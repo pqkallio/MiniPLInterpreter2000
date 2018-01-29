@@ -1,0 +1,5 @@
+/home/pqkallio/MonoDevelopProjects/Compiler/Compiler/obj/x86/Debug/.NETFramework,Version=v4.5.AssemblyAttribute.cs
+/home/pqkallio/MonoDevelopProjects/Compiler/Compiler/bin/Debug/Compiler.exe.mdb
+/home/pqkallio/MonoDevelopProjects/Compiler/Compiler/bin/Debug/Compiler.exe
+/home/pqkallio/MonoDevelopProjects/Compiler/Compiler/obj/x86/Debug/Compiler.exe
+/home/pqkallio/MonoDevelopProjects/Compiler/Compiler/obj/x86/Debug/Compiler.exe.mdb

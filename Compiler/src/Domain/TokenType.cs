@@ -1,0 +1,36 @@
+﻿using System;
+
+namespace MiniPLInterpreter
+{
+	public enum TokenType
+	{
+		ID,
+		UNARY_OP,
+		BINARY_OP,
+		TYPE,
+		EXPR_START,
+		EXPR_END,
+		RANGE,
+		UPTO,
+		STR_VAL,
+		END_STATEMENT,
+		DECLARATION,
+		FOR_LOOP,
+		LOOP_BODY,
+		INPUT,
+		OUTPUT,
+		END,
+		ASSERT,
+		INT_VAL,
+		INT_VAR,
+		BOOL_VAL,
+		BOOL_VAR,
+		STR_VAR,
+		COMMENT_ONE_LINE,
+		COMMENT_START,
+		COMMENT_END,
+		UNDEFINED,
+		LINEBREAK
+	}
+}
+
