@@ -10,7 +10,7 @@ namespace MiniPLInterpreter
 				return false;
 			}
 
-			if (str [0] != '-' && !NumericUtils.IntBetween (value, 0, 9)) {
+			if (str [0] != '-' && !NumericUtils.IntBetween (str [0], 0, 9)) {
 				return false;
 			}
 			
