@@ -36,7 +36,6 @@ namespace MiniPLInterpreter
 
 			for (int i = 0; i < input.Length; i++) {
 				if (input [i] == Constants.LINEBREAK) {
-					tokens.Add (new Token (row, i, Constants.LINEBREAK.ToString ()));
 					row++;
 				} else {
 					tokenScanned = scan (input, ref temp, ref i);

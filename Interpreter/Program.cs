@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using MiniPLInterpreter;
 
-namespace MiniPLInterpreter
+namespace Interpreter
 {
-	class Program
+	class MainClass
 	{
-		static void Main(string[] args)
+		public static void Main (string[] args)
 		{
 			if (args.Length < 1) {
 				return;
@@ -41,7 +42,7 @@ namespace MiniPLInterpreter
 			foreach (Object o in tokens) {
 				Console.WriteLine (o);
 			}
+
 		}
 	}
 }
-

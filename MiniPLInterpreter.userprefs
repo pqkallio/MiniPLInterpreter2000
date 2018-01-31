@@ -1,26 +1,32 @@
-﻿<Properties StartupItem="Compiler/MiniPLInterpreter.csproj">
+﻿<Properties StartupItem="Interpreter/Interpreter.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Compiler/src/Rules/ReservedKeywordRule.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Interpreter/Program.cs">
     <Files>
-      <File FileName="Compiler/src/Program.cs" Line="1" Column="1" />
-      <File FileName="Compiler/test/Domain/TokenTest.cs" Line="1" Column="1" />
-      <File FileName="Compiler/src/Services/Scanner.cs" Line="38" Column="1" />
-      <File FileName="Compiler/src/Rules/ScannerRule.cs" Line="1" Column="1" />
-      <File FileName="Compiler/src/Rules/DefaultScannerRule.cs" Line="22" Column="36" />
-      <File FileName="Compiler/test/Rules/DefaultScannerRuleTest.cs" Line="1" Column="1" />
-      <File FileName="Compiler/src/Domain/Token.cs" Line="1" Column="1" />
-      <File FileName="Compiler/src/Rules/ReservedKeywordRule.cs" Line="28" Column="16" />
-      <File FileName="Compiler/src/Rules/IndependentCharRule.cs" Line="1" Column="1" />
-      <File FileName="Compiler/src/Constants.cs" Line="43" Column="18" />
-      <File FileName="Compiler/src/Rules/SuccessorDependentRule.cs" Line="18" Column="46" />
+      <File FileName="Compiler/src/Services/Scanner.cs" Line="46" Column="6" />
+      <File FileName="Interpreter/Program.cs" Line="3" Column="24" />
+      <File FileName="Compiler/Properties/AssemblyInfo.cs" Line="7" Column="45" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore>
-      <Breakpoint file="/home/pqkallio/MonoDevelopProjects/Compiler/Compiler/src/Services/Scanner.cs" line="23" column="1" />
-    </BreakpointStore>
+    <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.ItemProperties.Interpreter>
+    <MonoDevelop.Ide.CustomExecutionModes>
+      <Data Name="TestText" Id="47d82eb1-4bfd-468c-a383-0c36dbf1b4dc" ModeId="Default">
+        <CommandData>
+          <Item Key="MonoDevelop.Ide.Execution.CustomArgsCustomizer">
+            <Value Arguments="~/test.txt" ctype="CustomArgsExecutionModeData">
+              <EnvironmentVariables />
+            </Value>
+          </Item>
+          <Item Key="MonoDevelop.Ide.Execution.MonoExecutionCustomizer">
+            <Value ctype="MonoExecutionParameters" />
+          </Item>
+        </CommandData>
+      </Data>
+    </MonoDevelop.Ide.CustomExecutionModes>
+  </MonoDevelop.Ide.ItemProperties.Interpreter>
   <MonoDevelop.Ide.ItemProperties.MiniPLInterpreter>
     <MonoDevelop.Ide.CustomExecutionModes>
       <Data Name="TestText" Id="2798571e-17c1-49a6-ac3f-d5a7733623c2" ModeId="Default">
