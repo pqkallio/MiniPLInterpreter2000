@@ -67,7 +67,7 @@ namespace MiniPLInterpreter
 		{
 			string value = token.Value;
 
-			if (StringUtils.isNumeric (value)) {
+			if (StringUtils.isInteger (value)) {
 				token.Type = TokenType.INT_VAL;
 			} else if (StringUtils.delimited (value, Constants.STRING_DELIMITER)) {
 				token.Type = TokenType.STR_VAL;

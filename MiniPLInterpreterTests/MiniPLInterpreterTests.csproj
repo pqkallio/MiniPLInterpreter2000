@@ -36,6 +36,8 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="test\Domain\TokenTest.cs" />
+    <Compile Include="test\Utils\NumericUtilsTest.cs" />
+    <Compile Include="test\Utils\StringUtilsTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -47,8 +49,6 @@
   <ItemGroup>
     <Folder Include="test\" />
     <Folder Include="test\Domain\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
+    <Folder Include="test\Utils\" />
   </ItemGroup>
 </Project>

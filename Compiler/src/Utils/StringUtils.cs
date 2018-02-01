@@ -4,14 +4,14 @@ namespace MiniPLInterpreter
 {
 	public class StringUtils
 	{
-		public static bool isNumeric (string str)
+		public static bool isInteger (string str)
 		{
 			if (String.IsNullOrEmpty (str)) {
 				return false;
 			}
 
-
-			if (str [0] != '-' && !NumericUtils.IntBetween (str [0], 0, 9)) {
+			if (str [0] != '-' && str [0] != '+' 
+				&& !NumericUtils.IntBetween ((int) Char.GetNumericValue(str [0]), 0, 9)) {
 				return false;
 			}
 			
@@ -28,8 +28,13 @@ namespace MiniPLInterpreter
 
 		public static int parseToInt(string str)
 		{
+			if (String.IsNullOrEmpty(str) || !isInteger(str)) {
+				throw new ArgumentException ();
+			}
+
 			bool negative = str [0] == '-';
-			int downTo = negative ? 0 : -1;
+			bool signed = negative | str [0] == '+';
+			int downTo = signed ? 0 : -1;
 			int coefficient = 1;
 			int value = 0;
 
@@ -43,6 +48,10 @@ namespace MiniPLInterpreter
 
 		public static bool sequenceMatch (string input, int index, string sequence)
 		{
+			if (input == null) {
+				throw new ArgumentNullException ();
+			}
+
 			int i, j;
 
 			for (i = index, j = 0; j < sequence.Length && i < input.Length; i++, j++) {
