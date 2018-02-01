@@ -14,46 +14,51 @@ namespace MiniPLInterpreterTests
 		private readonly string notInt = "123a";
 		private readonly string notIntEither = "1-23";
 
-		[Test()]
-		public void TestIsIntegerNullPointer()
+		private bool test(string str)
 		{
-			Assert.False (StringUtils.isInteger(null));
+			return StringUtils.isInteger (str);
 		}
 
 		[Test()]
-		public void TestIsIntegerEmptyString()
+		public void NullPointer()
 		{
-			Assert.False (StringUtils.isInteger(""));
+			Assert.False (test(null));
 		}
 
 		[Test()]
-		public void TestIsIntegerNotInteger1()
+		public void EmptyString()
 		{
-			Assert.False (StringUtils.isInteger(this.notInt));
+			Assert.False (test(""));
 		}
 
 		[Test()]
-		public void TestIsIntegerNotInteger2()
+		public void NotInteger1()
 		{
-			Assert.False (StringUtils.isInteger(this.notIntEither));
+			Assert.False (test(this.notInt));
 		}
 
 		[Test()]
-		public void TestIsIntegerPosIntWOSignString()
+		public void NotInteger2()
 		{
-			Assert.True (StringUtils.isInteger(this.posIntWOSign));
+			Assert.False (test(this.notIntEither));
 		}
 
 		[Test()]
-		public void TestIsIntegerPosIntWSignString()
+		public void PosIntWOSignString()
 		{
-			Assert.True (StringUtils.isInteger(this.posIntWSign));
+			Assert.True (test(this.posIntWOSign));
 		}
 
 		[Test()]
-		public void TestIsIntegerNegIntString()
+		public void PosIntWSignString()
 		{
-			Assert.True (StringUtils.isInteger(this.negInt));
+			Assert.True (test(this.posIntWSign));
+		}
+
+		[Test()]
+		public void NegIntString()
+		{
+			Assert.True (test(this.negInt));
 		}
 	}
 
@@ -68,45 +73,50 @@ namespace MiniPLInterpreterTests
 		private readonly int negInt = -987654;
 		private readonly int posIntWOSign = 123456;
 
-		[Test()]
-		public void TestParseToIntThrowsForNullPointer() {
-			Assert.Throws (typeof(ArgumentException), delegate {
-				StringUtils.parseToInt(null);
-			});
-		}
-
-		[Test()]
-		public void TestParseToIntThrowsForEmptyString() {
-			Assert.Throws (typeof(ArgumentException), delegate {
-				StringUtils.parseToInt("");
-			});
-		}
-
-		[Test()]
-		public void TestParseToIntThrowsForUnparseableString() {
-			Assert.Throws (typeof(ArgumentException), delegate {
-				StringUtils.parseToInt(this.invalidString);
-			});
-		}
-
-		[Test()]
-		public void TestParseToIntParsesNegInt()
+		private int test(string str)
 		{
-			int parsed = StringUtils.parseToInt (this.negIntStr);
+			return StringUtils.parseToInt (str);
+		}
+
+		[Test()]
+		public void ThrowsForNullPointer() {
+			Assert.Throws (typeof(ArgumentException), delegate {
+				test(null);
+			});
+		}
+
+		[Test()]
+		public void ThrowsForEmptyString() {
+			Assert.Throws (typeof(ArgumentException), delegate {
+				test("");
+			});
+		}
+
+		[Test()]
+		public void ThrowsForUnparseableString() {
+			Assert.Throws (typeof(ArgumentException), delegate {
+				test(this.invalidString);
+			});
+		}
+
+		[Test()]
+		public void ParsesNegInt()
+		{
+			int parsed = test (this.negIntStr);
 			Assert.AreEqual (parsed, this.negInt);
 		}
 
 		[Test()]
-		public void TestParseToIntParsesPosIntWOSign()
+		public void ParsesPosIntWOSign()
 		{
-			int parsed = StringUtils.parseToInt (this.posIntWOSignStr);
+			int parsed = test (this.posIntWOSignStr);
 			Assert.AreEqual (parsed, this.posIntWOSign);
 		}
 
 		[Test()]
-		public void TestParseToIntParsesPosIntWSign()
+		public void ParsesPosIntWSign()
 		{
-			int parsed = StringUtils.parseToInt (this.posIntWSignStr);
+			int parsed = test (this.posIntWSignStr);
 			Assert.AreEqual (parsed, this.posIntWOSign);
 		}
 	}
@@ -115,7 +125,149 @@ namespace MiniPLInterpreterTests
 	[Category("TestSequenceMatch")]
 	public class StringUtilsTestSequenceMatch
 	{
-		
+		private readonly string input = "abcdefghijkl";
+		private readonly string validSequence1 = "abc";
+		private readonly string validSequence2 = "ghi";
+		private readonly string invalidSequence1 = "abcdefghijklm";
+		private readonly string invalidSequence2 = "abcdefghijkm";
+
+		private bool test(string input, int index, string seq)
+		{
+			return StringUtils.sequenceMatch (input, index, seq);
+		}
+
+		[Test()]
+		public void NullInputThrows()
+		{
+			Assert.Throws (typeof(ArgumentNullException), delegate {
+				test(null, 0, this.validSequence1);
+			});
+		}
+
+		[Test()]
+		public void NullSequenceThrows()
+		{
+			Assert.Throws (typeof(ArgumentNullException), delegate {
+				test(this.input, 0, null);
+			});
+		}
+
+		[Test()]
+		public void NegIndexThrows()
+		{
+			Assert.Throws (typeof(ArgumentOutOfRangeException), delegate {
+				test(this.input, -1, this.validSequence1);
+			});
+		}
+
+		[Test()]
+		public void TooGreatIndexThrows()
+		{
+			Assert.Throws (typeof(ArgumentOutOfRangeException), delegate {
+				test(this.input, this.input.Length, this.validSequence1);
+			});
+		}
+
+		[Test()]
+		public void EmptyStringsMatch()
+		{
+			Assert.True (test("", 0, ""));
+		}
+
+		[Test()]
+		public void EmptySeqMatches()
+		{
+			Assert.True (test(this.input, 0, ""));
+		}
+
+		[Test()]
+		public void TrueIfIndexIsRight1()
+		{
+			Assert.True (test(this.input, 0, this.validSequence1));
+		}
+
+		[Test()]
+		public void FalseIfIndexIsWrong1()
+		{
+			Assert.False (test(this.input, 1, this.validSequence1));
+		}
+
+		[Test()]
+		public void TrueIfIndexIsRight2()
+		{
+			Assert.True (test(this.input, 6, this.validSequence2));
+		}
+
+		[Test()]
+		public void FalseIfIndexIsWrong2()
+		{
+			Assert.False (test(this.input, 7, this.validSequence2));
+		}
+
+		[Test()]
+		public void FalseIfNotPerfectMatch()
+		{
+			Assert.False (test(this.input, 0, this.invalidSequence2));
+		}
+
+		[Test()]
+		public void FalseIfSequenceIsTooLong()
+		{
+			Assert.False (test(this.input, 0, this.invalidSequence1));
+		}
+	}
+
+	[TestFixture()]
+	[Category("TestDelimited")]
+	public class StringUtilsTestDelimited
+	{
+		private readonly char delimiter = '"';
+		private readonly string delimited = "\"delimited, yes?\"";
+		private readonly string notDelimited1 = "not delimited, yes?\"";
+		private readonly string notDelimited2 = "\"not delimited, yes?";
+		private readonly string notDelimited3 = "not delimited, yes?";
+
+		public bool test(string str, char delimiter)
+		{
+			return StringUtils.delimited (str, delimiter);
+		}
+
+		[Test()]
+		public void NullPointerThrows()
+		{
+			Assert.Throws (typeof(ArgumentNullException), delegate {
+				test (null, delimiter);
+			});
+		}
+
+		[Test()]
+		public void FalseIfEmptyString()
+		{
+			Assert.False(test("", delimiter));
+		}
+
+		[Test()]
+		public void FalseIfNotDelimited()
+		{
+			Assert.False(test(notDelimited3, delimiter));
+		}
+
+		[Test()]
+		public void FalseIfNotLeftDelimited()
+		{
+			Assert.False(test(notDelimited1, delimiter));
+		}
+
+		[Test()]
+		public void FalseIfNotRightDelimited()
+		{
+			Assert.False(test(notDelimited2, delimiter));
+		}
+
+		[Test()]
+		public void TrueIfDelimited()
+		{
+			Assert.True(test(delimited, delimiter));
+		}
 	}
 }
-

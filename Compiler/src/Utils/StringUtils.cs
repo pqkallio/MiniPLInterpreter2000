@@ -48,16 +48,28 @@ namespace MiniPLInterpreter
 
 		public static bool sequenceMatch (string input, int index, string sequence)
 		{
-			if (input == null) {
+			if (input == null || sequence == null) {
 				throw new ArgumentNullException ();
+			}
+
+			if (input == "" && sequence == "") {
+				return true;
+			}
+
+			if (index < 0 || index >= input.Length) {
+				throw new ArgumentOutOfRangeException ();
 			}
 
 			int i, j;
 
 			for (i = index, j = 0; j < sequence.Length && i < input.Length; i++, j++) {
-				if (input [i] != sequence [j]) {
+				if (i >= input.Length || input [i] != sequence [j]) {
 					return false;
 				}
+			}
+
+			if (j != sequence.Length) {
+				return false;
 			}
 
 			return true;
@@ -65,6 +77,14 @@ namespace MiniPLInterpreter
 
 		public static bool delimited (string input, char delimiter)
 		{
+			if (input == null) {
+				throw new ArgumentNullException ();
+			}
+
+			if (input == "") {
+				return false;
+			}
+
 			return input [0] == delimiter && input [input.Length - 1] == delimiter;
 		}
 	}
