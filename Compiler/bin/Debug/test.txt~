@@ -1,11 +1,11 @@
-// One line comment
+// ///// One line comment
 var nTimes:int:=0;
 print "How many times?"; 
 read nTimes; 
 
-/* Some comments here
+/*** // Some comments here
 	spread on multiple
-	lines */
+	lines ******/
 
 var x : int;
 for x in 0..nTimes-1 do 

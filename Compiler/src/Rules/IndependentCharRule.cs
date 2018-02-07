@@ -2,7 +2,7 @@
 
 namespace MiniPLInterpreter
 {
-	public class IndependentCharRule : ScannerRule
+	public class IndependentCharRule : IScannerRule
 	{
 		public IndependentCharRule ()
 		{

@@ -9,13 +9,15 @@ namespace MiniPLInterpreter
 	/// It scans through the original source code and divides it into string tokens.
 	/// These tokens are then passed to the Parser.
 	/// </summary>
-	public class Scanner
+	public class Scanner : IErrorAggregator
 	{
-		private Dictionary<char, List<ScannerRule>> scannerRules;
-		private ScannerRule defaultRule;
+		private Dictionary<char, List<IScannerRule>> scannerRules;
+		private IScannerRule defaultRule;
+		private List<Error> errors;
 
 		public Scanner ()
 		{
+			this.errors = new List<Error> ();
 			initScannerRules ();
 		}
 
@@ -69,10 +71,22 @@ namespace MiniPLInterpreter
 
 			if (StringUtils.isInteger (value)) {
 				token.Type = TokenType.INT_VAL;
-			} else if (StringUtils.delimited (value, Constants.STRING_DELIMITER)) {
+			} else if (value[0] == Constants.STRING_DELIMITER) {
 				token.Type = TokenType.STR_VAL;
+
+				bool wellFormed = StringUtils.delimited (value, Constants.STRING_DELIMITER);
+
+				if (!wellFormed) {
+					errors.Add (new StringLiteralError (token));
+				}
 			} else {
 				token.Type = TokenType.ID;
+
+				bool wellFormed = StringUtils.validId (value);
+
+				if (!wellFormed) {
+					errors.Add (new IdError (token));
+				}
 			}
 		}
 
@@ -111,10 +125,10 @@ namespace MiniPLInterpreter
 			return tokenParsed;
 		}
 
-		private bool scanRules(List<ScannerRule> rules, string input, ref string temp, ref int index) {
+		private bool scanRules(List<IScannerRule> rules, string input, ref string temp, ref int index) {
 			bool parsed = false;
 
-			foreach (ScannerRule rule in rules) {
+			foreach (IScannerRule rule in rules) {
 				parsed = rule.scanToken (input, ref temp, ref index);
 				if (parsed) {
 					return true;
@@ -127,7 +141,7 @@ namespace MiniPLInterpreter
 		private void initScannerRules()
 		{
 			this.defaultRule = new DefaultScannerRule ();
-			this.scannerRules = new Dictionary<char, List<ScannerRule>>();
+			this.scannerRules = new Dictionary<char, List<IScannerRule>>();
 
 			addRule (Constants.COMMENT_START_CHAR, new CommentRule ());
 
@@ -137,7 +151,7 @@ namespace MiniPLInterpreter
 
 			addRule (Constants.STRING_DELIMITER, new StringLiteralRule ());
 
-			ScannerRule independentCharRule = new IndependentCharRule ();
+			IScannerRule independentCharRule = new IndependentCharRule ();
 			addRules (independentCharRule, Enumerable.ToList(Constants.INDEPENDENT_CHARS.Keys).ToArray());
 		}
 
@@ -161,7 +175,7 @@ namespace MiniPLInterpreter
 			}
 		}
 
-		private void addRules(ScannerRule rule, string[] strs)
+		private void addRules(IScannerRule rule, string[] strs)
 		{
 			foreach (string str in strs) {
 				if (!String.IsNullOrEmpty(str)) {
@@ -172,13 +186,22 @@ namespace MiniPLInterpreter
 			}
 		}
 
-		private void addRule(char key, ScannerRule rule)
+		private void addRule(char key, IScannerRule rule)
 		{
 			if (!this.scannerRules.ContainsKey (key)) {
-				this.scannerRules [key] = new List<ScannerRule> ();
+				this.scannerRules [key] = new List<IScannerRule> ();
 			}
 
 			this.scannerRules[key].Add(rule);
+		}
+
+		public void notifyError(Error error)
+		{
+			this.errors.Add (error);
+		}
+
+		public List<Error> getErrors () {
+			return this.errors;
 		}
 	}
 }

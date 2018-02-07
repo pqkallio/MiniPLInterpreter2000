@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace MiniPLInterpreter
 {
@@ -86,6 +87,47 @@ namespace MiniPLInterpreter
 			}
 
 			return input [0] == delimiter && input [input.Length - 1] == delimiter;
+		}
+
+		public static bool validId(string input)
+		{
+			if (input == null) {
+				throw new ArgumentNullException ();
+			}
+
+			if (input == "") {
+				return false;
+			}
+
+			char c = input [0];
+
+			if (!(NumericUtils.IntBetween ((int)c, Constants.UTF8_SMALL_LETTERS_START, Constants.UTF8_SMALL_LETTERS_END) ||
+				NumericUtils.IntBetween ((int)c, Constants.UTF8_CAPITAL_LETTERS_START, Constants.UTF8_CAPITAL_LETTERS_END))) {
+				return false;
+			}
+
+			for (int i = 1; i < input.Length; i++) {
+				c = input [i];
+				bool valid = validIdChar (c);
+
+				if (!valid) {
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		private static bool validIdChar(char c) {
+			Dictionary<char, char> validChars = Constants.UTF8_VALID_ID_CHAR_RANGES;
+
+			foreach (char key in validChars.Keys) {
+				if (NumericUtils.IntBetween ((int)c, key, validChars [key])) {
+					return true;
+				}
+			}
+
+			return false;
 		}
 	}
 }

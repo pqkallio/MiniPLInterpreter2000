@@ -270,4 +270,50 @@ namespace MiniPLInterpreterTests
 			Assert.True(test(delimited, delimiter));
 		}
 	}
+
+	[TestFixture()]
+	[Category("TestValidId")]
+	public class StringUtilsTestValidId
+	{
+		private readonly string valid = "a123_RtZ_";
+		private readonly string notValid1 = "1oRpo";
+		private readonly string notValid2 = "_poRo2";
+
+		public bool test(string str)
+		{
+			return StringUtils.validId (str);
+		}
+
+		[Test()]
+		public void NullPointerThrows()
+		{
+			Assert.Throws (typeof(ArgumentNullException), delegate {
+				test (null);
+			});
+		}
+
+		[Test()]
+		public void FalseIfEmptyString()
+		{
+			Assert.False(test(""));
+		}
+
+		[Test()]
+		public void FalseIfNotValid1()
+		{
+			Assert.False(test(notValid1));
+		}
+
+		[Test()]
+		public void FalseIfNotValid2()
+		{
+			Assert.False(test(notValid2));
+		}
+			
+		[Test()]
+		public void TrueIfValid()
+		{
+			Assert.True(test(valid));
+		}
+	}
 }

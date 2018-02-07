@@ -2,7 +2,7 @@
 
 namespace MiniPLInterpreter
 {
-	public class StringLiteralRule : ScannerRule
+	public class StringLiteralRule : IScannerRule
 	{
 		public StringLiteralRule ()
 		{
@@ -36,7 +36,7 @@ namespace MiniPLInterpreter
 			if (escapeNextChar) {
 				escapeNextChar = false;
 			} else {
-				escapeNextChar = c == Constants.ESCAPE_CHAR;
+				escapeNextChar = c != '\n' && c == Constants.ESCAPE_CHAR;
 				stringEnded = c == Constants.STRING_DELIMITER;
 			}
 

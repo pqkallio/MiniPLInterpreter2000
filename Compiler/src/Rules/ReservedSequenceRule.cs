@@ -2,7 +2,7 @@
 
 namespace MiniPLInterpreter
 {
-	public class ReservedSequenceRule : ScannerRule
+	public class ReservedSequenceRule : IScannerRule
 	{
 		private readonly string sequence;
 

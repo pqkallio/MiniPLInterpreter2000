@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace MiniPLInterpreter
 {
-	public class DefaultScannerRule : ScannerRule
+	public class DefaultScannerRule : IScannerRule
 	{
 		private readonly Dictionary<char, string> escapeChars = new Dictionary<char, string> ();
 

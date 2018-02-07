@@ -2,7 +2,7 @@
 
 namespace MiniPLInterpreter
 {
-	public class CommentRule : ScannerRule
+	public class CommentRule : IScannerRule
 	{
 		public CommentRule ()
 		{
@@ -10,8 +10,6 @@ namespace MiniPLInterpreter
 
 		public bool scanToken(string input, ref string token, ref int index)
 		{
-			bool commentParsed = false;
-
 			foreach (string commentStartDelimiter in Constants.COMMENT_DELIMITERS.Keys) {
 				if (StringUtils.sequenceMatch (input, index, commentStartDelimiter)) {
 					index = findCommentEnd (input, index, Constants.COMMENT_DELIMITERS [commentStartDelimiter]);
