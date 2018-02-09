@@ -26,6 +26,8 @@ namespace MiniPLInterpreter
 			List<Token> tokens = parseTokens (input);
 			setTypes (tokens);
 
+			tokens.Add (new Token (tokens [tokens.Count - 1].Line + 1, 0, "$$", TokenType.END_OF_FILE));
+
 			return tokens;
 		}
 
@@ -80,12 +82,13 @@ namespace MiniPLInterpreter
 					errors.Add (new StringLiteralError (token));
 				}
 			} else {
-				token.Type = TokenType.ID;
+				bool wellFormedId = StringUtils.validId (value);
 
-				bool wellFormed = StringUtils.validId (value);
-
-				if (!wellFormed) {
-					errors.Add (new IdError (token));
+				if (!wellFormedId) {
+					errors.Add (new TokenError (token));
+					token.Type = TokenType.UNDEFINED;
+				} else {
+					token.Type = TokenType.ID;
 				}
 			}
 		}

@@ -32,7 +32,7 @@ namespace MiniPLInterpreter
 
 		public override string ToString ()
 		{
-			return string.Format ("{0}: {1} at row {2} column {3}", Title, ErrorMessage, Token.Line, Token.Column);
+			return string.Format ("{0}: {1}: {2} at row {3} column {4}", Title, ErrorMessage, Token.Value, Token.Line, Token.Column);
 		}
 	}
 }

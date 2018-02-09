@@ -22,9 +22,20 @@ namespace Interpreter
 			}
 
 			if (scanner.getErrors ().Count > 0) {
-				Console.WriteLine ("\n\nErrors encoutered during scanning:\n");
+				Console.WriteLine ("\n\nErrors were encountered while scanning:\n");
 			
 				foreach (Error e in scanner.getErrors()) {
+					Console.WriteLine (e);
+				}
+			}
+
+			Parser parser = new Parser (tokens);
+			parser.ParseTokens ();
+
+			if (parser.getErrors ().Count > 0) {
+				Console.WriteLine ("\n\nErrors were encountered while parsing:\n");
+
+				foreach (Error e in parser.getErrors()) {
 					Console.WriteLine (e);
 				}
 			}

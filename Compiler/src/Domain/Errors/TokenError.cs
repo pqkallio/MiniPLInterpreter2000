@@ -2,11 +2,11 @@
 
 namespace MiniPLInterpreter
 {
-	public class IdError : Error
+	public class TokenError : Error
 	{
-		public IdError (Token token) 
+		public TokenError (Token token) 
 			: base(Constants.SCANNER_ERROR_TITLE, 
-				   Constants.ID_ERROR_MESSAGE, 
+				   Constants.TOKEN_ERROR_MESSAGE, 
 				   token)
 		{
 		}

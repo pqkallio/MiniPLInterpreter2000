@@ -11,12 +11,12 @@ namespace MiniPLInterpreter
 															{"for", TokenType.FOR_LOOP},
 															{"false", TokenType.BOOL_VAL},
 															{"true", TokenType.BOOL_VAL},
-															{"end", TokenType.END},
-															{"in", TokenType.RANGE},
+															{"end", TokenType.END_OF_BLOCK},
+															{"in", TokenType.RANGE_FROM},
 															{"int", TokenType.INT_VAR},
-															{"do", TokenType.LOOP_BODY},
-															{"read", TokenType.INPUT},
-															{"print", TokenType.OUTPUT},
+															{"do", TokenType.START_BLOCK},
+															{"read", TokenType.READ},
+															{"print", TokenType.WRITE},
 															{"string", TokenType.STR_VAR},
 															{"bool", TokenType.BOOL_VAR},
 															{"assert", TokenType.ASSERT}
@@ -24,25 +24,24 @@ namespace MiniPLInterpreter
 
 		public static readonly Dictionary<string, TokenType> INDEPENDENT_CHARS = new Dictionary<string, TokenType> ()	
 														{
-															{"+", TokenType.BINARY_OP}, 
-															{"-", TokenType.BINARY_OP},
-															{"<", TokenType.BINARY_OP},
-															{"=", TokenType.BINARY_OP},
-															{"&", TokenType.BINARY_OP}, 
-															{"!", TokenType.UNARY_OP}, 
+															{"+", TokenType.BINARY_OP_ADD}, 
+															{"-", TokenType.BINARY_OP_SUB},
+															{"<", TokenType.BINARY_OP_LOG_LT},
+															{"=", TokenType.BINARY_OP_LOG_EQ},
+															{"&", TokenType.BINARY_OP_LOG_AND}, 
+															{"!", TokenType.UNARY_OP_LOG_NEG}, 
 															{";", TokenType.END_STATEMENT}, 
-															{"(", TokenType.EXPR_START}, 
-															{")", TokenType.EXPR_END},
-															{"/", TokenType.BINARY_OP},
-															{"*", TokenType.BINARY_OP},
-															{":", TokenType.BINARY_OP},
-															{"\n", TokenType.LINEBREAK}
+															{"(", TokenType.PARENTHESIS_LEFT}, 
+															{")", TokenType.PARENTHESIS_RIGHT},
+															{"/", TokenType.BINARY_OP_DIV},
+															{"*", TokenType.BINARY_OP_MUL},
+															{":", TokenType.SET_TYPE}
 														};
 
 		public static readonly Dictionary<string, TokenType> SUCCESSOR_DEPENDENT = new Dictionary<string, TokenType> ()
 														{
-															{":=", TokenType.DECLARATION},
-															{"..", TokenType.UPTO}
+															{":=", TokenType.ASSIGN},
+															{"..", TokenType.RANGE_UPTO}
 														};
 
 		public static readonly Dictionary<string, string> COMMENT_DELIMITERS = new Dictionary<string, string>()
@@ -72,7 +71,9 @@ namespace MiniPLInterpreter
 
 		public static readonly string SCANNER_ERROR_TITLE = "Scanner error";
 		public static readonly string STRING_LITERAL_ERROR_MESSAGE = "Error while scanning string literal";
-		public static readonly string ID_ERROR_MESSAGE = "Error while scanning variable identifier";
+		public static readonly string TOKEN_ERROR_MESSAGE = "Error while scanning token";
+		public static readonly string SYNTAX_ERROR_TITLE = "Syntax error";
+		public static readonly string SYNTAX_ERROR_MESSAGE = "Error while parsing token";
 
 		public static readonly Dictionary<char, char> UTF8_VALID_ID_CHAR_RANGES = new Dictionary<char, char> ()
 														{
