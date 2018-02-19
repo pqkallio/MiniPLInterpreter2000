@@ -32,7 +32,7 @@ namespace MiniPLInterpreterTests
 		[Test ()]
 		public void TestGetTokenLine ()
 		{
-			Assert.AreEqual (this.token.Line, this.tokenLine);
+			Assert.AreEqual (this.token.Row, this.tokenLine);
 		}
 
 		[Test ()]
@@ -60,6 +60,15 @@ namespace MiniPLInterpreterTests
 			Assert.AreEqual (this.token.Type, TokenType.UNDEFINED);
 			this.token.Type = this.tokenType;
 			Assert.AreEqual (this.token.Type, this.tokenType);
+		}
+
+		[Test ()]
+		public void TestAddToValue ()
+		{
+			Token t = new Token (0, 0);
+			Assert.AreEqual (null, t.Value);
+			t.Value = "c";
+			Assert.AreEqual ("c", t.Value);
 		}
 	}
 }

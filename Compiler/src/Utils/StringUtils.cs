@@ -5,6 +5,17 @@ namespace MiniPLInterpreter
 {
 	public class StringUtils
 	{
+		public static bool isAlpha (char c)
+		{
+			return (c >= Constants.UTF8_CAPITAL_LETTERS_START && c <= Constants.UTF8_CAPITAL_LETTERS_END) ||
+				(c >= Constants.UTF8_SMALL_LETTERS_START && c <= Constants.UTF8_SMALL_LETTERS_END);
+		}
+
+		public static bool isInteger (char c)
+		{
+			return c >= 0x30 && c <= 0x39;
+		}
+
 		public static bool isInteger (string str)
 		{
 			if (String.IsNullOrEmpty (str)) {

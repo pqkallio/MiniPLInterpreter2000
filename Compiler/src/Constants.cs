@@ -5,7 +5,13 @@ namespace MiniPLInterpreter
 {
 	public class Constants
 	{
-		public static readonly Dictionary<string, TokenType> RESERVED_SEQUENCES =	new Dictionary<string, TokenType> ()	
+		public static readonly Dictionary<char, string> WHITESPACES = new Dictionary<char, string> ()
+														{
+															{' ', null},
+															{'\t', null}
+														};
+
+		public static readonly Dictionary<string, TokenType> RESERVED_SEQUENCES = new Dictionary<string, TokenType> ()	
 														{
 															{"var", TokenType.DECLARATION},
 															{"for", TokenType.FOR_LOOP},
@@ -22,10 +28,8 @@ namespace MiniPLInterpreter
 															{"assert", TokenType.ASSERT}
 														};
 
-		public static readonly Dictionary<string, TokenType> INDEPENDENT_CHARS = new Dictionary<string, TokenType> ()	
+		public static readonly Dictionary<string, TokenType> OLD_INDEPENDENT_CHARS = new Dictionary<string, TokenType> ()	
 														{
-															{"+", TokenType.BINARY_OP_ADD}, 
-															{"-", TokenType.BINARY_OP_SUB},
 															{"<", TokenType.BINARY_OP_LOG_LT},
 															{"=", TokenType.BINARY_OP_LOG_EQ},
 															{"&", TokenType.BINARY_OP_LOG_AND}, 
@@ -33,10 +37,26 @@ namespace MiniPLInterpreter
 															{";", TokenType.END_STATEMENT}, 
 															{"(", TokenType.PARENTHESIS_LEFT}, 
 															{")", TokenType.PARENTHESIS_RIGHT},
-															{"/", TokenType.BINARY_OP_DIV},
-															{"*", TokenType.BINARY_OP_MUL},
-															{":", TokenType.SET_TYPE}
+															{"*", TokenType.BINARY_OP_MUL}
 														};
+
+		public static readonly Dictionary<char, TokenType> INDEPENDENT_CHARS = new Dictionary<char, TokenType> ()	
+		{
+			{'<', TokenType.BINARY_OP_LOG_LT},
+			{'=', TokenType.BINARY_OP_LOG_EQ},
+			{'&', TokenType.BINARY_OP_LOG_AND}, 
+			{'!', TokenType.UNARY_OP_LOG_NEG}, 
+			{';', TokenType.END_STATEMENT}, 
+			{'(', TokenType.PARENTHESIS_LEFT}, 
+			{')', TokenType.PARENTHESIS_RIGHT},
+			{'*', TokenType.BINARY_OP_MUL}
+		};
+
+		public static readonly Tuple<char, TokenType> BINARY_OP_ADD = Tuple.Create('+', TokenType.BINARY_OP_ADD);
+		public static readonly Tuple<char, TokenType> BINARY_OP_SUB = Tuple.Create('-', TokenType.BINARY_OP_SUB);
+		public static readonly Tuple<char, TokenType> BINARY_OP_DIV = Tuple.Create('/', TokenType.BINARY_OP_DIV);
+		public static readonly Tuple<char, TokenType> SET_TYPE = Tuple.Create(':', TokenType.SET_TYPE);
+		public static readonly Tuple<char, TokenType> ASSIGN = Tuple.Create('=', TokenType.ASSIGN);
 
 		public static readonly Dictionary<string, TokenType> SUCCESSOR_DEPENDENT = new Dictionary<string, TokenType> ()
 														{
@@ -52,7 +72,7 @@ namespace MiniPLInterpreter
 
 		public static readonly Dictionary<string, TokenType>[] ALL_SEQUENCES = 
 														{
-															INDEPENDENT_CHARS, 
+															//INDEPENDENT_CHARS, 
 															SUCCESSOR_DEPENDENT, 
 															RESERVED_SEQUENCES
 														};

@@ -1,32 +1,48 @@
 ﻿<Properties StartupItem="Interpreter/Interpreter.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Interpreter/Program.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Compiler/src/Rules/StringLiteralRule.cs">
     <Files>
-      <File FileName="Compiler/src/Services/Scanner.cs" Line="46" Column="6" />
-      <File FileName="Interpreter/Program.cs" Line="3" Column="24" />
-      <File FileName="Compiler/Properties/AssemblyInfo.cs" Line="7" Column="45" />
+      <File FileName="Compiler/src/Constants.cs" Line="3" Column="1" />
+      <File FileName="Interpreter/Program.cs" Line="38" Column="31" />
+      <File FileName="Compiler/src/Services/Parser.cs" Line="17" Column="4" />
+      <File FileName="Compiler/src/Rules/StringLiteralRule.cs" Line="9" Column="4" />
+      <File FileName="Compiler/src/Services/Scanner.cs" Line="128" Column="1" />
     </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="MiniPLInterpreter" expanded="True">
+            <Node name="Interpreter" expanded="True" />
+            <Node name="MiniPLInterpreter" expanded="True">
+              <Node name="src" expanded="True">
+                <Node name="Domain" expanded="True" />
+                <Node name="Rules" expanded="True">
+                  <Node name="StringLiteralRule.cs" selected="True" />
+                </Node>
+                <Node name="Services" expanded="True" />
+              </Node>
+            </Node>
+            <Node name="MiniPLInterpreterTests" expanded="True">
+              <Node name="test" expanded="True">
+                <Node name="Utils" expanded="True" />
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+      <Pad Id="MonoDevelop.NUnit.TestPad">
+        <State name="__root__">
+          <Node name="MiniPLInterpreter" expanded="True">
+            <Node name="MiniPLInterpreterTests" selected="True" />
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MonoDevelop.Ide.ItemProperties.Interpreter>
-    <MonoDevelop.Ide.CustomExecutionModes>
-      <Data Name="TestText" Id="47d82eb1-4bfd-468c-a383-0c36dbf1b4dc" ModeId="Default">
-        <CommandData>
-          <Item Key="MonoDevelop.Ide.Execution.CustomArgsCustomizer">
-            <Value Arguments="~/test.txt" ctype="CustomArgsExecutionModeData">
-              <EnvironmentVariables />
-            </Value>
-          </Item>
-          <Item Key="MonoDevelop.Ide.Execution.MonoExecutionCustomizer">
-            <Value ctype="MonoExecutionParameters" />
-          </Item>
-        </CommandData>
-      </Data>
-    </MonoDevelop.Ide.CustomExecutionModes>
-  </MonoDevelop.Ide.ItemProperties.Interpreter>
   <MonoDevelop.Ide.ItemProperties.MiniPLInterpreter>
     <MonoDevelop.Ide.CustomExecutionModes>
       <Data Name="TestText" Id="2798571e-17c1-49a6-ac3f-d5a7733623c2" ModeId="Default">
@@ -43,4 +59,20 @@
       </Data>
     </MonoDevelop.Ide.CustomExecutionModes>
   </MonoDevelop.Ide.ItemProperties.MiniPLInterpreter>
+  <MonoDevelop.Ide.ItemProperties.Interpreter>
+    <MonoDevelop.Ide.CustomExecutionModes>
+      <Data Name="TestText" Id="47d82eb1-4bfd-468c-a383-0c36dbf1b4dc" ModeId="Default">
+        <CommandData>
+          <Item Key="MonoDevelop.Ide.Execution.CustomArgsCustomizer">
+            <Value Arguments="~/test.txt" ctype="CustomArgsExecutionModeData">
+              <EnvironmentVariables />
+            </Value>
+          </Item>
+          <Item Key="MonoDevelop.Ide.Execution.MonoExecutionCustomizer">
+            <Value ctype="MonoExecutionParameters" />
+          </Item>
+        </CommandData>
+      </Data>
+    </MonoDevelop.Ide.CustomExecutionModes>
+  </MonoDevelop.Ide.ItemProperties.Interpreter>
 </Properties>

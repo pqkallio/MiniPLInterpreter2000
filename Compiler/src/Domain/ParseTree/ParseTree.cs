@@ -18,6 +18,7 @@ namespace MiniPLInterpreter
 		public ParseLeaf Root
 		{
 			get { return this.root; }
+			set { this.root = value; }
 		}
 	}
 }

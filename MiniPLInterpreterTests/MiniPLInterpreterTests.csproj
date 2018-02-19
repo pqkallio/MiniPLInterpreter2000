@@ -38,6 +38,8 @@
     <Compile Include="test\Domain\TokenTest.cs" />
     <Compile Include="test\Utils\NumericUtilsTest.cs" />
     <Compile Include="test\Utils\StringUtilsTest.cs" />
+    <Compile Include="test\Services\ScannerTest.cs" />
+    <Compile Include="test\TestInputs.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -50,5 +52,6 @@
     <Folder Include="test\" />
     <Folder Include="test\Domain\" />
     <Folder Include="test\Utils\" />
+    <Folder Include="test\Services\" />
   </ItemGroup>
 </Project>

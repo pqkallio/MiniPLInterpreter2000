@@ -8,12 +8,28 @@ namespace MiniPLInterpreter
 		private TokenQueue queue;
 		private ParseTree tree;
 		private List<Error> errors;
+		private Scanner scanner;
+
+		public Parser ()
+		{
+			this.tree = new ParseTree ();
+			this.errors = new List<Error> ();
+		}
 
 		public Parser (List<Token> tokens)
 		{
 			this.queue = new TokenQueue(tokens);
 			this.tree = new ParseTree ();
 			this.errors = new List<Error> ();
+		}
+
+		public Scanner Scanner {
+			get { return scanner; }
+			set { this.scanner = value; }
+		}
+
+		public void Parse () {
+			ParseProgram (scanner.getNextToken ());
 		}
 
 		public void ParseTokens()
@@ -55,7 +71,7 @@ namespace MiniPLInterpreter
 					if (!match (next, TokenType.END_STATEMENT)) {
 						return next;
 					}
-					return ParseStatements (queue.Dequeue());
+				return ParseStatements (scanner.getNextToken());
 				case TokenType.END_OF_BLOCK:
 				case TokenType.END_OF_FILE:
 					return t;
@@ -70,54 +86,54 @@ namespace MiniPLInterpreter
 			Token next;
 			switch (t.Type) {
 				case TokenType.DECLARATION:
-					next = ParseVarId (queue.Dequeue ());
+					next = ParseVarId (scanner.getNextToken());
 					if (!match (next, TokenType.SET_TYPE)) {
 						return next;
 					}
-					next = ParseType (queue.Dequeue());
+					next = ParseType (scanner.getNextToken());
 					return ParseAssign (next);
 				case TokenType.ID:
 					next = ParseVarId (t);
 					if (!match (next, TokenType.ASSIGN)) {
 						return next;
 					}
-					return ParseExpression (queue.Dequeue ());
+					return ParseExpression (scanner.getNextToken());
 				case TokenType.FOR_LOOP:
-					next = ParseVarId (queue.Dequeue ());
+					next = ParseVarId (scanner.getNextToken());
 					if (!match (next, TokenType.RANGE_FROM)) {
 						return next;
 					}
-					next = ParseExpression (queue.Dequeue ());
+					next = ParseExpression (scanner.getNextToken());
 					if (!match (next, TokenType.RANGE_UPTO)) {
 						return next;
 					}
-					next = ParseExpression (queue.Dequeue ());
+					next = ParseExpression (scanner.getNextToken());
 					if (!match (next, TokenType.START_BLOCK)) {
 						return next;
 					}
-					next = ParseStatements (queue.Dequeue ());
+					next = ParseStatements (scanner.getNextToken());
 					if (!match (next, TokenType.END_OF_BLOCK)) {
 						return next;
 					}
-					next = queue.Dequeue ();
+					next = scanner.getNextToken();
 					if (!match (next, TokenType.FOR_LOOP)) {
 						return next;
 					}
-					return queue.Dequeue ();
+					return scanner.getNextToken();
 				case TokenType.READ:
-					return ParseVarId (queue.Dequeue ());
+					return ParseVarId (scanner.getNextToken());
 				case TokenType.WRITE:
-					return ParseExpression (queue.Dequeue ());
+					return ParseExpression (scanner.getNextToken());
 				case TokenType.ASSERT:
-					next = queue.Dequeue ();
+					next = scanner.getNextToken();
 					if (!match (next, TokenType.PARENTHESIS_LEFT)) {
 						return next;
 					}
-					next = ParseExpression (queue.Dequeue ());
+					next = ParseExpression (scanner.getNextToken ());
 					if (!match (next, TokenType.PARENTHESIS_RIGHT)) {
 						return next;
 					}
-					return queue.Dequeue ();
+					return scanner.getNextToken ();
 				default:
 					notifyError (new SyntaxError (t));
 					return t;
@@ -128,7 +144,7 @@ namespace MiniPLInterpreter
 		{
 			switch (t.Type) {
 				case TokenType.ID:
-					return queue.Dequeue ();
+					return scanner.getNextToken ();
 				default:
 					notifyError (new SyntaxError (t));
 					return t;
@@ -139,11 +155,11 @@ namespace MiniPLInterpreter
 		{
 			switch (t.Type) {
 				case TokenType.INT_VAR:
-					return queue.Dequeue ();
+					return scanner.getNextToken ();
 				case TokenType.STR_VAR:
-					return queue.Dequeue ();
+					return scanner.getNextToken ();
 				case TokenType.BOOL_VAR:
-					return queue.Dequeue ();
+					return scanner.getNextToken ();
 				default:
 					notifyError (new SyntaxError (t));
 					return t;
@@ -154,7 +170,7 @@ namespace MiniPLInterpreter
 		{
 			switch (t.Type) {
 				case TokenType.ASSIGN:
-					Token next = queue.Dequeue ();
+					Token next = scanner.getNextToken ();
 					return ParseExpression (next);
 				case TokenType.END_STATEMENT:
 					return t;
@@ -187,17 +203,17 @@ namespace MiniPLInterpreter
 		{
 			switch (t.Type) {
 				case TokenType.INT_VAL:
-					return queue.Dequeue ();
+					return scanner.getNextToken ();
 				case TokenType.STR_VAL:
-					return queue.Dequeue ();
+					return scanner.getNextToken ();
 				case TokenType.ID:
-					return queue.Dequeue ();
+					return scanner.getNextToken ();
 				case TokenType.PARENTHESIS_LEFT:
-					Token next = ParseExpression (queue.Dequeue ());
+					Token next = ParseExpression (scanner.getNextToken ());
 					if (!match (next, TokenType.PARENTHESIS_RIGHT)) {
 						return next;
 					}
-					return queue.Dequeue ();
+					return scanner.getNextToken ();
 				default:
 					notifyError (new SyntaxError (t));
 					return t;
@@ -231,7 +247,7 @@ namespace MiniPLInterpreter
 		{
 			switch (t.Type) {
 				case TokenType.UNARY_OP_LOG_NEG:
-					return queue.Dequeue ();
+					return scanner.getNextToken ();
 				default:
 					notifyError (new SyntaxError (t));
 					return t;
@@ -242,19 +258,19 @@ namespace MiniPLInterpreter
 		{
 			switch (t.Type) {
 				case TokenType.BINARY_OP_ADD:
-					return queue.Dequeue ();
+					return scanner.getNextToken ();
 				case TokenType.BINARY_OP_DIV:
-					return queue.Dequeue ();
+					return scanner.getNextToken ();
 				case TokenType.BINARY_OP_LOG_AND:
-					return queue.Dequeue ();
+					return scanner.getNextToken ();
 				case TokenType.BINARY_OP_LOG_EQ:
-					return queue.Dequeue ();
+					return scanner.getNextToken ();
 				case TokenType.BINARY_OP_LOG_LT:
-					return queue.Dequeue ();
+					return scanner.getNextToken ();
 				case TokenType.BINARY_OP_MUL:
-					return queue.Dequeue ();
+					return scanner.getNextToken ();
 				case TokenType.BINARY_OP_SUB:
-					return queue.Dequeue ();
+					return scanner.getNextToken ();
 				default:
 					notifyError (new SyntaxError (t));
 					return t;

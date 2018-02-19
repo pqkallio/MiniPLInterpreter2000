@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using MiniPLInterpreter;
 
@@ -11,7 +12,25 @@ namespace Interpreter
 			if (args.Length < 1) {
 				return;
 			}
+			using (StreamReader sr = new StreamReader (@args [0])) {
+				Parser p = new Parser ();
+				Scanner s = new Scanner (sr);
+				p.Scanner = s;
+				p.Parse ();
 
+				Console.WriteLine ("*************");
+
+				foreach (Error e in s.getErrors()) {
+					Console.WriteLine (e);
+				}
+
+				Console.WriteLine ("*************");
+
+				foreach (Error e in p.getErrors()) {
+					Console.WriteLine (e);
+				}
+			}
+			/*
 			string input = System.IO.File.ReadAllText(@args[0]);
 
 			Scanner scanner = new Scanner ();
@@ -39,6 +58,7 @@ namespace Interpreter
 					Console.WriteLine (e);
 				}
 			}
+			*/
 		}
 	}
 }

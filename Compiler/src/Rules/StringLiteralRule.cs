@@ -35,12 +35,17 @@ namespace MiniPLInterpreter
 		{
 			if (escapeNextChar) {
 				escapeNextChar = false;
+				//token [token.Length - 1] = '\n';
 			} else {
-				escapeNextChar = c != '\n' && c == Constants.ESCAPE_CHAR;
-				stringEnded = c == Constants.STRING_DELIMITER;
-			}
+				if (c == '\n') {
+					Console.WriteLine ("NEW LINE!!!");
+				} else {
+					escapeNextChar = c == Constants.ESCAPE_CHAR;
+					stringEnded = c == Constants.STRING_DELIMITER;
+				}
 
-			token += c;
+				token += c;
+			}
 		}
 	}
 }

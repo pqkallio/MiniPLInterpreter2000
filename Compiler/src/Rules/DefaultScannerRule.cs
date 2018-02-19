@@ -34,6 +34,7 @@ namespace MiniPLInterpreter
 
 		private void initEscapeChars()
 		{
+			/*
 			foreach (string s in Constants.INDEPENDENT_CHARS.Keys) {
 				this.escapeChars [s [0]] = null;
 			}
@@ -41,6 +42,7 @@ namespace MiniPLInterpreter
 			foreach (string s in Constants.SUCCESSOR_DEPENDENT.Keys) {
 				this.escapeChars [s [0]] = null;
 			}
+			*/
 		}
 	}
 }

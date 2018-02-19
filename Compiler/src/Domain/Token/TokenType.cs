@@ -39,7 +39,13 @@ namespace MiniPLInterpreter
 		END_OF_FILE,
 		SET_TYPE,
 		ASSIGN,
-		PROGRAM
+		PROGRAM,
+		ERROR,
+		STATEMENTS,
+		STATEMENT,
+		EXPRESSION,
+		BINARY_OP,
+		UNARY_OP
 	}
 }
 
