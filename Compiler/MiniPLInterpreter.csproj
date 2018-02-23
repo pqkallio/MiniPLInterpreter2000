@@ -54,7 +54,24 @@
     <Compile Include="src\Domain\Token\Token.cs" />
     <Compile Include="src\Domain\Token\TokenQueue.cs" />
     <Compile Include="src\Domain\Token\TokenType.cs" />
-    <Compile Include="src\Domain\Values\Property.cs" />
+    <Compile Include="src\Domain\ParseTree\SyntaxTree.cs" />
+    <Compile Include="src\Domain\ParseTree\ISyntaxTreeNode.cs" />
+    <Compile Include="src\Domain\ParseTree\StatementsNode.cs" />
+    <Compile Include="src\Domain\ParseTree\StatementNode.cs" />
+    <Compile Include="src\Domain\ParseTree\RootNode.cs" />
+    <Compile Include="src\Domain\ParseTree\AssignNode.cs" />
+    <Compile Include="src\Domain\ParseTree\ExpressionNode.cs" />
+    <Compile Include="src\Domain\Values\IProperty.cs" />
+    <Compile Include="src\Domain\Values\IntegerProperty.cs" />
+    <Compile Include="src\Domain\Values\StringProperty.cs" />
+    <Compile Include="src\Domain\Values\BooleanProperty.cs" />
+    <Compile Include="src\Domain\ParseTree\UnOpNode.cs" />
+    <Compile Include="src\Domain\ParseTree\BinOpNode.cs" />
+    <Compile Include="src\Utils\BooleanUtils.cs" />
+    <Compile Include="src\Domain\ParseTree\IntValueNode.cs" />
+    <Compile Include="src\Domain\ParseTree\StringValueNode.cs" />
+    <Compile Include="src\Domain\ParseTree\IExpressionContainer.cs" />
+    <Compile Include="src\Domain\ParseTree\VariableIdNode.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\" />

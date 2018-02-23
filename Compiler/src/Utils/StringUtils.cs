@@ -140,6 +140,19 @@ namespace MiniPLInterpreter
 
 			return false;
 		}
+
+		public static object Evaluate (string leftOperand, string rightOperand, TokenType operation)
+		{
+			switch (operation) {
+				case TokenType.BINARY_OP_ADD:
+					return leftOperand + rightOperand;
+				case TokenType.BINARY_OP_LOG_EQ:
+				case TokenType.BINARY_OP_LOG_LT:
+					return BooleanUtils.EvaluateBinOp (leftOperand, rightOperand, operation);
+				default:
+					throw new ArgumentException (String.Format ("operation {0} not defined for string values", operation));
+			}
+		}
 	}
 }
 
