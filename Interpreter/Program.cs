@@ -29,6 +29,12 @@ namespace Interpreter
 				foreach (Error e in p.getErrors()) {
 					Console.WriteLine (e);
 				}
+
+				Console.WriteLine ("*************");
+
+				SyntaxTree tree = p.SyntaxTree;
+
+				tree.execute ();
 			}
 
 			/*

@@ -13,8 +13,16 @@ namespace MiniPLInterpreter
 			this.sequitor = null;
 		}
 
-		public Object execute ()
+		public object execute ()
 		{
+			if (this.statement != null) {
+				this.statement.execute ();
+			}
+
+			if (this.sequitor != null) {
+				this.sequitor.execute ();
+			}
+
 			return null;
 		}
 

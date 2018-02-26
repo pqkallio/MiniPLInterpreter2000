@@ -8,7 +8,7 @@ namespace MiniPLInterpreter
 		{
 		}
 
-		public Object execute ()
+		public object execute ()
 		{
 			return null;
 		}

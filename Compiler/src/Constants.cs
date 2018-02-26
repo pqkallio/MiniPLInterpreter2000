@@ -22,7 +22,7 @@ namespace MiniPLInterpreter
 															{"int", TokenType.INT_VAR},
 															{"do", TokenType.START_BLOCK},
 															{"read", TokenType.READ},
-															{"print", TokenType.WRITE},
+															{"print", TokenType.PRINT},
 															{"string", TokenType.STR_VAR},
 															{"bool", TokenType.BOOL_VAR},
 															{"assert", TokenType.ASSERT}

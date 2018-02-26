@@ -32,7 +32,7 @@ namespace MiniPLInterpreter
 			return TokenType.ASSIGN;
 		}
 
-		public Object execute()
+		public object execute()
 		{
 			var evaluation = exprNode.execute ();
 			Type evalType = evaluation.GetType ();

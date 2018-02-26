@@ -24,7 +24,7 @@ namespace MiniPLInterpreter
 		FOR_LOOP,
 		START_BLOCK,
 		READ,
-		WRITE,
+		PRINT,
 		END_OF_BLOCK,
 		ASSERT,
 		INT_VAL,
@@ -45,7 +45,8 @@ namespace MiniPLInterpreter
 		STATEMENT,
 		EXPRESSION,
 		BINARY_OP,
-		UNARY_OP
+		UNARY_OP,
+		BINARY_OP_NO_OP
 	}
 }
 

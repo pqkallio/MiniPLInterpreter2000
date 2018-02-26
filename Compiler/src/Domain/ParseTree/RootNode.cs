@@ -20,7 +20,7 @@ namespace MiniPLInterpreter
 			return TokenType.PROGRAM;
 		}
 
-		public Object execute () {
+		public object execute () {
 			return sequitor.execute ();
 		}
 	}

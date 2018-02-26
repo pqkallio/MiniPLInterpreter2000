@@ -72,6 +72,11 @@
     <Compile Include="src\Domain\ParseTree\StringValueNode.cs" />
     <Compile Include="src\Domain\ParseTree\IExpressionContainer.cs" />
     <Compile Include="src\Domain\ParseTree\VariableIdNode.cs" />
+    <Compile Include="src\Domain\ParseTree\IOperandContainer.cs" />
+    <Compile Include="src\Domain\ParseTree\ForLoopNode.cs" />
+    <Compile Include="src\Domain\ParseTree\IOReadNode.cs" />
+    <Compile Include="src\Domain\ParseTree\IOPrintNode.cs" />
+    <Compile Include="src\Domain\ParseTree\AssertNode.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\" />

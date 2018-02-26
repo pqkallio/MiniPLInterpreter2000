@@ -2,19 +2,22 @@
 
 namespace MiniPLInterpreter
 {
-	public class UnOpNode : ISyntaxTreeNode, IExpressionContainer
+	public class UnOpNode : ISyntaxTreeNode, IExpressionContainer, IOperandContainer
 	{
 		private ISyntaxTreeNode operand;
 		private TokenType operation;
 
-		public UnOpNode (TokenType operation)
-		{
-			this.operation = operation;
-		}
+		public UnOpNode ()
+		{}
 
 		public ISyntaxTreeNode Operand {
 			get { return operand; }
 			set { this.operand = value; }
+		}
+
+		public TokenType Operation {
+			get { return operation; }
+			set { this.operation = value; }
 		}
 
 		public TokenType Type () {
@@ -34,6 +37,11 @@ namespace MiniPLInterpreter
 		public void AddExpression(ISyntaxTreeNode expressionNode)
 		{
 			this.operand = expressionNode;
+		}
+
+		public void AddOperand(ISyntaxTreeNode operandNode)
+		{
+			this.operand = operandNode;
 		}
 	}
 }

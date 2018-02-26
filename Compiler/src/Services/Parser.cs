@@ -32,6 +32,10 @@ namespace MiniPLInterpreter
 			set { this.scanner = value; }
 		}
 
+		public SyntaxTree SyntaxTree {
+			get { return tree; }
+		}
+
 		public void Parse () {
 			ISyntaxTreeNode root = new RootNode ();
 			tree.Root = root;
@@ -44,7 +48,7 @@ namespace MiniPLInterpreter
 				case TokenType.DECLARATION:
 				case TokenType.FOR_LOOP:
 				case TokenType.READ:
-				case TokenType.WRITE:
+				case TokenType.PRINT:
 				case TokenType.ASSERT:
 				case TokenType.ID:
 					Token next = ParseStatements (t, root);
@@ -64,10 +68,10 @@ namespace MiniPLInterpreter
 				case TokenType.DECLARATION:
 				case TokenType.FOR_LOOP:
 				case TokenType.READ:
-				case TokenType.WRITE:
+				case TokenType.PRINT:
 				case TokenType.ASSERT:
 				case TokenType.ID:
-					ISyntaxTreeNode statements = new StatementsNode ();
+				ISyntaxTreeNode statements = new StatementsNode ();
 					if (parent == tree.Root) {
 						RootNode rn = (RootNode)parent;
 						rn.Sequitor = statements;
@@ -89,41 +93,61 @@ namespace MiniPLInterpreter
 			}
 		}
 
-		private Token ParseStatement(Token t, ISyntaxTreeNode parent)
+		private Token ParseStatement(Token t, ISyntaxTreeNode statementsNode)
 		{
 			Token next;
+			StatementsNode sn = (StatementsNode)statementsNode;
 			switch (t.Type) {
 				case TokenType.DECLARATION:
-					ISyntaxTreeNode idNode = new VariableIdNode (ids);
+					VariableIdNode idNode = new VariableIdNode (ids);
 					next = ParseVarId (scanner.getNextToken (t), idNode);
 					match (next, TokenType.SET_TYPE);
 					next = ParseType (scanner.getNextToken (next), idNode);
-					return ParseAssign (next, idNode);
+					ISyntaxTreeNode assignNode = new AssignNode ((VariableIdNode)idNode, ids);
+					sn.Statement = assignNode;
+					return ParseAssign (next, assignNode);
 				case TokenType.ID:
-					next = ParseVarId (t, null);
+					idNode = new VariableIdNode (ids);
+					next = ParseVarId (t, idNode);
 					match (next, TokenType.ASSIGN);
-					return ParseExpression (scanner.getNextToken(next), null);
+					assignNode = new AssignNode ((VariableIdNode)idNode, ids);
+					sn.Statement = assignNode;
+					return ParseExpression (scanner.getNextToken(next), (IExpressionContainer)assignNode);
 				case TokenType.FOR_LOOP:
-					next = ParseVarId (scanner.getNextToken(t), null);
+					idNode = new VariableIdNode (ids);
+					next = ParseVarId (scanner.getNextToken (t), idNode);
+					ForLoopNode forLoop = new ForLoopNode (idNode);
 					match (next, TokenType.RANGE_FROM);
-					next = ParseExpression (scanner.getNextToken(next), null);
+					AssignNode rangeFrom = new AssignNode (idNode, ids);
+					forLoop.RangeFrom = rangeFrom;
+					next = ParseExpression (scanner.getNextToken (next), rangeFrom);
 					match (next, TokenType.RANGE_UPTO);
-					next = ParseExpression (scanner.getNextToken(next), null);
+					next = ParseExpression (scanner.getNextToken (next), forLoop);
 					match (next, TokenType.START_BLOCK);
-					next = ParseStatements (scanner.getNextToken(next), null);
+					StatementsNode statements = new StatementsNode ();
+					forLoop.Statements = statements;
+					next = ParseStatements (scanner.getNextToken (next), statements);
 					match (next, TokenType.END_OF_BLOCK);
-					next = scanner.getNextToken(next);
+					next = scanner.getNextToken (next);
 					match (next, TokenType.FOR_LOOP);
+					sn.Statement = forLoop;
 					return scanner.getNextToken(next);
 				case TokenType.READ:
-					return ParseVarId (scanner.getNextToken(t), null);
-				case TokenType.WRITE:
-					return ParseExpression (scanner.getNextToken(t), null);
+					VariableIdNode varId = new VariableIdNode (ids);
+					IOReadNode readNode = new IOReadNode (varId, ids);
+					sn.Statement = readNode;
+					return ParseVarId (scanner.getNextToken(t), varId);
+				case TokenType.PRINT:
+					IOPrintNode printNode = new IOPrintNode ();
+					sn.Statement = printNode;
+					return ParseExpression (scanner.getNextToken(t), printNode);
 				case TokenType.ASSERT:
-					next = scanner.getNextToken(t);
+					next = scanner.getNextToken (t);
 					match (next, TokenType.PARENTHESIS_LEFT);
-					next = ParseExpression (scanner.getNextToken (next), null);
+					AssertNode assertNode = new AssertNode ();
+					next = ParseExpression (scanner.getNextToken (next), assertNode);
 					match (next, TokenType.PARENTHESIS_RIGHT);
+					sn.Statement = assertNode;
 					return scanner.getNextToken (next);
 				default:
 					if (errorReportingEnabled) notifyError (new SyntaxError (t));
@@ -163,13 +187,12 @@ namespace MiniPLInterpreter
 			}
 		}
 
-		private Token ParseAssign (Token t, ISyntaxTreeNode idNode)
+		private Token ParseAssign (Token t, ISyntaxTreeNode assignNode)
 		{
 			switch (t.Type) {
 			case TokenType.ASSIGN:
-					ISyntaxTreeNode assignNode = new AssignNode ((VariableIdNode)idNode, ids);
 					Token next = scanner.getNextToken (t);
-					return ParseExpression (next, assignNode);
+					return ParseExpression (next, (IExpressionContainer)assignNode);
 				case TokenType.END_STATEMENT:
 					return t;
 				default:
@@ -178,7 +201,7 @@ namespace MiniPLInterpreter
 			}
 		}
 
-		private Token ParseExpression (Token t, ISyntaxTreeNode node)
+		private Token ParseExpression (Token t, IExpressionContainer node)
 		{
 			Token next;
 			switch (t.Type) {
@@ -187,13 +210,14 @@ namespace MiniPLInterpreter
 				case TokenType.PARENTHESIS_LEFT:
 				case TokenType.ID:
 					ISyntaxTreeNode binOp = new BinOpNode ();
-					IExpressionContainer containerNode = (IExpressionContainer)node;
-					containerNode.AddExpression(binOp);
+					node.AddExpression(binOp);
 					next = ParseOperand (t, binOp);
 					return ParseBinaryOp (next, binOp);
 				case TokenType.UNARY_OP_LOG_NEG:
-					next = ParseUnaryOp (t);
-					return ParseOperand (next, null);
+				ISyntaxTreeNode unOp = new UnOpNode ();
+					node.AddExpression (unOp);
+					next = ParseUnaryOp (t, unOp);
+					return ParseOperand (next, unOp);
 				default:
 					if (errorReportingEnabled) notifyError (new SyntaxError (t));
 					return t;
@@ -202,24 +226,26 @@ namespace MiniPLInterpreter
 
 		private Token ParseOperand (Token t, ISyntaxTreeNode node)
 		{
+			IOperandContainer parent = (IOperandContainer)node;
 			switch (t.Type) {
 				case TokenType.INT_VAL:
 					ISyntaxTreeNode intVal = new IntValueNode (StringUtils.parseToInt (t.Value));
-					BinOpNode binOp = (BinOpNode)node;
-					binOp.AddOperand (intVal);
+					parent = (BinOpNode)node;
+					parent.AddOperand (intVal);
 					return scanner.getNextToken (t);
 				case TokenType.STR_VAL:
 					ISyntaxTreeNode strVal = new StringValueNode (t.Value);
-					binOp = (BinOpNode)node;
-					binOp.AddOperand (strVal);
+					parent = (BinOpNode)node;
+					parent.AddOperand (strVal);
 					return scanner.getNextToken (t);
 				case TokenType.ID:
 					ISyntaxTreeNode varId = new VariableIdNode (t.Value, ids);
-					binOp = (BinOpNode)node;
-					binOp.AddOperand (varId);
+					parent = (BinOpNode)node;
+					parent.AddOperand (varId);
 					return scanner.getNextToken (t);
 				case TokenType.PARENTHESIS_LEFT:
-					Token next = ParseExpression (scanner.getNextToken (t), null);
+					IExpressionContainer exprContainer = (IExpressionContainer)node;
+					Token next = ParseExpression (scanner.getNextToken (t), exprContainer);
 					match (next, TokenType.PARENTHESIS_RIGHT);
 					return scanner.getNextToken (next);
 				default:
@@ -251,10 +277,12 @@ namespace MiniPLInterpreter
 			}
 		}
 
-		private Token ParseUnaryOp (Token t)
+		private Token ParseUnaryOp (Token t, ISyntaxTreeNode node)
 		{
 			switch (t.Type) {
 				case TokenType.UNARY_OP_LOG_NEG:
+					UnOpNode unOp = (UnOpNode)node;
+					unOp.Operation = TokenType.UNARY_OP_LOG_NEG;
 					return scanner.getNextToken (t);
 				default:
 					if (errorReportingEnabled) notifyError (new SyntaxError (t));

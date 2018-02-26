@@ -23,7 +23,7 @@ namespace MiniPLInterpreter
 			set { id = value; }
 		}
 
-		public Object execute ()
+		public object execute ()
 		{
 			return this.ids[ID];
 		}
