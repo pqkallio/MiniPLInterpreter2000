@@ -77,5 +77,23 @@ namespace MiniPLInterpreterTests
 			"   print \" : Hello, World!\\n\";\n" +
 			"end for;\n" +
 			"assert (x = nTimes);";
+
+		public static readonly string invalidInput3 =
+			"// ///// One line comment\n" +
+			"\n" +
+			"var nTimes3:int:=0;\n" +
+			"print \"How many times?\"; \n" +
+			"read nTimes; \n" +
+			"\n" +
+			"/*** // Some comments here\n" +
+			"\tspread on multiple\n" +
+			"\tlines ******/\n" +
+			"\n" +
+			"var var : int;\n" +
+			"for x in 0..nTimes-1 do \n" +
+			"   print x;\n" +
+			"   print \" : Hello, World!\\n\";\n" +
+			"end for;\n" +
+			"assert (x = nTimes);";
 	}
 }
