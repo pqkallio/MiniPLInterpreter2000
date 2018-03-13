@@ -15,13 +15,17 @@ namespace MiniPLInterpreter
 
 		public SyntaxError (Token token)
 			: this(token, TokenType.UNDEFINED)
-		{
-		}
+		{}
 
 		public SyntaxError (Token token, TokenType expectedType) 
 			: base(Constants.SYNTAX_ERROR_TITLE, Constants.SYNTAX_ERROR_MESSAGE, token)
 		{
 			this.expectedType = expectedType;
+		}
+
+		public TokenType ExpectedType
+		{
+			get { return this.expectedType; }
 		}
 
 		public override string ToString ()

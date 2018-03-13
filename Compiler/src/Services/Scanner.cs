@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using System.Linq;
 using System.Collections.Generic;
 
 namespace MiniPLInterpreter
@@ -91,28 +90,7 @@ namespace MiniPLInterpreter
 			} else if (c == Constants.BINARY_OP_DIV.Item1) {
 				parseDivOrComment (ref token, c);
 			} else if (StringUtils.isAlpha(c)) {
-				StringBuilder sb = new StringBuilder (c.ToString());
-				token.Type = TokenType.ID;
-				while (!inputStream.EndOfStream) {
-
-					c = peekStream ();
-					if (StringUtils.isAlpha (c) || StringUtils.isInteger (c) || c == '_') {
-						sb.Append (readStream ());
-					} else {
-						break;
-					}
-				}
-				string val = sb.ToString ();
-				if (Constants.RESERVED_SEQUENCES.ContainsKey (val)) {
-					if (previous != null && previous.Type == TokenType.DECLARATION) {
-						token.Value = val;
-						notifyError (new TokenError (token, "Reserved keyword used as variable identifier"));
-					} else {
-						token.Type = Constants.RESERVED_SEQUENCES [val];
-					}
-				} else {
-					token.Value = val;
-				}
+				parseIdOrKeyword (token, previous, c);
 			} else {
 				notifyError (new TokenError (token));
 				token.Type = TokenType.ERROR;
@@ -121,40 +99,45 @@ namespace MiniPLInterpreter
 			return token;
 		}
 
+		private void parseIdOrKeyword (Token token, Token previous, char c)
+		{
+			StringBuilder sb = new StringBuilder (c.ToString());
+			token.Type = TokenType.ID;
+
+			while (!inputStream.EndOfStream) {
+				c = peekStream ();
+
+				if (isIdCharacter(c)) {
+					sb.Append (readStream ());
+				} else {
+					break;
+				}
+			}
+
+			string val = sb.ToString ();
+
+			if (Constants.RESERVED_SEQUENCES.ContainsKey (val)) {
+				if (previous != null && previous.Type == TokenType.DECLARATION) {
+					token.Value = val;
+					notifyError (new TokenError (token, "Reserved keyword used as variable identifier"));
+				} else {
+					token.Type = Constants.RESERVED_SEQUENCES [val];
+				}
+			} else {
+				token.Value = val;
+			}
+		}
+
 		private void parseDivOrComment (ref Token token, char c)
 		{
 			token.Type = Constants.BINARY_OP_DIV.Item2;
+
 			if (peekStream () == Constants.BINARY_OP_DIV.Item1) {
 				token = null;
 				parseSingleLineComment ();
 			} else if (peekStream () == '*') {
-				int nestingDepth = 1;
-				bool starHit = false;
 				token = null;
-				while (!inputStream.EndOfStream) {
-					c = readStream ();
-
-					if (c == Constants.LINEBREAK) {
-						starHit = false;
-					} else if (c == '*') {
-						starHit = true;
-					} else if (c == '/') {
-						if (starHit) {
-							nestingDepth--;
-							if (nestingDepth == 0) {
-								break;
-							}
-						} else {
-							c = readStream ();
-
-							if (c == '*') {
-								nestingDepth++;
-							}
-						}
-					} else {
-						starHit = false;
-					}
-				}
+				parseMultilineComment ();
 			}
 		}
 
@@ -164,6 +147,37 @@ namespace MiniPLInterpreter
 				char c = readStream ();
 				if (c == Constants.LINEBREAK) {
 					break;
+				}
+			}
+		}
+
+		private void parseMultilineComment ()
+		{
+			int nestingDepth = 1;
+			bool starHit = false;
+
+			while (!inputStream.EndOfStream) {
+				char c = readStream ();
+
+				if (c == Constants.LINEBREAK) {
+					starHit = false;
+				} else if (c == '*') {
+					starHit = true;
+				} else if (c == '/') {
+					if (starHit) {
+						nestingDepth--;
+						if (nestingDepth == 0) {
+							break;
+						}
+					} else {
+						c = readStream ();
+
+						if (c == '*') {
+							nestingDepth++;
+						}
+					}
+				} else {
+					starHit = false;
 				}
 			}
 		}
@@ -298,6 +312,11 @@ namespace MiniPLInterpreter
 		private bool isWhitespace (char c)
 		{
 			return c == Constants.LINEBREAK || Constants.WHITESPACES.ContainsKey (c);
+		}
+
+		private bool isIdCharacter (char c)
+		{
+			return StringUtils.isAlpha (c) || StringUtils.isInteger (c) || c == '_';
 		}
 	}
 }

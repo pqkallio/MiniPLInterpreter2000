@@ -1,16 +1,17 @@
 ﻿using System;
+using System.Collections;
 
 namespace MiniPLInterpreter
 {
-	public class UnOpNode : ISyntaxTreeNode, IExpressionContainer, IOperandContainer
+	public class UnOpNode : IExpressionContainer, IOperandContainer, IExpressionNode
 	{
-		private ISyntaxTreeNode operand;
+		private IExpressionNode operand;
 		private TokenType operation;
 
 		public UnOpNode ()
 		{}
 
-		public ISyntaxTreeNode Operand {
+		public IExpressionNode Operand {
 			get { return operand; }
 			set { this.operand = value; }
 		}
@@ -25,7 +26,7 @@ namespace MiniPLInterpreter
 		}
 
 		public object execute () {
-			bool evaluation = (bool)operand.execute ();
+			bool evaluation = (bool)((ISyntaxTreeNode)operand).execute ();
 
 			if (operation == TokenType.UNARY_OP_LOG_NEG) {
 				return !evaluation;
@@ -34,14 +35,55 @@ namespace MiniPLInterpreter
 			throw new ArgumentException (String.Format ("the operation {0} is not defined", operation));
 		}
 
-		public void AddExpression(ISyntaxTreeNode expressionNode)
+		public void AddExpression(IExpressionNode expressionNode)
 		{
 			this.operand = expressionNode;
 		}
 
 		public void AddOperand(ISyntaxTreeNode operandNode)
 		{
-			this.operand = operandNode;
+			this.operand = (IExpressionNode)operandNode;
+		}
+
+		public override string ToString ()
+		{
+			return this.operation.ToString ();
+		}
+
+		public void AddNodesToQueue (Queue q)
+		{
+			q.Enqueue (this);
+			((ISyntaxTreeNode)operand).AddNodesToQueue (q);
+		}
+
+		public TokenType GetEvaluationType (TokenType parentType)
+		{
+			if (parentType == TokenType.ERROR) {
+				return parentType;
+			}
+
+			return operand.GetEvaluationType (parentType);
+		}
+
+		public IExpressionNode[] GetExpressions()
+		{
+			IExpressionNode[] expressions = { this.operand };
+
+			return expressions;
+		}
+
+		public TokenType GetOperation ()
+		{
+			return operation;
+		}
+
+		public TokenType GetValueType ()
+		{
+			return TokenType.UNDEFINED;
+		}
+
+		public void Accept(NodeVisitor visitor) {
+			visitor.VisitUnOpNode (this);
 		}
 	}
 }

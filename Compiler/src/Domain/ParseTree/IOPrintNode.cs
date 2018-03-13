@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections;
 
 namespace MiniPLInterpreter
 {
-	public class IOPrintNode: ISyntaxTreeNode, IExpressionContainer
+	public class IOPrintNode: IExpressionContainer
 	{
-		private ISyntaxTreeNode expression;
+		private IExpressionNode expression;
 
 		public IOPrintNode ()
 		{}
@@ -20,9 +21,19 @@ namespace MiniPLInterpreter
 			return null;
 		}
 
-		public void AddExpression(ISyntaxTreeNode expressionNode)
+		public void AddExpression(IExpressionNode expressionNode)
 		{
 			this.expression = expressionNode;
+		}
+
+		public void AddNodesToQueue (Queue q)
+		{
+			q.Enqueue (this);
+			expression.AddNodesToQueue (q);
+		}
+
+		public void Accept(NodeVisitor visitor) {
+			visitor.VisitIOPrintNode (this);
 		}
 	}
 }

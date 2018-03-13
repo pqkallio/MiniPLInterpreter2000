@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace MiniPLInterpreter
@@ -37,6 +38,21 @@ namespace MiniPLInterpreter
 			assignNode.execute ();
 
 			return null;
+		}
+
+		public void AddNodesToQueue (Queue q)
+		{
+			q.Enqueue (this);
+			idNode.AddNodesToQueue (q);
+		}
+
+		public VariableIdNode IDNode
+		{
+			get { return this.idNode; }
+		}
+
+		public void Accept(NodeVisitor visitor) {
+			visitor.VisitIOReadNode (this);
 		}
 	}
 }

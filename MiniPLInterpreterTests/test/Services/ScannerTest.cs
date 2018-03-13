@@ -158,6 +158,21 @@ namespace MiniPLInterpreterTests
 				Assert.AreEqual (e.GetType ().Name, nameof(TokenError));
 			}
 		}
+
+		[Test]
+		public void TestTwoErrorsInOneStatement ()
+		{
+			InitScanner (TestInputs.invalidInput4);
+			Token t = null;
+
+			while (t == null || t.Type != TokenType.END_OF_FILE) {
+				t = s.getNextToken (t);
+				tokens.Add(t);
+				Console.WriteLine (t.Type);
+			}
+
+			Assert.AreEqual (2, s.getErrors ().Count);
+		}
 	}
 }
 

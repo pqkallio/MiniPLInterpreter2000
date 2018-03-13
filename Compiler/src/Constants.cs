@@ -41,16 +41,16 @@ namespace MiniPLInterpreter
 														};
 
 		public static readonly Dictionary<char, TokenType> INDEPENDENT_CHARS = new Dictionary<char, TokenType> ()	
-		{
-			{'<', TokenType.BINARY_OP_LOG_LT},
-			{'=', TokenType.BINARY_OP_LOG_EQ},
-			{'&', TokenType.BINARY_OP_LOG_AND}, 
-			{'!', TokenType.UNARY_OP_LOG_NEG}, 
-			{';', TokenType.END_STATEMENT}, 
-			{'(', TokenType.PARENTHESIS_LEFT}, 
-			{')', TokenType.PARENTHESIS_RIGHT},
-			{'*', TokenType.BINARY_OP_MUL}
-		};
+														{
+															{'<', TokenType.BINARY_OP_LOG_LT},
+															{'=', TokenType.BINARY_OP_LOG_EQ},
+															{'&', TokenType.BINARY_OP_LOG_AND}, 
+															{'!', TokenType.UNARY_OP_LOG_NEG}, 
+															{';', TokenType.END_STATEMENT}, 
+															{'(', TokenType.PARENTHESIS_LEFT}, 
+															{')', TokenType.PARENTHESIS_RIGHT},
+															{'*', TokenType.BINARY_OP_MUL}
+														};
 
 		public static readonly Tuple<char, TokenType> BINARY_OP_ADD = Tuple.Create('+', TokenType.BINARY_OP_ADD);
 		public static readonly Tuple<char, TokenType> BINARY_OP_SUB = Tuple.Create('-', TokenType.BINARY_OP_SUB);
@@ -94,6 +94,11 @@ namespace MiniPLInterpreter
 		public static readonly string TOKEN_ERROR_MESSAGE = "Error while scanning token";
 		public static readonly string SYNTAX_ERROR_TITLE = "Syntax error";
 		public static readonly string SYNTAX_ERROR_MESSAGE = "Error while parsing token";
+		public static readonly string SEMANTIC_ERROR_TITLE = "Semantic error";
+		public static readonly string SEMANTIC_ERROR_MESSAGE = "That's some weird shit... Error's in the semantix";
+		public static readonly string UNINITIALIZED_VARIABLE_ERROR_MESSAGE = "Uninitialized variable";
+		public static readonly string ILLEGAL_TYPE_ERROR_MESSAGE = "The type is not supported by this expression";
+		public static readonly string DECLARATION_ERROR_MESSAGE = "The variable has already been declared";
 
 		public static readonly Dictionary<char, char> UTF8_VALID_ID_CHAR_RANGES = new Dictionary<char, char> ()
 														{
@@ -101,6 +106,54 @@ namespace MiniPLInterpreter
 															{UTF8_CAPITAL_LETTERS_START, UTF8_CAPITAL_LETTERS_END},
 															{UTF8_LOWLINE, UTF8_LOWLINE},
 															{UTF8_NUMERIC_START, UTF8_NUMERIC_END}
+														};
+
+		public static readonly Dictionary<TokenType, Dictionary<TokenType, string>> LEGIT_OPERATIONS = new Dictionary<TokenType, Dictionary<TokenType, string>> ()
+		{
+			{TokenType.INT_VAL, 
+				new Dictionary<TokenType, string> () 
+					{
+						{TokenType.BINARY_OP_ADD, null},
+						{TokenType.BINARY_OP_DIV, null},
+						{TokenType.BINARY_OP_MUL, null},
+						{TokenType.BINARY_OP_NO_OP, null},
+						{TokenType.BINARY_OP_SUB, null},
+						{TokenType.BINARY_OP_LOG_EQ, null},
+						{TokenType.BINARY_OP_LOG_LT, null}
+					}
+			},
+			{TokenType.STR_VAL, 
+				new Dictionary<TokenType, string> () 
+				{
+					{TokenType.BINARY_OP_ADD, null},
+					{TokenType.BINARY_OP_NO_OP, null},
+					{TokenType.BINARY_OP_LOG_EQ, null},
+					{TokenType.BINARY_OP_LOG_LT, null}
+				}
+			},
+			{TokenType.BOOL_VAL, 
+				new Dictionary<TokenType, string> () 
+				{
+					{TokenType.BINARY_OP_NO_OP, null},
+					{TokenType.BINARY_OP_LOG_EQ, null},
+					{TokenType.BINARY_OP_LOG_LT, null},
+					{TokenType.BINARY_OP_LOG_AND, null},
+					{TokenType.UNARY_OP_LOG_NEG, null}
+				}
+			}
+		};
+
+		public static readonly Dictionary<TokenType, string> STATEMENT_FASTFORWARD_TO = new Dictionary<TokenType, string> () 
+														{
+															{TokenType.END_STATEMENT, null},
+															{TokenType.END_OF_FILE, null}
+														};
+
+		public static readonly Dictionary<TokenType, string> BLOCK_DEF_FASTFORWARD_TO = new Dictionary<TokenType, string> () 
+														{
+															{TokenType.START_BLOCK, null},
+															{TokenType.END_STATEMENT, null},
+															{TokenType.END_OF_FILE, null}
 														};
 	}
 }

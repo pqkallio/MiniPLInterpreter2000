@@ -8,23 +8,17 @@ namespace MiniPLInterpreter
 		private SyntaxTree tree;
 		private List<Error> errors;
 		private Scanner scanner;
-		private bool buildSyntaxTree;
-		private bool errorReportingEnabled;
+		private bool syntaxTreeBuilt;
 		private Dictionary<string, IProperty> ids;
+		private NodeBuilder nodeBuilder;
 
-		public Parser ()
+		public Parser (Dictionary<string, IProperty> ids)
 		{
 			this.tree = new SyntaxTree ();
 			this.errors = new List<Error> ();
-			this.buildSyntaxTree = true;
-			this.errorReportingEnabled = true;
-			this.ids = new Dictionary<string, IProperty> ();
-		}
-
-		public Parser (List<Token> tokens)
-		{
-			this.tree = new SyntaxTree ();
-			this.errors = new List<Error> ();
+			this.syntaxTreeBuilt = true;
+			this.ids = ids;
+			this.nodeBuilder = new NodeBuilder (ids);
 		}
 
 		public Scanner Scanner {
@@ -37,12 +31,12 @@ namespace MiniPLInterpreter
 		}
 
 		public void Parse () {
-			ISyntaxTreeNode root = new RootNode ();
+			IStatementsContainer root = nodeBuilder.CreateRootNode ();
 			tree.Root = root;
 			ParseProgram (scanner.getNextToken (null), root);
 		}
 
-		private void ParseProgram (Token t, ISyntaxTreeNode root)
+		private void ParseProgram (Token t, IStatementsContainer root)
 		{
 			switch (t.Type) {
 				case TokenType.DECLARATION:
@@ -51,18 +45,29 @@ namespace MiniPLInterpreter
 				case TokenType.PRINT:
 				case TokenType.ASSERT:
 				case TokenType.ID:
-					Token next = ParseStatements (t, root);
+					Token next;
+					
+					try {	
+						next = ParseStatements (t, root);
+					} catch (UnexpectedTokenException ex) {
+						notifyError(new SyntaxError(ex.Token));
+
+						do {
+							next = scanner.getNextToken (null);
+						} while (next.Type != TokenType.END_OF_FILE);
+					}
+					
 					match (next, TokenType.END_OF_FILE);
 					break;
 				case TokenType.END_OF_FILE:
 					break;
 				default:
-					if (errorReportingEnabled) notifyError (new SyntaxError (t));
+					notifyError (new SyntaxError (t));
 					break;
 			}
 		}
 
-		private Token ParseStatements(Token t, ISyntaxTreeNode parent)
+		private Token ParseStatements(Token t, IStatementsContainer parent)
 		{
 			switch (t.Type) {
 				case TokenType.DECLARATION:
@@ -71,133 +76,176 @@ namespace MiniPLInterpreter
 				case TokenType.PRINT:
 				case TokenType.ASSERT:
 				case TokenType.ID:
-				ISyntaxTreeNode statements = new StatementsNode ();
-					if (parent == tree.Root) {
-						RootNode rn = (RootNode)parent;
-						rn.Sequitor = statements;
-					} else {
-						StatementsNode sn = (StatementsNode)parent;
-						sn.Sequitor = statements;
-					}
+					StatementsNode statements = nodeBuilder.CreateStatementsNode (parent);
 					Token next = ParseStatement (t, statements);
 					match (next, TokenType.END_STATEMENT);
-					// parent.AddChild (child);
-					this.errorReportingEnabled = true;
+
 					return ParseStatements (scanner.getNextToken(next), statements);
 				case TokenType.END_OF_BLOCK:
 				case TokenType.END_OF_FILE:
 					return t;
 				default:
-					if (errorReportingEnabled) notifyError (new SyntaxError (t));
-					return t;
+					throw new UnexpectedTokenException (t);
 			}
 		}
 
-		private Token ParseStatement(Token t, ISyntaxTreeNode statementsNode)
+		private Token ParseStatement(Token t, StatementsNode statementsNode)
 		{
-			Token next;
-			StatementsNode sn = (StatementsNode)statementsNode;
 			switch (t.Type) {
 				case TokenType.DECLARATION:
-					VariableIdNode idNode = new VariableIdNode (ids);
-					next = ParseVarId (scanner.getNextToken (t), idNode);
-					match (next, TokenType.SET_TYPE);
-					next = ParseType (scanner.getNextToken (next), idNode);
-					ISyntaxTreeNode assignNode = new AssignNode ((VariableIdNode)idNode, ids);
-					sn.Statement = assignNode;
-					return ParseAssign (next, assignNode);
+					return ParseDeclaration (t, statementsNode);
 				case TokenType.ID:
-					idNode = new VariableIdNode (ids);
-					next = ParseVarId (t, idNode);
-					match (next, TokenType.ASSIGN);
-					assignNode = new AssignNode ((VariableIdNode)idNode, ids);
-					sn.Statement = assignNode;
-					return ParseExpression (scanner.getNextToken(next), (IExpressionContainer)assignNode);
+					return ParseVariableAssign (t, statementsNode);
 				case TokenType.FOR_LOOP:
-					idNode = new VariableIdNode (ids);
-					next = ParseVarId (scanner.getNextToken (t), idNode);
-					ForLoopNode forLoop = new ForLoopNode (idNode);
-					match (next, TokenType.RANGE_FROM);
-					AssignNode rangeFrom = new AssignNode (idNode, ids);
-					forLoop.RangeFrom = rangeFrom;
-					next = ParseExpression (scanner.getNextToken (next), rangeFrom);
-					match (next, TokenType.RANGE_UPTO);
-					next = ParseExpression (scanner.getNextToken (next), forLoop);
-					match (next, TokenType.START_BLOCK);
-					StatementsNode statements = new StatementsNode ();
-					forLoop.Statements = statements;
-					next = ParseStatements (scanner.getNextToken (next), statements);
-					match (next, TokenType.END_OF_BLOCK);
-					next = scanner.getNextToken (next);
-					match (next, TokenType.FOR_LOOP);
-					sn.Statement = forLoop;
-					return scanner.getNextToken(next);
+					return ParseForLoop (t, statementsNode);
 				case TokenType.READ:
-					VariableIdNode varId = new VariableIdNode (ids);
-					IOReadNode readNode = new IOReadNode (varId, ids);
-					sn.Statement = readNode;
-					return ParseVarId (scanner.getNextToken(t), varId);
+					return ParseRead (t, statementsNode);
 				case TokenType.PRINT:
-					IOPrintNode printNode = new IOPrintNode ();
-					sn.Statement = printNode;
-					return ParseExpression (scanner.getNextToken(t), printNode);
+					return ParsePrint (t, statementsNode);
 				case TokenType.ASSERT:
-					next = scanner.getNextToken (t);
-					match (next, TokenType.PARENTHESIS_LEFT);
-					AssertNode assertNode = new AssertNode ();
-					next = ParseExpression (scanner.getNextToken (next), assertNode);
-					match (next, TokenType.PARENTHESIS_RIGHT);
-					sn.Statement = assertNode;
-					return scanner.getNextToken (next);
+					return ParseAssert (t, statementsNode);
 				default:
-					if (errorReportingEnabled) notifyError (new SyntaxError (t));
-					return t;
+					throw new UnexpectedTokenException (t);
 			}
 		}
 
-		private Token ParseVarId(Token t, ISyntaxTreeNode idNode)
+		private Token ParseDeclaration(Token t, StatementsNode statementsNode)
+		{
+			try {
+				VariableIdNode idNode = nodeBuilder.CreateIdNode ();
+				Token next = ParseVarId (scanner.getNextToken (t), idNode);
+				match (next, TokenType.SET_TYPE);
+				next = ParseType (scanner.getNextToken (next), idNode);
+				DeclarationNode declarationNode = nodeBuilder.CreateDeclarationNode(idNode, statementsNode);
+				return ParseAssign (next, declarationNode.AssignNode);
+			} catch (UnexpectedTokenException ex) {
+				return FastForwardToStatementEnd (ex);
+			}
+		}
+
+		private Token ParseVariableAssign(Token t, StatementsNode statementsNode)
+		{
+			try {
+				VariableIdNode idNode = nodeBuilder.CreateIdNode ();
+				Token next = ParseVarId (t, idNode);
+				match (next, TokenType.ASSIGN);
+				AssignNode assignNode = nodeBuilder.CreateAssignNode(idNode, statementsNode);
+				return ParseExpression (scanner.getNextToken(next), assignNode);
+			} catch (UnexpectedTokenException ex) {
+				return FastForwardToStatementEnd (ex);
+			}
+		}
+
+		private Token ParseForLoop(Token t, StatementsNode statementsNode)
+		{
+			VariableIdNode idNode = nodeBuilder.CreateIdNode ();
+			ForLoopNode forLoop = nodeBuilder.CreateForLoopNode(idNode, statementsNode);
+			Token next;
+
+			try {
+				next = ParseVarId (scanner.getNextToken (t), idNode);
+				match (next, TokenType.RANGE_FROM);
+				AssignNode rangeFrom = nodeBuilder.CreateAssignNode(idNode);
+				forLoop.RangeFrom = rangeFrom;
+				next = ParseExpression (scanner.getNextToken (next), rangeFrom);
+				match (next, TokenType.RANGE_UPTO);
+				next = ParseExpression (scanner.getNextToken (next), forLoop);
+				match (next, TokenType.START_BLOCK);
+			} catch (UnexpectedTokenException ex) {
+				notifyError (new SyntaxError (ex.Token));
+				next = FastForwardTo (Constants.BLOCK_DEF_FASTFORWARD_TO);
+			}
+
+			try {
+				StatementsNode statements = nodeBuilder.CreateStatementsNode ();
+				forLoop.Statements = statements;
+				next = ParseStatements (scanner.getNextToken (next), statements);
+				match (next, TokenType.END_OF_BLOCK);
+				next = scanner.getNextToken (next);
+				match (next, TokenType.FOR_LOOP);
+				return scanner.getNextToken(next);	
+			} catch (UnexpectedTokenException ex) {
+				return FastForwardToStatementEnd (ex);
+			}
+		}
+
+		private Token ParseRead(Token t, StatementsNode statementsNode)
+		{
+			try {
+				VariableIdNode varId = nodeBuilder.CreateIdNode ();
+				nodeBuilder.CreateIOReadNode(varId, statementsNode);
+				return ParseVarId (scanner.getNextToken(t), varId);
+			} catch (UnexpectedTokenException ex) {
+				return FastForwardToStatementEnd (ex);
+			}
+		}
+
+		private Token ParsePrint (Token t, StatementsNode statementsNode)
+		{
+			try {
+				IOPrintNode printNode = nodeBuilder.CreateIOPrintNode(statementsNode);
+				return ParseExpression (scanner.getNextToken(t), printNode);
+			} catch (UnexpectedTokenException ex) {
+				return FastForwardToStatementEnd (ex);
+			}
+		}
+
+		private Token ParseAssert (Token t, StatementsNode statementsNode)
+		{
+			try {
+				Token next = scanner.getNextToken (t);
+				match (next, TokenType.PARENTHESIS_LEFT);
+				AssertNode assertNode = nodeBuilder.CreateAssertNode(statementsNode);
+				next = ParseExpression (scanner.getNextToken (next), assertNode);
+				match (next, TokenType.PARENTHESIS_RIGHT);
+				return scanner.getNextToken (next);
+			} catch (UnexpectedTokenException ex) {
+				return FastForwardToStatementEnd (ex);
+			}
+		}
+
+		private Token ParseVarId(Token t, VariableIdNode idNode)
 		{
 			switch (t.Type) {
 				case TokenType.ID:
-					VariableIdNode id = (VariableIdNode)idNode;
-					id.ID = t.Value;
+					idNode.ID = t.Value;
 					return scanner.getNextToken (t);
 				default:
-					if (errorReportingEnabled) notifyError (new SyntaxError (t));
-					return t;
+					throw new UnexpectedTokenException (t);
 			}
 		}
 
-		private Token ParseType (Token t, ISyntaxTreeNode idNode)
+		private Token ParseType (Token t, VariableIdNode idNode)
 		{
-			VariableIdNode id = (VariableIdNode)idNode;
 			switch (t.Type) {
 				case TokenType.INT_VAR:
-					ids.Add(id.ID, (new IntegerProperty(0)));
+					idNode.VariableType = TokenType.INT_VAR;
+					ids.Add(idNode.ID, (new IntegerProperty(0)));
 					return scanner.getNextToken (t);
 				case TokenType.STR_VAR:
-					ids.Add(id.ID, new StringProperty(""));
+					idNode.VariableType = TokenType.STR_VAR;
+					ids.Add(idNode.ID, new StringProperty(""));
 					return scanner.getNextToken (t);
 				case TokenType.BOOL_VAR:
-					ids.Add(id.ID, new BooleanProperty(false));
+					idNode.VariableType = TokenType.BOOL_VAR;
+					ids.Add(idNode.ID, new BooleanProperty(false));
 					return scanner.getNextToken (t);
 				default:
-					notifyUndefinedToken(t, "type");
-					return t;
+					throw new UnexpectedTokenException (t);
 			}
 		}
 
-		private Token ParseAssign (Token t, ISyntaxTreeNode assignNode)
+		private Token ParseAssign (Token t, AssignNode assignNode)
 		{
 			switch (t.Type) {
-			case TokenType.ASSIGN:
+				case TokenType.ASSIGN:
 					Token next = scanner.getNextToken (t);
-					return ParseExpression (next, (IExpressionContainer)assignNode);
+					return ParseExpression (next, assignNode);
 				case TokenType.END_STATEMENT:
+					setDefaultAssignment (assignNode);
 					return t;
 				default:
-					notifyUndefinedToken(t, "assign or end of statement");
-					return t;
+					throw new UnexpectedTokenException (t);
 			}
 		}
 
@@ -209,39 +257,32 @@ namespace MiniPLInterpreter
 				case TokenType.STR_VAL:
 				case TokenType.PARENTHESIS_LEFT:
 				case TokenType.ID:
-					ISyntaxTreeNode binOp = new BinOpNode ();
-					node.AddExpression(binOp);
+					BinOpNode binOp = nodeBuilder.CreateBinOpNode(node);
 					next = ParseOperand (t, binOp);
 					return ParseBinaryOp (next, binOp);
 				case TokenType.UNARY_OP_LOG_NEG:
-				ISyntaxTreeNode unOp = new UnOpNode ();
-					node.AddExpression (unOp);
+					UnOpNode unOp = nodeBuilder.CreateUnOpNode (node);
 					next = ParseUnaryOp (t, unOp);
 					return ParseOperand (next, unOp);
 				default:
-					if (errorReportingEnabled) notifyError (new SyntaxError (t));
-					return t;
+					throw new UnexpectedTokenException (t);
 			}
 		}
 
-		private Token ParseOperand (Token t, ISyntaxTreeNode node)
+		private Token ParseOperand (Token t, IOperandContainer node)
 		{
-			IOperandContainer parent = (IOperandContainer)node;
 			switch (t.Type) {
 				case TokenType.INT_VAL:
 					ISyntaxTreeNode intVal = new IntValueNode (StringUtils.parseToInt (t.Value));
-					parent = (BinOpNode)node;
-					parent.AddOperand (intVal);
+					node.AddOperand (intVal);
 					return scanner.getNextToken (t);
 				case TokenType.STR_VAL:
 					ISyntaxTreeNode strVal = new StringValueNode (t.Value);
-					parent = (BinOpNode)node;
-					parent.AddOperand (strVal);
+					node.AddOperand (strVal);
 					return scanner.getNextToken (t);
 				case TokenType.ID:
 					ISyntaxTreeNode varId = new VariableIdNode (t.Value, ids);
-					parent = (BinOpNode)node;
-					parent.AddOperand (varId);
+					node.AddOperand (varId);
 					return scanner.getNextToken (t);
 				case TokenType.PARENTHESIS_LEFT:
 					IExpressionContainer exprContainer = (IExpressionContainer)node;
@@ -249,12 +290,11 @@ namespace MiniPLInterpreter
 					match (next, TokenType.PARENTHESIS_RIGHT);
 					return scanner.getNextToken (next);
 				default:
-					if (errorReportingEnabled) notifyError (new SyntaxError (t));
-					return t;
+					throw new UnexpectedTokenException (t);
 			}
 		}
 
-		private Token ParseBinaryOp (Token t, ISyntaxTreeNode node)
+		private Token ParseBinaryOp (Token t, BinOpNode binOp)
 		{
 			switch (t.Type) {
 				case TokenType.BINARY_OP_ADD:
@@ -264,35 +304,31 @@ namespace MiniPLInterpreter
 				case TokenType.BINARY_OP_LOG_LT:
 				case TokenType.BINARY_OP_LOG_EQ:
 				case TokenType.BINARY_OP_LOG_AND:
-					Token next = ParseOperation (t, node);
-					return ParseOperand (next, node);
+					Token next = ParseOperation (t, binOp);
+					return ParseOperand (next, binOp);
 				case TokenType.PARENTHESIS_RIGHT:
 				case TokenType.END_STATEMENT:
 				case TokenType.RANGE_UPTO:
 				case TokenType.START_BLOCK:
 					return t;
 				default:
-					if (errorReportingEnabled) notifyError (new SyntaxError (t));
-					return t;
+					throw new UnexpectedTokenException (t);
 			}
 		}
 
-		private Token ParseUnaryOp (Token t, ISyntaxTreeNode node)
+		private Token ParseUnaryOp (Token t, UnOpNode unOp)
 		{
 			switch (t.Type) {
 				case TokenType.UNARY_OP_LOG_NEG:
-					UnOpNode unOp = (UnOpNode)node;
 					unOp.Operation = TokenType.UNARY_OP_LOG_NEG;
 					return scanner.getNextToken (t);
 				default:
-					if (errorReportingEnabled) notifyError (new SyntaxError (t));
-					return t;
+					throw new UnexpectedTokenException (t);
 			}
 		}
 
-		private Token ParseOperation (Token t, ISyntaxTreeNode node)
+		private Token ParseOperation (Token t, BinOpNode binOp)
 		{
-			BinOpNode binOp = (BinOpNode)node;
 			switch (t.Type) {
 				case TokenType.BINARY_OP_ADD:
 					binOp.Operation = TokenType.BINARY_OP_ADD;
@@ -316,27 +352,49 @@ namespace MiniPLInterpreter
 					binOp.Operation = TokenType.BINARY_OP_SUB;
 					return scanner.getNextToken (t);
 				default:
-					if (errorReportingEnabled) notifyError (new SyntaxError (t));
-					return t;
+					throw new UnexpectedTokenException (t);
 			}
 		}
 
-		private bool match(Token t, TokenType type)
+		private void setDefaultAssignment (AssignNode assignNode)
 		{
-			if (t.Type != type && errorReportingEnabled) {
-				notifyError (new SyntaxError (t, type));
-				errorReportingEnabled = false;
-				return false;
-			}
+			TokenType idType = assignNode.IDNode.GetValueType ();
 
-			return true;
+			switch (idType) {
+				case TokenType.STR_VAL:
+					assignNode.AddExpression (new StringValueNode (""));
+					break;
+				case TokenType.INT_VAL:
+					assignNode.AddExpression (new IntValueNode(0));
+					break;
+			} 
 		}
 
-		private void notifyUndefinedToken(Token t, string type) {
-			if (errorReportingEnabled) {
-				notifyError (new SyntaxError (t, type));
-				errorReportingEnabled = false;
+		private void match(Token t, TokenType type)
+		{
+			if (t.Type != type) {
+				syntaxTreeBuilt = false;
+				throw new UnexpectedTokenException (t);
 			}
+		}
+
+		private Token FastForwardTo (Dictionary<TokenType, string> tokenTypes)
+		{
+			syntaxTreeBuilt = false;
+
+			Token token = scanner.getNextToken (null);
+
+			while (!tokenTypes.ContainsKey(token.Type)) {
+				token = scanner.getNextToken (token);
+			}
+
+			return token;
+		}
+
+		private Token FastForwardToStatementEnd (UnexpectedTokenException ex)
+		{
+			notifyError (new SyntaxError (ex.Token));
+			return FastForwardTo (Constants.STATEMENT_FASTFORWARD_TO);
 		}
 
 		public void notifyError (Error error)
@@ -347,6 +405,11 @@ namespace MiniPLInterpreter
 		public List<Error> getErrors ()
 		{
 			return this.errors;
+		}
+
+		public bool SyntaxTreeBuilt
+		{
+			get { return syntaxTreeBuilt; }
 		}
 	}
 }

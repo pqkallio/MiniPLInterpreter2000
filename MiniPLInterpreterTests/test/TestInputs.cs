@@ -95,5 +95,63 @@ namespace MiniPLInterpreterTests
 			"   print \" : Hello, World!\\n\";\n" +
 			"end for;\n" +
 			"assert (x = nTimes);";
+
+		public static readonly string invalidInput4 =
+			"var for : int := 4 + (6 * 2)?\n" +
+			"print X;";
+
+		public static readonly string statementNotEnded =
+			"var x : int := 4 + (6 * 2)\n";
+		
+		public static readonly string rightParenthesisMissing =
+			"var x : int := 4 + (6 * 2;\n";
+
+		public static readonly string declarationColonMissing =
+			"var x  int := 4 + (6 * 2);\n";
+
+		public static readonly string declarationAssignMissing =
+			"var x : int = 4 + (6 * 2);\n";
+		
+		public static readonly string declarationAssignValueMissing =
+			"var x : int := ;\n";
+
+		public static readonly string illegalStartOfStatement =
+			"(6 * 2) var x : int := 4 + (6 * 2);\n";
+
+		public static readonly string forLoopMissingVar =
+			"for  in 0..nTimes-1 do \n" +
+			"   print x;\n" +
+			"   print \" : Hello, World!\\n\";\n" +
+			"end for;\n";
+		
+		public static readonly string forLoopMissingRangeFrom =
+			"for x  0..nTimes-1 do \n" +
+			"   print x;\n" +
+			"   print \" : Hello, World!\\n\";\n" +
+			"end for;\n";
+
+		public static readonly string forLoopMissingRangeFromExpression =
+			"for x in ..nTimes-1 do \n" +
+			"   print x;\n" +
+			"   print \" : Hello, World!\\n\";\n" +
+			"end for;\n";
+
+		public static readonly string forLoopMissingRangeUptoExpression =
+			"for x in 0.. do \n" +
+			"   print x;\n" +
+			"   print \" : Hello, World!\\n\";\n" +
+			"end for;\n";
+
+		public static readonly string forLoopMissingRangeUpto =
+			"for x in 0 30 do \n" +
+			"   print x;\n" +
+			"   print \" : Hello, World!\\n\";\n" +
+			"end for;\n";
+
+		public static readonly string forLoopMissingStartBlock =
+			"for x in 0..nTimes-1 \n" +
+			"   print x;\n" +
+			"   print \" : Hello, World!\\n\";\n" +
+			"end for;\n";
 	}
 }

@@ -2,9 +2,9 @@
 
 namespace MiniPLInterpreter
 {
-	public interface IExpressionContainer
+	public interface IExpressionContainer : ISyntaxTreeNode
 	{
-		void AddExpression(ISyntaxTreeNode expressionNode);
+		void AddExpression(IExpressionNode expressionNode);
 	}
 }
 

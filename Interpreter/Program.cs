@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Collections;
 using System.Collections.Generic;
 using MiniPLInterpreter;
 
@@ -13,7 +14,8 @@ namespace Interpreter
 				return;
 			}
 			using (StreamReader sr = new StreamReader (@args [0])) {
-				Parser p = new Parser ();
+				Dictionary<string, IProperty> ids = new Dictionary<string, IProperty> ();
+				Parser p = new Parser (ids);
 				Scanner s = new Scanner (sr);
 				p.Scanner = s;
 				p.Parse ();
@@ -30,42 +32,28 @@ namespace Interpreter
 					Console.WriteLine (e);
 				}
 
-				Console.WriteLine ("*************");
-
+				/*
 				SyntaxTree tree = p.SyntaxTree;
 
-				tree.execute ();
-			}
+				Queue q = tree.NodeOrder ();
 
-			/*
-			string input = System.IO.File.ReadAllText(@args[0]);
+				while (q.Count > 0) {
+					object o = q.Dequeue ();
+					Console.WriteLine (o);
+				}
+				*/
 
-			Scanner scanner = new Scanner ();
-			List<Token> tokens = scanner.tokenize (input);
+				Console.WriteLine ("*************");
+				if (p.SyntaxTreeBuilt) {
+					SemanticAnalyzer se = new SemanticAnalyzer (p.SyntaxTree.NodeOrder (), ids);
+					se.Analyze ();
+					Console.WriteLine ("*************");
 
-			foreach (Object o in tokens) {
-				Console.WriteLine (o);
-			}
-
-			if (scanner.getErrors ().Count > 0) {
-				Console.WriteLine ("\n\nErrors were encountered while scanning:\n");
-			
-				foreach (Error e in scanner.getErrors()) {
-					Console.WriteLine (e);
+					foreach (Error e in se.getErrors ()) {
+						Console.WriteLine (e);
+					}
 				}
 			}
-
-			Parser parser = new Parser (tokens);
-			parser.ParseTokens ();
-
-			if (parser.getErrors ().Count > 0) {
-				Console.WriteLine ("\n\nErrors were encountered while parsing:\n");
-
-				foreach (Error e in parser.getErrors()) {
-					Console.WriteLine (e);
-				}
-			}
-			*/
 		}
 	}
 }

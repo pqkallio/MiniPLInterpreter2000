@@ -1,12 +1,13 @@
 ﻿using System;
+using System.Collections;
 
 namespace MiniPLInterpreter
 {
-	public class ForLoopNode : ISyntaxTreeNode, IExpressionContainer
+	public class ForLoopNode : IExpressionContainer
 	{
 		private VariableIdNode idNode;
 		private BinOpNode indexAccumulator;
-		private ISyntaxTreeNode max;
+		private IExpressionNode max;
 		private StatementsNode statements;
 		private AssignNode rangeFrom;
 
@@ -37,16 +38,22 @@ namespace MiniPLInterpreter
 				  rangeFrom.IDNode = idNode; }
 		}
 
-		public ISyntaxTreeNode MaxValue
+		public IExpressionNode MaxValue
 		{
 			get { return max; }
 			set { max = value; }
 		}
 
+		public VariableIdNode IDNode
+		{
+			get { return idNode; }
+			set { idNode = value; }
+		}
+
 		public object execute() {
 			rangeFrom.execute ();
-			int maxVal = (int)max.execute ();
-			while ((int)idNode.execute () < maxVal) {
+			int maxVal = 5;//(int)((IntValueNode)max).execute ();
+			while (((IntegerProperty)idNode.execute ()).Value < maxVal) {
 				statements.execute ();
 				indexAccumulator.execute ();
 			}
@@ -54,9 +61,22 @@ namespace MiniPLInterpreter
 			return null;
 		}
 
-		public void AddExpression(ISyntaxTreeNode expressionNode)
+		public void AddExpression(IExpressionNode expressionNode)
 		{
 			this.max = expressionNode;
+		}
+
+		public void AddNodesToQueue (Queue q)
+		{
+			q.Enqueue (this);
+			idNode.AddNodesToQueue (q);
+			rangeFrom.AddNodesToQueue (q);
+			max.AddNodesToQueue (q);
+			statements.AddNodesToQueue (q);
+		}
+
+		public void Accept(NodeVisitor visitor) {
+			visitor.VisitForLoopNode (this);
 		}
 	}
 }

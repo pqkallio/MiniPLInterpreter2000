@@ -1,13 +1,14 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 
 namespace MiniPLInterpreter
 {
-	public class AssignNode : ISyntaxTreeNode, IExpressionContainer
+	public class AssignNode : IExpressionContainer
 	{
 		private VariableIdNode idNode;
-		private ISyntaxTreeNode exprNode;
+		private IExpressionNode exprNode;
 		private Dictionary<string, IProperty> ids;
 
 		public AssignNode (VariableIdNode idNode, Dictionary<string, IProperty> ids)
@@ -22,7 +23,7 @@ namespace MiniPLInterpreter
 			set { idNode = value; }
 		}
 
-		public ISyntaxTreeNode ExprNode {
+		public IExpressionNode ExprNode {
 			get { return exprNode; }
 			set { exprNode = value; }
 		}
@@ -54,9 +55,27 @@ namespace MiniPLInterpreter
 			return null;
 		}
 
-		public void AddExpression(ISyntaxTreeNode expressionNode)
+		public void AddExpression(IExpressionNode expressionNode)
 		{
 			this.exprNode = expressionNode;
+		}
+
+		public override string ToString ()
+		{
+			return "DECLARE AND/OR ASSIGN";
+		}
+
+		public void AddNodesToQueue (Queue q)
+		{
+			q.Enqueue (this);
+			idNode.AddNodesToQueue (q);
+			if (exprNode != null) {
+				exprNode.AddNodesToQueue (q);
+			}
+		}
+
+		public void Accept(NodeVisitor visitor) {
+			visitor.VisitAssignNode (this);
 		}
 	}
 }

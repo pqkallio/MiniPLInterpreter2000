@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections;
 
 namespace MiniPLInterpreter
 {
-	public class StatementsNode : ISyntaxTreeNode
+	public class StatementsNode : IStatementsContainer
 	{
 		public ISyntaxTreeNode statement;
-		public ISyntaxTreeNode sequitor;
+		public StatementsNode sequitor;
 
 		public StatementsNode ()
 		{
@@ -36,9 +37,24 @@ namespace MiniPLInterpreter
 			set { statement = value; }
 		}
 
-		public ISyntaxTreeNode Sequitor {
+		public StatementsNode Sequitor {
 			get { return sequitor; }
 			set { sequitor = value; }
+		}
+
+		public void AddNodesToQueue (Queue q)
+		{
+			if (statement != null) {
+				q.Enqueue (statement);
+			}
+
+			if (sequitor != null) {
+				sequitor.AddNodesToQueue (q);
+			}
+		}
+
+		public void Accept(NodeVisitor visitor) {
+			visitor.VisitStatementsNode (this);
 		}
 	}
 }

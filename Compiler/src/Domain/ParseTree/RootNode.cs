@@ -1,17 +1,18 @@
 ﻿using System;
+using System.Collections;
 
 namespace MiniPLInterpreter
 {
-	public class RootNode : ISyntaxTreeNode
+	public class RootNode : IStatementsContainer
 	{
-		private ISyntaxTreeNode sequitor;
+		private StatementsNode sequitor;
 
 		public RootNode ()
 		{
 			this.sequitor = null;
 		}
 
-		public ISyntaxTreeNode Sequitor {
+		public StatementsNode Sequitor {
 			get { return sequitor; }
 			set { sequitor = value; }
 		}
@@ -22,6 +23,23 @@ namespace MiniPLInterpreter
 
 		public object execute () {
 			return sequitor.execute ();
+		}
+
+		public override string ToString ()
+		{
+			return "ROOT";
+		}
+
+		public void AddNodesToQueue (Queue q)
+		{
+			q.Enqueue (this);
+			if (sequitor != null) {
+				sequitor.AddNodesToQueue (q);
+			}
+		}
+
+		public void Accept(NodeVisitor visitor) {
+			visitor.VisitRootNode (this);
 		}
 	}
 }

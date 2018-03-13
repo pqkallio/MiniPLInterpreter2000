@@ -1,12 +1,14 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace MiniPLInterpreter
 {
-	public class VariableIdNode : ISyntaxTreeNode
+	public class VariableIdNode : IExpressionNode
 	{
 		private string id;
 		private Dictionary<string, IProperty> ids;
+		private TokenType variableType;
 
 		public VariableIdNode(Dictionary<string, IProperty> ids)
 			: this(null, ids)
@@ -31,6 +33,55 @@ namespace MiniPLInterpreter
 		public TokenType Type ()
 		{
 			return TokenType.ID;
+		}
+
+		public TokenType VariableType
+		{
+			get { return variableType; }
+			set { variableType = value; }
+		}
+
+		public override string ToString ()
+		{
+			return "id: " + ID;
+		}
+
+		public void AddNodesToQueue (Queue q)
+		{
+			q.Enqueue (this);
+		}
+
+		public TokenType GetEvaluationType (TokenType parentType)
+		{
+			TokenType thisType = ids [ID].GetTokenType ();
+			if (parentType == TokenType.UNDEFINED) {
+				return thisType;
+			}
+
+			if (parentType != thisType) {
+				return TokenType.ERROR;
+			}
+
+			return thisType;
+		}
+
+		public IExpressionNode[] GetExpressions()
+		{
+			return null;
+		}
+
+		public TokenType GetOperation ()
+		{
+			return TokenType.BINARY_OP_NO_OP;
+		}
+
+		public TokenType GetValueType ()
+		{
+			return ids[ID].GetTokenType ();
+		}
+
+		public void Accept(NodeVisitor visitor) {
+			visitor.VisitVariableIdNode (this);
 		}
 	}
 }

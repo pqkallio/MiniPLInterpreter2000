@@ -7,6 +7,14 @@ namespace MiniPLInterpreter
 		private string title;
 		private string errorMessage;
 		private Token token;
+		private ISyntaxTreeNode node;
+
+		public Error (string title, string errorMessage, ISyntaxTreeNode node)
+		{
+			this.title = title;
+			this.errorMessage = errorMessage;
+			this.node = node;
+		}
 
 		public Error (string title, string errorMessage, Token token)
 		{
@@ -30,8 +38,16 @@ namespace MiniPLInterpreter
 			get { return this.token; }
 		}
 
+		public ISyntaxTreeNode Node {
+			get { return this.Node; }
+		}
+
 		public override string ToString ()
 		{
+			if (this.token == null) {
+				return string.Format ("{0}: {1}", Title, ErrorMessage);
+			}
+
 			return string.Format ("{0}: {1}: {2} at row {3} column {4}", Title, ErrorMessage, Token.Value, Token.Row, Token.Column);
 		}
 	}

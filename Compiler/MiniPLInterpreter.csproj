@@ -77,6 +77,19 @@
     <Compile Include="src\Domain\ParseTree\IOReadNode.cs" />
     <Compile Include="src\Domain\ParseTree\IOPrintNode.cs" />
     <Compile Include="src\Domain\ParseTree\AssertNode.cs" />
+    <Compile Include="src\Services\SemanticAnalyzer.cs" />
+    <Compile Include="src\Domain\ParseTree\IExpressionNode.cs" />
+    <Compile Include="src\Domain\Errors\SemanticError.cs" />
+    <Compile Include="src\Domain\ParseTree\DeclarationNode.cs" />
+    <Compile Include="src\Domain\Errors\UnexpectedTokenException.cs" />
+    <Compile Include="src\Domain\ParseTree\IStatementsContainer.cs" />
+    <Compile Include="src\Services\NodeBuilder.cs" />
+    <Compile Include="src\Domain\Visitors\NodeVisitor.cs" />
+    <Compile Include="src\Domain\Visitors\TypeCheckingVisitor.cs" />
+    <Compile Include="src\Domain\Visitors\ExpressionCheckVisitor.cs" />
+    <Compile Include="src\Domain\Errors\UninitializedVariableError.cs" />
+    <Compile Include="src\Domain\Errors\IllegalTypeError.cs" />
+    <Compile Include="src\Domain\Errors\DeclarationError.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\" />
@@ -89,6 +102,7 @@
     <Folder Include="src\Domain\Errors\" />
     <Folder Include="src\Domain\Token\" />
     <Folder Include="src\Domain\Values\" />
+    <Folder Include="src\Domain\Visitors\" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="nunit.framework">

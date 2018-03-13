@@ -2,7 +2,7 @@
 
 namespace MiniPLInterpreter
 {
-	public interface IOperandContainer
+	public interface IOperandContainer : ISyntaxTreeNode
 	{
 		void AddOperand(ISyntaxTreeNode operandNode);
 	}
