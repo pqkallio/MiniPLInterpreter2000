@@ -6,6 +6,7 @@ namespace MiniPLInterpreter
 	public class IOPrintNode: IExpressionContainer
 	{
 		private IExpressionNode expression;
+		private Token token;
 
 		public IOPrintNode ()
 		{}
@@ -13,6 +14,11 @@ namespace MiniPLInterpreter
 		public TokenType Type ()
 		{
 			return TokenType.PRINT;
+		}
+
+		public IExpressionNode Expression
+		{
+			get { return expression; }
 		}
 
 		public object execute ()
@@ -32,8 +38,14 @@ namespace MiniPLInterpreter
 			expression.AddNodesToQueue (q);
 		}
 
-		public void Accept(NodeVisitor visitor) {
-			visitor.VisitIOPrintNode (this);
+		public ISemanticCheckValue Accept(INodeVisitor visitor) {
+			return visitor.VisitIOPrintNode (this);
+		}
+
+		public Token Token
+		{
+			get { return this.token; }
+			set { }
 		}
 	}
 }

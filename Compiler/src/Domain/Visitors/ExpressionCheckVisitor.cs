@@ -3,22 +3,25 @@ using System.Collections.Generic;
 
 namespace MiniPLInterpreter
 {
-	public class ExpressionCheckVisitor : NodeVisitor
+	public class ExpressionCheckVisitor : INodeVisitor
 	{
 		private SemanticAnalyzer analyzer;
+		private TypeCheckingVisitor typeChecker;
 
 		public ExpressionCheckVisitor (SemanticAnalyzer analyzer)
 		{
 			this.analyzer = analyzer;
+			this.typeChecker = new TypeCheckingVisitor (analyzer);
 		}
 
-		public void VisitAssertNode(AssertNode node)
+		public ISemanticCheckValue VisitAssertNode(AssertNode node)
 		{
-			TokenType type = checkExpressionIsLegit (node.Expression);
-			matchEvaluationType (node, type, TokenType.BOOL_VAL);
+			IProperty evaluation = node.Accept(this.typeChecker).asProperty();
+			matchEvaluationType (node, evaluation.GetTokenType(), TokenType.BOOL_VAL);
+			return null;
 		}
 
-		public void VisitAssignNode(AssignNode node)
+		public ISemanticCheckValue VisitAssignNode(AssignNode node)
 		{
 			VariableIdNode idNode = node.IDNode;
 
@@ -31,24 +34,28 @@ namespace MiniPLInterpreter
 					analyzer.notifyError (new UninitializedVariableError (idNode));
 				}
 
-				TokenType evaluated = checkExpressionIsLegit(node.ExprNode);
+				ISemanticCheckValue val = node.Accept (this.typeChecker);
 
-				if (property.GetTokenType () != evaluated) {
-					analyzer.notifyError (new IllegalTypeError(idNode));
+				if (val != null) {
+					IProperty evaluated = val.asProperty();
+					if (property.GetTokenType () != evaluated.GetTokenType ()) {
+						analyzer.notifyError (new IllegalTypeError(idNode));
+					}
 				}
 			}
+			return null;
 		}
 
-		public void VisitBinOpNode(BinOpNode node) {}
+		public ISemanticCheckValue VisitBinOpNode(BinOpNode node) {return null;}
 
-		public void VisitDeclarationNode(DeclarationNode node)
+		public ISemanticCheckValue VisitDeclarationNode(DeclarationNode node)
 		{
 			VariableIdNode idNode = node.IDNode;
 
 			if (idNode == null) {
 				analyzer.notifyError (new SemanticError (Constants.SEMANTIC_ERROR_MESSAGE, node));
 			} else {
-				IProperty property = analyzer.IDs [idNode.ID];
+				IProperty property = idNode.Accept(this.typeChecker).asProperty();
 
 				if (property.Declared) {
 					analyzer.notifyError (new DeclarationError (idNode));
@@ -57,16 +64,17 @@ namespace MiniPLInterpreter
 					node.AssignNode.Accept (this);
 				}
 			}
+			return null;
 		}
 
-		public void VisitForLoopNode(ForLoopNode node)
+		public ISemanticCheckValue VisitForLoopNode(ForLoopNode node)
 		{
 			VariableIdNode idNode = node.IDNode;
 
 			if (idNode == null) {
 				analyzer.notifyError (new SemanticError (Constants.SEMANTIC_ERROR_MESSAGE, node));
 			} else {
-				IProperty property = analyzer.IDs [idNode.ID];
+				IProperty property = idNode.Accept(this.typeChecker).asProperty();
 
 				if (!property.Declared) {
 					analyzer.notifyError (new UninitializedVariableError (idNode));
@@ -82,23 +90,29 @@ namespace MiniPLInterpreter
 			if (max == null) {
 				analyzer.notifyError (new SemanticError (Constants.SEMANTIC_ERROR_MESSAGE, node));
 			} else {
-				TokenType type = checkExpressionIsLegit (max);
+				IProperty p = max.Accept(this.typeChecker).asProperty();
 
-				if (type != TokenType.INT_VAL) {
-					analyzer.notifyError (new IllegalTypeError(idNode));
+				if (p.GetTokenType () != TokenType.INT_VAL) {
+					analyzer.notifyError (new IllegalTypeError(max));
 				}
 			}
 
-			node.RangeFrom.Accept (this);
+			IProperty p2 = node.RangeFrom.Accept (this.typeChecker).asProperty();
+
+			if (p2.GetTokenType () != TokenType.INT_VAL) {
+				analyzer.notifyError (new IllegalTypeError(node.RangeFrom));
+			}
 
 			node.Statements.Accept (this);
+
+			return null;
 		}
 
-		public void VisitIntValueNode(IntValueNode node) {}
+		public ISemanticCheckValue VisitIntValueNode(IntValueNode node) {return null;}
 
-		public void VisitIOPrintNode(IOPrintNode node) {}
+		public ISemanticCheckValue VisitIOPrintNode(IOPrintNode node) {return null;}
 
-		public void VisitIOReadNode(IOReadNode node) 
+		public ISemanticCheckValue VisitIOReadNode(IOReadNode node) 
 		{
 			VariableIdNode idNode = node.IDNode;
 
@@ -115,15 +129,18 @@ namespace MiniPLInterpreter
 					analyzer.notifyError (new IllegalTypeError(idNode));
 				}
 			}
+
+			return null;
 		}
 
-		public void VisitRootNode(RootNode node) {
+		public ISemanticCheckValue VisitRootNode(RootNode node) {
 			if (node.Sequitor != null) {
 				node.Sequitor.Accept (this);
 			}
+			return null;
 		}
 
-		public void VisitStatementsNode(StatementsNode node) {
+		public ISemanticCheckValue VisitStatementsNode(StatementsNode node) {
 			if (node.Statement != null) {
 				node.Statement.Accept (this);
 			}
@@ -131,13 +148,14 @@ namespace MiniPLInterpreter
 			if (node.Sequitor != null) {
 				node.Sequitor.Accept (this);
 			}
+			return null;
 		}
 
-		public void VisitStringValueNode(StringValueNode node) {}
+		public ISemanticCheckValue VisitStringValueNode(StringValueNode node) {return null;}
 
-		public void VisitUnOpNode(UnOpNode node) {}
+		public ISemanticCheckValue VisitUnOpNode(UnOpNode node) {return null;}
 
-		public void VisitVariableIdNode(VariableIdNode node) {}
+		public ISemanticCheckValue VisitVariableIdNode(VariableIdNode node) {return null;}
 
 		private TokenType checkExpressionIsLegit(IExpressionNode node)
 		{
@@ -169,7 +187,7 @@ namespace MiniPLInterpreter
 				}
 			}
 
-			if (Constants.LEGIT_OPERATIONS [tt].ContainsKey (node.GetOperation ())) {
+			if (Constants.LEGIT_OPERATIONS [tt].ContainsKey (node.Operation)) {
 				return tt;
 			}
 

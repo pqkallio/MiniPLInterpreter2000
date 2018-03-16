@@ -8,6 +8,7 @@ namespace MiniPLInterpreter
 		private IExpressionNode leftOperand;
 		private IExpressionNode rightOperand;
 		private TokenType operation;
+		private Token token;
 
 		public BinOpNode ()
 		{
@@ -123,8 +124,14 @@ namespace MiniPLInterpreter
 			return TokenType.UNDEFINED;
 		}
 
-		public void Accept(NodeVisitor visitor) {
-			visitor.VisitBinOpNode (this);
+		public ISemanticCheckValue Accept(INodeVisitor visitor) {
+			return visitor.VisitBinOpNode (this);
+		}
+
+		public Token Token
+		{
+			get { return this.token; }
+			set { }
 		}
 	}
 }

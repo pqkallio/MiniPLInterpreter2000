@@ -92,6 +92,7 @@ namespace MiniPLInterpreter
 			} else if (StringUtils.isAlpha(c)) {
 				parseIdOrKeyword (token, previous, c);
 			} else {
+				parseErrorToken (token, c);
 				notifyError (new TokenError (token));
 				token.Type = TokenType.ERROR;
 			}
@@ -288,6 +289,20 @@ namespace MiniPLInterpreter
 			} else {
 				token.Value = sb.ToString ();
 			}
+		}
+
+		private void parseErrorToken(Token t, char c)
+		{
+			StringBuilder sb = new StringBuilder (c.ToString());
+
+			c = peekStream ();
+
+			while (!isWhitespace (c) && c != ';') {
+				sb.Append (readStream());
+				c = peekStream ();
+			}
+
+			t.Value = sb.ToString ();
 		}
 
 		private bool isBinaryOperand (Token t)

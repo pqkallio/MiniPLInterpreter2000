@@ -119,7 +119,9 @@ namespace MiniPLInterpreter
 						{TokenType.BINARY_OP_NO_OP, null},
 						{TokenType.BINARY_OP_SUB, null},
 						{TokenType.BINARY_OP_LOG_EQ, null},
-						{TokenType.BINARY_OP_LOG_LT, null}
+						{TokenType.BINARY_OP_LOG_LT, null},
+						{TokenType.RANGE_FROM, null},
+						{TokenType.RANGE_UPTO, null}
 					}
 			},
 			{TokenType.STR_VAL, 

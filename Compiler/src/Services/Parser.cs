@@ -57,7 +57,12 @@ namespace MiniPLInterpreter
 						} while (next.Type != TokenType.END_OF_FILE);
 					}
 					
-					match (next, TokenType.END_OF_FILE);
+					try {
+						match (next, TokenType.END_OF_FILE);
+					} catch (UnexpectedTokenException ex) {
+						notifyError (new SyntaxError (ex.Token));
+					}
+					
 					break;
 				case TokenType.END_OF_FILE:
 					break;
@@ -76,14 +81,22 @@ namespace MiniPLInterpreter
 				case TokenType.PRINT:
 				case TokenType.ASSERT:
 				case TokenType.ID:
-					StatementsNode statements = nodeBuilder.CreateStatementsNode (parent);
-					Token next = ParseStatement (t, statements);
+					StatementsNode statements = nodeBuilder.CreateStatementsNode (parent, t);
+					Token next;
+					try {
+						next = ParseStatement (t, statements);
+						match (next, TokenType.END_STATEMENT);
+					} catch (UnexpectedTokenException ex) {
+						next = FastForwardToStatementEnd (ex);
+					}
 					match (next, TokenType.END_STATEMENT);
-
 					return ParseStatements (scanner.getNextToken(next), statements);
 				case TokenType.END_OF_BLOCK:
 				case TokenType.END_OF_FILE:
 					return t;
+				case TokenType.ERROR:
+					next = FastForwardToStatementEnd(t);
+					return ParseStatements (scanner.getNextToken(next), parent);
 				default:
 					throw new UnexpectedTokenException (t);
 			}
@@ -104,6 +117,8 @@ namespace MiniPLInterpreter
 					return ParsePrint (t, statementsNode);
 				case TokenType.ASSERT:
 					return ParseAssert (t, statementsNode);
+				case TokenType.ERROR:
+					return FastForwardToStatementEnd(t);
 				default:
 					throw new UnexpectedTokenException (t);
 			}
@@ -112,7 +127,7 @@ namespace MiniPLInterpreter
 		private Token ParseDeclaration(Token t, StatementsNode statementsNode)
 		{
 			try {
-				VariableIdNode idNode = nodeBuilder.CreateIdNode ();
+				VariableIdNode idNode = nodeBuilder.CreateIdNode (t);
 				Token next = ParseVarId (scanner.getNextToken (t), idNode);
 				match (next, TokenType.SET_TYPE);
 				next = ParseType (scanner.getNextToken (next), idNode);
@@ -126,7 +141,7 @@ namespace MiniPLInterpreter
 		private Token ParseVariableAssign(Token t, StatementsNode statementsNode)
 		{
 			try {
-				VariableIdNode idNode = nodeBuilder.CreateIdNode ();
+				VariableIdNode idNode = nodeBuilder.CreateIdNode (t);
 				Token next = ParseVarId (t, idNode);
 				match (next, TokenType.ASSIGN);
 				AssignNode assignNode = nodeBuilder.CreateAssignNode(idNode, statementsNode);
@@ -138,7 +153,7 @@ namespace MiniPLInterpreter
 
 		private Token ParseForLoop(Token t, StatementsNode statementsNode)
 		{
-			VariableIdNode idNode = nodeBuilder.CreateIdNode ();
+			VariableIdNode idNode = nodeBuilder.CreateIdNode (t);
 			ForLoopNode forLoop = nodeBuilder.CreateForLoopNode(idNode, statementsNode);
 			Token next;
 
@@ -157,7 +172,7 @@ namespace MiniPLInterpreter
 			}
 
 			try {
-				StatementsNode statements = nodeBuilder.CreateStatementsNode ();
+				StatementsNode statements = nodeBuilder.CreateStatementsNode (t);
 				forLoop.Statements = statements;
 				next = ParseStatements (scanner.getNextToken (next), statements);
 				match (next, TokenType.END_OF_BLOCK);
@@ -172,7 +187,7 @@ namespace MiniPLInterpreter
 		private Token ParseRead(Token t, StatementsNode statementsNode)
 		{
 			try {
-				VariableIdNode varId = nodeBuilder.CreateIdNode ();
+				VariableIdNode varId = nodeBuilder.CreateIdNode (t);
 				nodeBuilder.CreateIOReadNode(varId, statementsNode);
 				return ParseVarId (scanner.getNextToken(t), varId);
 			} catch (UnexpectedTokenException ex) {
@@ -219,15 +234,15 @@ namespace MiniPLInterpreter
 		{
 			switch (t.Type) {
 				case TokenType.INT_VAR:
-					idNode.VariableType = TokenType.INT_VAR;
+					idNode.VariableType = TokenType.INT_VAL;
 					ids.Add(idNode.ID, (new IntegerProperty(0)));
 					return scanner.getNextToken (t);
 				case TokenType.STR_VAR:
-					idNode.VariableType = TokenType.STR_VAR;
+					idNode.VariableType = TokenType.STR_VAL;
 					ids.Add(idNode.ID, new StringProperty(""));
 					return scanner.getNextToken (t);
 				case TokenType.BOOL_VAR:
-					idNode.VariableType = TokenType.BOOL_VAR;
+					idNode.VariableType = TokenType.BOOL_VAL;
 					ids.Add(idNode.ID, new BooleanProperty(false));
 					return scanner.getNextToken (t);
 				default:
@@ -281,7 +296,7 @@ namespace MiniPLInterpreter
 					node.AddOperand (strVal);
 					return scanner.getNextToken (t);
 				case TokenType.ID:
-					ISyntaxTreeNode varId = new VariableIdNode (t.Value, ids);
+					ISyntaxTreeNode varId = new VariableIdNode (t.Value, ids, t);
 					node.AddOperand (varId);
 					return scanner.getNextToken (t);
 				case TokenType.PARENTHESIS_LEFT:
@@ -394,6 +409,12 @@ namespace MiniPLInterpreter
 		private Token FastForwardToStatementEnd (UnexpectedTokenException ex)
 		{
 			notifyError (new SyntaxError (ex.Token));
+			return FastForwardTo (Constants.STATEMENT_FASTFORWARD_TO);
+		}
+
+		private Token FastForwardToStatementEnd (Token token)
+		{
+			notifyError (new SyntaxError (token));
 			return FastForwardTo (Constants.STATEMENT_FASTFORWARD_TO);
 		}
 

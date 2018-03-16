@@ -2,7 +2,7 @@
 
 namespace MiniPLInterpreter
 {
-	public interface IProperty
+	public interface IProperty : ISemanticCheckValue
 	{
 		Type GetPropertyType ();
 		TokenType GetTokenType ();

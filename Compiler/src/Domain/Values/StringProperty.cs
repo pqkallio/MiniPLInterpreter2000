@@ -32,6 +32,11 @@ namespace MiniPLInterpreter
 			get { return declared; }
 			set { declared = value; }
 		}
+
+		public IProperty asProperty ()
+		{
+			return this;
+		}
 	}
 }
 

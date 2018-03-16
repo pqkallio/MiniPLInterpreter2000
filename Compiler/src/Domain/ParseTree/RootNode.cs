@@ -6,10 +6,12 @@ namespace MiniPLInterpreter
 	public class RootNode : IStatementsContainer
 	{
 		private StatementsNode sequitor;
+		private Token token;
 
 		public RootNode ()
 		{
 			this.sequitor = null;
+			this.token = new Token (1, 0, null, TokenType.PROGRAM);
 		}
 
 		public StatementsNode Sequitor {
@@ -38,8 +40,14 @@ namespace MiniPLInterpreter
 			}
 		}
 
-		public void Accept(NodeVisitor visitor) {
-			visitor.VisitRootNode (this);
+		public ISemanticCheckValue Accept(INodeVisitor visitor) {
+			return visitor.VisitRootNode (this);
+		}
+
+		public Token Token
+		{
+			get { return this.token; }
+			set { }
 		}
 	}
 }

@@ -3,9 +3,10 @@ using System.Collections;
 
 namespace MiniPLInterpreter
 {
-	public class StringValueNode : IExpressionNode
+	public class StringValueNode : IExpressionNode, ISemanticCheckValue
 	{
 		private string value;
+		private Token token;
 
 		public StringValueNode (string value)
 		{
@@ -50,9 +51,10 @@ namespace MiniPLInterpreter
 			return null;
 		}
 
-		public TokenType GetOperation ()
+		public TokenType Operation
 		{
-			return TokenType.BINARY_OP_NO_OP;
+			get { return TokenType.BINARY_OP_NO_OP; }
+			set { }
 		}
 
 		public TokenType GetValueType ()
@@ -60,8 +62,19 @@ namespace MiniPLInterpreter
 			return Type ();
 		}
 
-		public void Accept(NodeVisitor visitor) {
-			visitor.VisitStringValueNode (this);
+		public ISemanticCheckValue Accept(INodeVisitor visitor) {
+			return visitor.VisitStringValueNode (this);
+		}
+
+		public IProperty asProperty ()
+		{
+			return null;
+		}
+
+		public Token Token
+		{
+			get { return this.token; }
+			set { }
 		}
 	}
 }

@@ -23,13 +23,35 @@ namespace Interpreter
 				Console.WriteLine ("*************");
 
 				foreach (Error e in s.getErrors()) {
+					int line = e.Token.Row;
+					int column = e.Token.Column;
+
+					string l = GetLine (@args [0], line);
 					Console.WriteLine (e);
+					Console.WriteLine (l);
+					string x = "";
+					for (int i = 1; i < column; i++) {
+						x += ' ';
+					}
+					x += '^';
+					Console.WriteLine (x);
 				}
 
 				Console.WriteLine ("*************");
 
 				foreach (Error e in p.getErrors()) {
+					int line = e.Token.Row;
+					int column = e.Token.Column;
+
+					string l = GetLine (@args [0], line);
 					Console.WriteLine (e);
+					Console.WriteLine (l);
+					string x = "";
+					for (int i = 1; i < column; i++) {
+						x += ' ';
+					}
+					x += '^';
+					Console.WriteLine (x);
 				}
 
 				/*
@@ -41,7 +63,7 @@ namespace Interpreter
 					object o = q.Dequeue ();
 					Console.WriteLine (o);
 				}
-				*/
+
 
 				Console.WriteLine ("*************");
 				if (p.SyntaxTreeBuilt) {
@@ -53,6 +75,17 @@ namespace Interpreter
 						Console.WriteLine (e);
 					}
 				}
+				*/
+			}
+		}
+
+		private static string GetLine (string filename, int line)
+		{
+			using (StreamReader sr = new StreamReader (filename)) {
+				for (int i = 1; i < line; i++) {
+					sr.ReadLine ();
+				}
+				return sr.ReadLine ();
 			}
 		}
 	}

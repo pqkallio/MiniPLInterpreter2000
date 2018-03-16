@@ -66,7 +66,7 @@ namespace MiniPLInterpreter
 				}
 			}
 
-			if (Constants.LEGIT_OPERATIONS [tt].ContainsKey (node.GetOperation ())) {
+			if (Constants.LEGIT_OPERATIONS [tt].ContainsKey (node.Operation)) {
 				return tt;
 			}
 

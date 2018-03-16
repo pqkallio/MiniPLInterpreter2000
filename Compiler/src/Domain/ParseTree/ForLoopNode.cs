@@ -10,6 +10,7 @@ namespace MiniPLInterpreter
 		private IExpressionNode max;
 		private StatementsNode statements;
 		private AssignNode rangeFrom;
+		private Token token;
 
 		public ForLoopNode (VariableIdNode idNode)
 		{
@@ -75,8 +76,14 @@ namespace MiniPLInterpreter
 			statements.AddNodesToQueue (q);
 		}
 
-		public void Accept(NodeVisitor visitor) {
-			visitor.VisitForLoopNode (this);
+		public ISemanticCheckValue Accept(INodeVisitor visitor) {
+			return visitor.VisitForLoopNode (this);
+		}
+
+		public Token Token
+		{
+			get { return this.token; }
+			set { }
 		}
 	}
 }

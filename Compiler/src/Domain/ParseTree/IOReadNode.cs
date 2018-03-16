@@ -9,6 +9,7 @@ namespace MiniPLInterpreter
 		private VariableIdNode idNode;
 		private AssignNode assignNode;
 		private Dictionary<string, IProperty> ids;
+		private Token token;
 
 		public IOReadNode (VariableIdNode idNode, Dictionary<string, IProperty> ids)
 		{
@@ -51,8 +52,14 @@ namespace MiniPLInterpreter
 			get { return this.idNode; }
 		}
 
-		public void Accept(NodeVisitor visitor) {
-			visitor.VisitIOReadNode (this);
+		public ISemanticCheckValue Accept(INodeVisitor visitor) {
+			return visitor.VisitIOReadNode (this);
+		}
+
+		public Token Token
+		{
+			get { return this.token; }
+			set { }
 		}
 	}
 }

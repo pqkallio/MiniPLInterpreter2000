@@ -3,37 +3,135 @@ using System.Collections.Generic;
 
 namespace MiniPLInterpreter
 {
-	public class TypeCheckingVisitor : NodeVisitor
+	public class TypeCheckingVisitor : INodeVisitor
 	{
-		private IErrorAggregator errorAggregator;
-		private Dictionary<string, IProperty> ids;
+		private SemanticAnalyzer analyzer;
 
-		public TypeCheckingVisitor (IErrorAggregator errorAggregator, Dictionary<string, IProperty> ids)
+		public TypeCheckingVisitor (SemanticAnalyzer analyzer)
 		{
-			this.errorAggregator = errorAggregator;
-			this.ids = ids;
+			this.analyzer = analyzer;
 		}
 
-		public void VisitAssertNode(AssertNode node)
+		public ISemanticCheckValue VisitAssertNode(AssertNode node)
 		{
-			IExpressionNode[] expressions = node.Expression.GetExpressions ();
+			return getEvaluation (node.Expression.GetExpressions ());
+		}
+
+		public ISemanticCheckValue VisitAssignNode(AssignNode node)
+		{
+			return getEvaluation (node.ExprNode);
+		}
+
+		public ISemanticCheckValue VisitBinOpNode(BinOpNode node)
+		{
+			return VisitOperationNode (node);
+		}
+
+		public ISemanticCheckValue VisitDeclarationNode(DeclarationNode node)
+		{
+			return node.AssignNode.Accept (this);
+		}
+
+		public ISemanticCheckValue VisitForLoopNode(ForLoopNode node)
+		{
+			IProperty rangeFrom = (IProperty)(node.RangeFrom.Accept (this));
+			IProperty max = (IProperty)(node.MaxValue.Accept (this));
+			bool alright = true;
+
+			if (!Constants.LEGIT_OPERATIONS.ContainsKey(rangeFrom.GetTokenType ()) ||
+				!Constants.LEGIT_OPERATIONS [rangeFrom.GetTokenType ()].ContainsKey (TokenType.RANGE_FROM)) {
+				analyzer.notifyError(new IllegalTypeError(node.RangeFrom));
+				alright = false;
+			}
+
+			if (!Constants.LEGIT_OPERATIONS.ContainsKey(max.GetTokenType ()) ||
+				!Constants.LEGIT_OPERATIONS [max.GetTokenType ()].ContainsKey (TokenType.RANGE_UPTO)) {
+				analyzer.notifyError(new IllegalTypeError(node.MaxValue));
+				alright = false;
+			}
+
+			if (!alright) {
+				return new MismatchProperty ();
+			}
+
+			return rangeFrom;
+		}
+
+		public ISemanticCheckValue VisitIntValueNode(IntValueNode node)
+		{
+			return node;
+		}
+
+		public ISemanticCheckValue VisitIOPrintNode(IOPrintNode node)
+		{
+			return node.Expression.Accept(this);
+		}
+
+		public ISemanticCheckValue VisitIOReadNode(IOReadNode node)
+		{
+			return node.IDNode.Accept(this);
+		}
+
+		public ISemanticCheckValue VisitRootNode(RootNode node)
+		{
+			return null;
+		}
+
+		public ISemanticCheckValue VisitStatementsNode(StatementsNode node)
+		{
+			return null;
+		}
+
+		public ISemanticCheckValue VisitStringValueNode(StringValueNode node)
+		{
+			return node;
+		}
+
+		public ISemanticCheckValue VisitUnOpNode(UnOpNode node)
+		{
+			return VisitOperationNode (node);
+		}
+
+		public ISemanticCheckValue VisitVariableIdNode(VariableIdNode node)
+		{
+			return analyzer.IDs[node.ID];
+		}
+
+		public IProperty VisitOperationNode (IExpressionNode node)
+		{
+			IProperty evaluationType = getEvaluation(node.GetExpressions());
+
+			if (evaluationType != null && Constants.LEGIT_OPERATIONS.ContainsKey(evaluationType.GetTokenType ()) &&
+				Constants.LEGIT_OPERATIONS [evaluationType.GetTokenType ()].ContainsKey (node.Operation)) {
+				return evaluationType;
+			}
+
+			return new MismatchProperty (); 
+		}
+
+		private IProperty getEvaluation(params IExpressionNode[] expressions)
+		{
+			IProperty evaluatedType = null;
 
 			foreach (IExpressionNode expression in expressions) {
-				expression.Accept (this);
-			}
-		}
+				IProperty retVal = expression.Accept (this).asProperty();
 
-		public void VisitAssignNode(AssignNode node) {}
-		public void VisitBinOpNode(BinOpNode node) {}
-		public void VisitDeclarationNode(DeclarationNode node) {}
-		public void VisitForLoopNode(ForLoopNode node) {}
-		public void VisitIntValueNode(IntValueNode node) {}
-		public void VisitIOPrintNode(IOPrintNode node) {}
-		public void VisitIOReadNode(IOReadNode node) {}
-		public void VisitRootNode(RootNode node) {}
-		public void VisitStatementsNode(StatementsNode node) {}
-		public void VisitStringValueNode(StringValueNode node) {}
-		public void VisitUnOpNode(UnOpNode node) {}
-		public void VisitVariableIdNode(VariableIdNode node) {}
+				if (evaluatedType == null) {
+					evaluatedType = retVal;
+				} else if (evaluatedType != retVal) {
+					return new MismatchProperty ();
+				}
+
+				if (evaluatedType != null && evaluatedType.GetTokenType () == TokenType.ERROR) {
+					break;
+				}
+			}
+
+			if (evaluatedType == null) {
+				
+			}
+
+			return evaluatedType;
+		}
 	}
 }

@@ -9,6 +9,7 @@ namespace MiniPLInterpreter
 		private VariableIdNode idNode;
 		private AssignNode assignNode;
 		private Dictionary<string, IProperty> ids;
+		private Token token;
 
 		public DeclarationNode (VariableIdNode idNode, Dictionary<string, IProperty> ids)
 		{
@@ -43,8 +44,14 @@ namespace MiniPLInterpreter
 			q.Enqueue (this);
 		}
 
-		public void Accept(NodeVisitor visitor) {
-			visitor.VisitDeclarationNode (this);
+		public ISemanticCheckValue Accept(INodeVisitor visitor) {
+			return visitor.VisitDeclarationNode (this);
+		}
+
+		public Token Token
+		{
+			get { return this.token; }
+			set { }
 		}
 	}
 }

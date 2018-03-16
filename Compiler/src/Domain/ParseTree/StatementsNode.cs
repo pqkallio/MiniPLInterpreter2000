@@ -7,11 +7,13 @@ namespace MiniPLInterpreter
 	{
 		public ISyntaxTreeNode statement;
 		public StatementsNode sequitor;
+		public Token token;
 
-		public StatementsNode ()
+		public StatementsNode (Token token)
 		{
 			this.statement = null;
 			this.sequitor = null;
+			this.token = token;
 		}
 
 		public object execute ()
@@ -53,8 +55,14 @@ namespace MiniPLInterpreter
 			}
 		}
 
-		public void Accept(NodeVisitor visitor) {
-			visitor.VisitStatementsNode (this);
+		public ISemanticCheckValue Accept(INodeVisitor visitor) {
+			return visitor.VisitStatementsNode (this);
+		}
+
+		public Token Token
+		{
+			get { return this.token; }
+			set { }
 		}
 	}
 }

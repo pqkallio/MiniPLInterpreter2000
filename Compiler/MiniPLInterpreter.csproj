@@ -84,12 +84,15 @@
     <Compile Include="src\Domain\Errors\UnexpectedTokenException.cs" />
     <Compile Include="src\Domain\ParseTree\IStatementsContainer.cs" />
     <Compile Include="src\Services\NodeBuilder.cs" />
-    <Compile Include="src\Domain\Visitors\NodeVisitor.cs" />
     <Compile Include="src\Domain\Visitors\TypeCheckingVisitor.cs" />
     <Compile Include="src\Domain\Visitors\ExpressionCheckVisitor.cs" />
     <Compile Include="src\Domain\Errors\UninitializedVariableError.cs" />
     <Compile Include="src\Domain\Errors\IllegalTypeError.cs" />
     <Compile Include="src\Domain\Errors\DeclarationError.cs" />
+    <Compile Include="src\Domain\SemanticCheckValues\ISemanticCheckValue.cs" />
+    <Compile Include="src\Domain\SemanticCheckValues\TypeCheckValue.cs" />
+    <Compile Include="src\Domain\Visitors\INodeVisitor.cs" />
+    <Compile Include="src\Domain\Values\MismatchProperty.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\" />
@@ -103,6 +106,7 @@
     <Folder Include="src\Domain\Token\" />
     <Folder Include="src\Domain\Values\" />
     <Folder Include="src\Domain\Visitors\" />
+    <Folder Include="src\Domain\SemanticCheckValues\" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="nunit.framework">

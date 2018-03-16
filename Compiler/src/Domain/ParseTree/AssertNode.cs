@@ -6,6 +6,7 @@ namespace MiniPLInterpreter
 	public class AssertNode : IExpressionContainer
 	{
 		private IExpressionNode expressionNode;
+		private Token token;
 
 		public AssertNode ()
 		{}
@@ -47,8 +48,14 @@ namespace MiniPLInterpreter
 			// expressionNode.AddNodesToQueue (q);
 		}
 
-		public void Accept(NodeVisitor visitor) {
-			visitor.VisitAssertNode (this);
+		public ISemanticCheckValue Accept(INodeVisitor visitor) {
+			return visitor.VisitAssertNode (this);
+		}
+
+		public Token Token
+		{
+			get { return this.token; }
+			set { }
 		}
 	}
 }

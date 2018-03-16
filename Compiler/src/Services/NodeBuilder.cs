@@ -17,22 +17,22 @@ namespace MiniPLInterpreter
 			return new RootNode ();
 		}
 
-		public StatementsNode CreateStatementsNode ()
+		public StatementsNode CreateStatementsNode (Token token)
 		{
-			return new StatementsNode ();
+			return new StatementsNode (token);
 		}
 
-		public StatementsNode CreateStatementsNode (IStatementsContainer parentNode)
+		public StatementsNode CreateStatementsNode (IStatementsContainer parentNode, Token token)
 		{
-			StatementsNode statementsNode = new StatementsNode ();
+			StatementsNode statementsNode = new StatementsNode (token);
 			parentNode.Sequitor = statementsNode;
 
 			return statementsNode;
 		}
 
-		public VariableIdNode CreateIdNode ()
+		public VariableIdNode CreateIdNode (Token token)
 		{
-			return new VariableIdNode (ids);
+			return new VariableIdNode (ids, token);
 		}
 
 		public DeclarationNode CreateDeclarationNode (VariableIdNode idNode, StatementsNode statementsNode)

@@ -9,15 +9,17 @@ namespace MiniPLInterpreter
 		private string id;
 		private Dictionary<string, IProperty> ids;
 		private TokenType variableType;
+		private Token token;
 
-		public VariableIdNode(Dictionary<string, IProperty> ids)
-			: this(null, ids)
+		public VariableIdNode(Dictionary<string, IProperty> ids, Token token)
+			: this(null, ids, token)
 		{}
 
-		public VariableIdNode (string id, Dictionary<string, IProperty> ids)
+		public VariableIdNode (string id, Dictionary<string, IProperty> ids, Token token)
 		{
 			this.id = id;
 			this.ids = ids;
+			this.token = token;
 		}
 
 		public string ID {
@@ -70,9 +72,10 @@ namespace MiniPLInterpreter
 			return null;
 		}
 
-		public TokenType GetOperation ()
+		public TokenType Operation
 		{
-			return TokenType.BINARY_OP_NO_OP;
+			get { return TokenType.BINARY_OP_NO_OP; }
+			set { }
 		}
 
 		public TokenType GetValueType ()
@@ -80,8 +83,14 @@ namespace MiniPLInterpreter
 			return ids[ID].GetTokenType ();
 		}
 
-		public void Accept(NodeVisitor visitor) {
-			visitor.VisitVariableIdNode (this);
+		public ISemanticCheckValue Accept(INodeVisitor visitor) {
+			return visitor.VisitVariableIdNode (this);
+		}
+
+		public Token Token
+		{
+			get { return this.token; }
+			set { }
 		}
 	}
 }

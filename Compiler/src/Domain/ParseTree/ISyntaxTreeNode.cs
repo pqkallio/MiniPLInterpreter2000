@@ -8,7 +8,11 @@ namespace MiniPLInterpreter
 		object execute();
 		TokenType Type();
 		void AddNodesToQueue(Queue q);
-		void Accept(NodeVisitor visitor);
+		ISemanticCheckValue Accept(INodeVisitor visitor);
+		Token Token { 
+			get; 
+			set; 
+		}
 	}
 }
 

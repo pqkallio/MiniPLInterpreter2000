@@ -1,0 +1,7 @@
+/home/pqkallio/MonoDevelopProjects/Compiler/Interpreter/obj/x86/Release/.NETFramework,Version=v4.5.AssemblyAttribute.cs
+/home/pqkallio/MonoDevelopProjects/Compiler/Interpreter/bin/Release/Interpreter.exe.mdb
+/home/pqkallio/MonoDevelopProjects/Compiler/Interpreter/bin/Release/Interpreter.exe
+/home/pqkallio/MonoDevelopProjects/Compiler/Interpreter/obj/x86/Release/Interpreter.exe
+/home/pqkallio/MonoDevelopProjects/Compiler/Interpreter/obj/x86/Release/Interpreter.exe.mdb
+/home/pqkallio/MonoDevelopProjects/Compiler/Interpreter/bin/Release/Compiler.dll
+/home/pqkallio/MonoDevelopProjects/Compiler/Interpreter/bin/Release/Compiler.dll.mdb

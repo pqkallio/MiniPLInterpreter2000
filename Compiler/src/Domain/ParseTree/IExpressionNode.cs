@@ -6,7 +6,10 @@ namespace MiniPLInterpreter
 	{
 		TokenType GetEvaluationType (TokenType parentType);
 		IExpressionNode[] GetExpressions ();
-		TokenType GetOperation ();
+		TokenType Operation { 
+			get;
+			set;
+		}
 		TokenType GetValueType();
 	}
 }

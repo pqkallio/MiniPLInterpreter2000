@@ -10,6 +10,7 @@ namespace MiniPLInterpreter
 		private VariableIdNode idNode;
 		private IExpressionNode exprNode;
 		private Dictionary<string, IProperty> ids;
+		private Token token;
 
 		public AssignNode (VariableIdNode idNode, Dictionary<string, IProperty> ids)
 		{
@@ -74,8 +75,14 @@ namespace MiniPLInterpreter
 			}
 		}
 
-		public void Accept(NodeVisitor visitor) {
-			visitor.VisitAssignNode (this);
+		public ISemanticCheckValue Accept(INodeVisitor visitor) {
+			return visitor.VisitAssignNode (this);
+		}
+
+		public Token Token
+		{
+			get { return this.token; }
+			set { }
 		}
 	}
 }
