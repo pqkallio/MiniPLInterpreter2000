@@ -104,11 +104,12 @@ namespace MiniPLInterpreter
 
 		public IExpressionNode[] GetExpressions()
 		{
-			IExpressionNode[] expressions = new IExpressionNode[2];
-			expressions [0] = leftOperand;
+			IExpressionNode[] expressions;
 
 			if (rightOperand != null) {
-				expressions [1] = rightOperand;
+				expressions = new IExpressionNode[] { leftOperand, rightOperand };
+			} else {
+				expressions = new IExpressionNode[] { leftOperand };
 			}
 
 			return expressions;

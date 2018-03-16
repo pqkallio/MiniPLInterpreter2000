@@ -63,11 +63,11 @@ namespace Interpreter
 					object o = q.Dequeue ();
 					Console.WriteLine (o);
 				}
-
+				*/
 
 				Console.WriteLine ("*************");
 				if (p.SyntaxTreeBuilt) {
-					SemanticAnalyzer se = new SemanticAnalyzer (p.SyntaxTree.NodeOrder (), ids);
+					SemanticAnalyzer se = new SemanticAnalyzer (p.SyntaxTree, ids);
 					se.Analyze ();
 					Console.WriteLine ("*************");
 
@@ -75,7 +75,6 @@ namespace Interpreter
 						Console.WriteLine (e);
 					}
 				}
-				*/
 			}
 		}
 

@@ -68,7 +68,7 @@ namespace MiniPLInterpreter
 
 		public IProperty asProperty ()
 		{
-			return null;
+			return new StringProperty(Value);
 		}
 
 		public Token Token

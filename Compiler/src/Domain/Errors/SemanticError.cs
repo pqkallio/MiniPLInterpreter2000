@@ -10,7 +10,7 @@ namespace MiniPLInterpreter
 		}
 
 		public SemanticError (string message, ISyntaxTreeNode node)
-			: this (Constants.SEMANTIC_ERROR_TITLE, message, node)
+			: this (Constants.SEMANTIC_ERROR_TITLE, message + node.Token.Row + " / " + node.Token.Column, node)
 		{
 		}
 

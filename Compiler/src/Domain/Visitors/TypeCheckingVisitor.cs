@@ -19,6 +19,7 @@ namespace MiniPLInterpreter
 
 		public ISemanticCheckValue VisitAssignNode(AssignNode node)
 		{
+			Console.WriteLine (node.ExprNode);
 			return getEvaluation (node.ExprNode);
 		}
 
@@ -101,34 +102,31 @@ namespace MiniPLInterpreter
 		{
 			IProperty evaluationType = getEvaluation(node.GetExpressions());
 
-			if (evaluationType != null && Constants.LEGIT_OPERATIONS.ContainsKey(evaluationType.GetTokenType ()) &&
+			if (Constants.LEGIT_OPERATIONS.ContainsKey(evaluationType.GetTokenType ()) &&
 				Constants.LEGIT_OPERATIONS [evaluationType.GetTokenType ()].ContainsKey (node.Operation)) {
 				return evaluationType;
 			}
 
-			return new MismatchProperty (); 
+			return new MismatchProperty ();
 		}
 
 		private IProperty getEvaluation(params IExpressionNode[] expressions)
 		{
-			IProperty evaluatedType = null;
-
-			foreach (IExpressionNode expression in expressions) {
+			IProperty evaluatedType = expressions [0].Accept (this).asProperty ();
+			Console.WriteLine ("first evaluation: " + evaluatedType);
+			for (int i = 1; i < expressions.Length; i++) {
+				IExpressionNode expression = expressions [i];
+				Console.WriteLine ("expression: " + expression);
 				IProperty retVal = expression.Accept (this).asProperty();
-
-				if (evaluatedType == null) {
-					evaluatedType = retVal;
-				} else if (evaluatedType != retVal) {
+				Console.WriteLine ("retVal: " + retVal);
+				if (retVal.GetTokenType () != evaluatedType.GetTokenType ()) {
+					Console.WriteLine ("Oh shit!");
 					return new MismatchProperty ();
 				}
 
-				if (evaluatedType != null && evaluatedType.GetTokenType () == TokenType.ERROR) {
+				if (evaluatedType.GetTokenType () == TokenType.ERROR) {
 					break;
 				}
-			}
-
-			if (evaluatedType == null) {
-				
 			}
 
 			return evaluatedType;

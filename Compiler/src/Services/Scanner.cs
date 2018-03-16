@@ -93,7 +93,6 @@ namespace MiniPLInterpreter
 				parseIdOrKeyword (token, previous, c);
 			} else {
 				parseErrorToken (token, c);
-				notifyError (new TokenError (token));
 				token.Type = TokenType.ERROR;
 			}
 

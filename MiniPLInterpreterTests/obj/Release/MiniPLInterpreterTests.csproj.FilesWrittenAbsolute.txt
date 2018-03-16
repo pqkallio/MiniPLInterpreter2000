@@ -1,0 +1,7 @@
+/home/pqkallio/MonoDevelopProjects/Compiler/MiniPLInterpreterTests/obj/Release/.NETFramework,Version=v4.5.AssemblyAttribute.cs
+/home/pqkallio/MonoDevelopProjects/Compiler/MiniPLInterpreterTests/bin/Release/MiniPLInterpreterTests.dll.mdb
+/home/pqkallio/MonoDevelopProjects/Compiler/MiniPLInterpreterTests/bin/Release/MiniPLInterpreterTests.dll
+/home/pqkallio/MonoDevelopProjects/Compiler/MiniPLInterpreterTests/obj/Release/MiniPLInterpreterTests.dll
+/home/pqkallio/MonoDevelopProjects/Compiler/MiniPLInterpreterTests/obj/Release/MiniPLInterpreterTests.dll.mdb
+/home/pqkallio/MonoDevelopProjects/Compiler/MiniPLInterpreterTests/bin/Release/Compiler.dll
+/home/pqkallio/MonoDevelopProjects/Compiler/MiniPLInterpreterTests/bin/Release/Compiler.dll.mdb

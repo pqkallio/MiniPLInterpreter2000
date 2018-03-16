@@ -25,7 +25,7 @@ namespace MiniPLInterpreter
 
 		public IProperty asProperty ()
 		{
-			return null;
+			return this;
 		}
 	}
 }
