@@ -37,6 +37,30 @@ namespace MiniPLInterpreter
 		{
 			return this;
 		}
+
+		public int asInteger ()
+		{
+			return StringUtils.isInteger(Value) ? StringUtils.parseToInt(Value) : 0;
+		}
+
+		public string asString ()
+		{
+			return Value;
+		}
+
+		public bool asBoolean ()
+		{
+			return Value != null && Value != "";
+		}
+
+		public void setInteger (int value) {}
+
+		public void setString (string value)
+		{
+			Value = value;
+		}
+
+		public void setBoolean (bool value) {}
 	}
 }
 

@@ -30,14 +30,20 @@ namespace MiniPLInterpreter
 			return statementsNode;
 		}
 
-		public VariableIdNode CreateIdNode (Token token)
+		public VariableIdNode CreateIdNode ()
 		{
-			return new VariableIdNode (ids, token);
+			return new VariableIdNode (ids);
 		}
 
-		public DeclarationNode CreateDeclarationNode (VariableIdNode idNode, StatementsNode statementsNode)
+		public ISyntaxTreeNode CreateIdNode(Token t)
 		{
-			DeclarationNode declarationNode = new DeclarationNode (idNode, ids);
+			string value = t.Value;
+			return new VariableIdNode (value, ids, t);
+		}
+
+		public DeclarationNode CreateDeclarationNode (VariableIdNode idNode, StatementsNode statementsNode, Token t)
+		{
+			DeclarationNode declarationNode = new DeclarationNode (idNode, ids, t);
 			declarationNode.AssignNode = CreateAssignNode (idNode);
 			statementsNode.Statement = declarationNode;
 
@@ -49,60 +55,82 @@ namespace MiniPLInterpreter
 			return new AssignNode (idNode, ids);
 		}
 
-		public AssignNode CreateAssignNode (VariableIdNode idNode, StatementsNode statementsNode)
+		public AssignNode CreateAssignNode (VariableIdNode idNode, StatementsNode statementsNode, Token t)
 		{
-			AssignNode assignNode = new AssignNode (idNode, ids);
+			AssignNode assignNode = new AssignNode (idNode, ids, t);
 			statementsNode.Statement = assignNode;
 
 			return assignNode;
 		}
 
-		public ForLoopNode CreateForLoopNode (VariableIdNode idNode, StatementsNode statementsNode)
+		public ForLoopNode CreateForLoopNode (VariableIdNode idNode, StatementsNode statementsNode, Token t)
 		{
-			ForLoopNode node = new ForLoopNode (idNode);
+			ForLoopNode node = new ForLoopNode (idNode, t);
 			statementsNode.Statement = node;
 
 			return node;
 		}
 
-		public IOReadNode CreateIOReadNode (VariableIdNode idNode, StatementsNode statementsNode)
+		public IOReadNode CreateIOReadNode (VariableIdNode idNode, StatementsNode statementsNode, Token t)
 		{
-			IOReadNode ioReadNode = new IOReadNode (idNode, ids);
+			IOReadNode ioReadNode = new IOReadNode (idNode, ids, t);
 			statementsNode.Statement = ioReadNode;
 
 			return ioReadNode;
 		}
 
-		public IOPrintNode CreateIOPrintNode (StatementsNode statementsNode)
+		public IOPrintNode CreateIOPrintNode (StatementsNode statementsNode, Token t)
 		{
-			IOPrintNode ioPrintNode = new IOPrintNode ();
+			IOPrintNode ioPrintNode = new IOPrintNode (t);
 			statementsNode.Statement = ioPrintNode;
 
 			return ioPrintNode;
 		}
 
-		public AssertNode CreateAssertNode (StatementsNode statementsNode)
+		public AssertNode CreateAssertNode (StatementsNode statementsNode, Token t)
 		{
-			AssertNode assertNode = new AssertNode ();
+			AssertNode assertNode = new AssertNode (t);
 			statementsNode.Statement = assertNode;
 
 			return assertNode;
 		}
 
-		public BinOpNode CreateBinOpNode (IExpressionContainer parent)
+		public BinOpNode CreateBinOpNode (IExpressionContainer parent, Token t)
 		{
-			BinOpNode binOp = new BinOpNode ();
+			BinOpNode binOp = new BinOpNode (t);
 			parent.AddExpression (binOp);
 
 			return binOp;
 		}
 
-		public UnOpNode CreateUnOpNode (IExpressionContainer parent)
+		public UnOpNode CreateUnOpNode (IExpressionContainer parent, Token t)
 		{
-			UnOpNode unOp = new UnOpNode ();
+			UnOpNode unOp = new UnOpNode (t);
 			parent.AddExpression (unOp);
 
 			return unOp;
+		}
+
+		public ISyntaxTreeNode CreateIntValueNode(Token t)
+		{
+			int value = StringUtils.parseToInt (t.Value);
+			return new IntValueNode (value, t);
+		}
+
+		public ISyntaxTreeNode CreateStringValueNode (Token t)
+		{
+			string value = t.Value;
+			return new StringValueNode (value, t);
+		}
+
+		public IExpressionNode CreateDefaultIntValueNode(Token t)
+		{
+			return new IntValueNode (Constants.DEFAULT_INTEGER_VALUE, t);
+		}
+
+		public IExpressionNode CreateDefaultStringValueNode (Token t)
+		{
+			return new StringValueNode (Constants.DEFAULT_STRING_VALUE, t);
 		}
 	}
 }

@@ -11,6 +11,19 @@ namespace MiniPLInterpreter
 		public StringValueNode (string value)
 		{
 			this.value = value;
+			this.token = new Token (0, 0, "", TokenType.STR_VAL);
+		}
+
+		public StringValueNode (string value, Token t)
+		{
+			this.value = value;
+			this.token = t;
+		}
+
+		public TokenType EvaluationType
+		{
+			get { return TokenType.STR_VAL; }
+			set { }
 		}
 
 		public TokenType Type ()

@@ -14,12 +14,11 @@ namespace MiniPLInterpreter
 
 		public ISemanticCheckValue VisitAssertNode(AssertNode node)
 		{
-			return getEvaluation (node.Expression.GetExpressions ());
+			return getEvaluation (node.Expression);
 		}
 
 		public ISemanticCheckValue VisitAssignNode(AssignNode node)
 		{
-			Console.WriteLine (node.ExprNode);
 			return getEvaluation (node.ExprNode);
 		}
 
@@ -52,7 +51,7 @@ namespace MiniPLInterpreter
 			}
 
 			if (!alright) {
-				return new MismatchProperty ();
+				return new ErrorProperty ();
 			}
 
 			return rangeFrom;
@@ -98,33 +97,46 @@ namespace MiniPLInterpreter
 			return analyzer.IDs[node.ID];
 		}
 
-		public IProperty VisitOperationNode (IExpressionNode node)
+		private IProperty VisitOperationNode (IExpressionNode node)
 		{
 			IProperty evaluationType = getEvaluation(node.GetExpressions());
 
 			if (Constants.LEGIT_OPERATIONS.ContainsKey(evaluationType.GetTokenType ()) &&
 				Constants.LEGIT_OPERATIONS [evaluationType.GetTokenType ()].ContainsKey (node.Operation)) {
+				if (Constants.LOGICAL_OPERATIONS.ContainsKey (node.Operation)) {
+					Console.WriteLine ("boolean operation: " + node.Operation);
+					return new BooleanProperty (Constants.DEFAULT_BOOL_VALUE);
+				}
+				Console.WriteLine ("not boolean operation: " + node.Operation);
 				return evaluationType;
 			}
-
-			return new MismatchProperty ();
+			return new ErrorProperty ();
 		}
 
 		private IProperty getEvaluation(params IExpressionNode[] expressions)
 		{
-			IProperty evaluatedType = expressions [0].Accept (this).asProperty ();
-			Console.WriteLine ("first evaluation: " + evaluatedType);
+			IExpressionNode expression = expressions [0];
+			IProperty evaluatedType = expression.Accept (this).asProperty ();
+			if (evaluatedType.GetTokenType () == TokenType.ERROR) {
+				expression.EvaluationType = TokenType.ERROR;
+				return new ErrorProperty ();
+			}
+
+			if (expression.EvaluationType == TokenType.UNDEFINED) {
+				expression.EvaluationType = evaluatedType.GetTokenType ();
+			}
+
 			for (int i = 1; i < expressions.Length; i++) {
-				IExpressionNode expression = expressions [i];
-				Console.WriteLine ("expression: " + expression);
+				expression = expressions [i];
+				Console.WriteLine ("getEvaluation: " + expression.GetValueType());
 				IProperty retVal = expression.Accept (this).asProperty();
-				Console.WriteLine ("retVal: " + retVal);
 				if (retVal.GetTokenType () != evaluatedType.GetTokenType ()) {
-					Console.WriteLine ("Oh shit!");
-					return new MismatchProperty ();
+					expression.EvaluationType = TokenType.ERROR;
+					return new ErrorProperty ();
 				}
 
 				if (evaluatedType.GetTokenType () == TokenType.ERROR) {
+					expression.EvaluationType = TokenType.ERROR;
 					break;
 				}
 			}

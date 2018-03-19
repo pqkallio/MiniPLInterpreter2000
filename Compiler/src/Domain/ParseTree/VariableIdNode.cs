@@ -11,6 +11,10 @@ namespace MiniPLInterpreter
 		private TokenType variableType;
 		private Token token;
 
+		public VariableIdNode(Dictionary<string, IProperty> ids)
+			: this(null, ids, null)
+		{}
+
 		public VariableIdNode(Dictionary<string, IProperty> ids, Token token)
 			: this(null, ids, token)
 		{}
@@ -20,6 +24,12 @@ namespace MiniPLInterpreter
 			this.id = id;
 			this.ids = ids;
 			this.token = token;
+		}
+
+		public TokenType EvaluationType
+		{
+			get { return ids [id].GetTokenType (); }
+			set { }
 		}
 
 		public string ID {

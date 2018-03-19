@@ -79,13 +79,6 @@ namespace MiniPLInterpreter
 			return null;
 		}
 
-
-
-
-
-
-
-
 		public ISemanticCheckValue VisitStringValueNode(StringValueNode node) {return null;}
 
 		public ISemanticCheckValue VisitUnOpNode(UnOpNode node) {return null;}
@@ -95,6 +88,7 @@ namespace MiniPLInterpreter
 		public ISemanticCheckValue VisitAssertNode(AssertNode node)
 		{
 			IProperty evaluation = node.Accept(this.typeChecker).asProperty();
+			Console.WriteLine (evaluation.GetTokenType());
 
 			if (evaluation.GetTokenType () != TokenType.BOOL_VAL) {
 				analyzer.notifyError (new IllegalTypeError (node));

@@ -8,11 +8,14 @@ namespace MiniPLInterpreter
 		private IExpressionNode leftOperand;
 		private IExpressionNode rightOperand;
 		private TokenType operation;
+		private TokenType evaluationType;
 		private Token token;
 
-		public BinOpNode ()
+		public BinOpNode (Token t)
 		{
 			this.operation = TokenType.BINARY_OP_NO_OP;
+			this.token = t;
+			this.evaluationType = TokenType.UNDEFINED;
 		}
 
 		public IExpressionNode LeftOperand {
@@ -83,6 +86,12 @@ namespace MiniPLInterpreter
 			if (rightOperand != null) {
 				((ISyntaxTreeNode)rightOperand).AddNodesToQueue (q);
 			}
+		}
+
+		public TokenType EvaluationType
+		{
+			get { return this.evaluationType; }
+			set { this.evaluationType = value; }
 		}
 
 		public TokenType GetEvaluationType (TokenType parentType)

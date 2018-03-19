@@ -46,7 +46,8 @@ namespace MiniPLInterpreter
 		EXPRESSION,
 		BINARY_OP,
 		UNARY_OP,
-		BINARY_OP_NO_OP
+		BINARY_OP_NO_OP,
+		VOID
 	}
 }
 

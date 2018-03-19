@@ -8,8 +8,10 @@ namespace MiniPLInterpreter
 		private IExpressionNode expressionNode;
 		private Token token;
 
-		public AssertNode ()
-		{}
+		public AssertNode (Token t)
+		{
+			this.token = t;
+		}
 
 		public TokenType Type ()
 		{

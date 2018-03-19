@@ -12,13 +12,14 @@ namespace MiniPLInterpreter
 		private AssignNode rangeFrom;
 		private Token token;
 
-		public ForLoopNode (VariableIdNode idNode)
+		public ForLoopNode (VariableIdNode idNode, Token t)
 		{
 			this.idNode = idNode;
-			indexAccumulator = new BinOpNode ();
+			this.token = t;
+			indexAccumulator = new BinOpNode (t);
 			indexAccumulator.Operation = TokenType.BINARY_OP_ADD;
 			indexAccumulator.AddOperand (idNode);
-			indexAccumulator.AddOperand (new IntValueNode (1));
+			indexAccumulator.AddOperand (new IntValueNode (1, t));
 		}
 
 		public TokenType Type ()

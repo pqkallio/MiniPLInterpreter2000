@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace MiniPLInterpreter
 {
@@ -152,6 +153,29 @@ namespace MiniPLInterpreter
 				default:
 					throw new ArgumentException (String.Format ("operation {0} not defined for string values", operation));
 			}
+		}
+
+		public static string IntToString (int value)
+		{
+			if (value == 0) {
+				return "0";
+			}
+
+			bool neg = value < 0;
+			int abs = neg ? -1 * value : value;
+
+			StringBuilder sb = new StringBuilder ();
+
+			while (abs > 0) {
+				sb.Insert (0, abs % 10);
+				abs /= 10;
+			}
+
+			if (neg) {
+				sb.Insert (0, '-');
+			}
+
+			return sb.ToString ();
 		}
 	}
 }

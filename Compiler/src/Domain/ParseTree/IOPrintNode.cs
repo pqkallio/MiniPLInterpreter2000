@@ -8,8 +8,10 @@ namespace MiniPLInterpreter
 		private IExpressionNode expression;
 		private Token token;
 
-		public IOPrintNode ()
-		{}
+		public IOPrintNode (Token t)
+		{
+			this.token = t;
+		}
 
 		public TokenType Type ()
 		{

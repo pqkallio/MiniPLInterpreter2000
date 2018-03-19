@@ -82,7 +82,11 @@
     <Compile Include="src\Domain\SemanticCheckValues\ISemanticCheckValue.cs" />
     <Compile Include="src\Domain\SemanticCheckValues\TypeCheckValue.cs" />
     <Compile Include="src\Domain\Visitors\INodeVisitor.cs" />
-    <Compile Include="src\Domain\Values\MismatchProperty.cs" />
+    <Compile Include="src\Domain\Visitors\ExecutionVisitor.cs" />
+    <Compile Include="src\Domain\Values\ErrorProperty.cs" />
+    <Compile Include="src\Domain\Values\VoidProperty.cs" />
+    <Compile Include="src\Services\Interpreter.cs" />
+    <Compile Include="src\Domain\Visitors\EvaluationVisitor.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\" />

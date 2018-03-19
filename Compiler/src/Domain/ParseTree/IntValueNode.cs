@@ -11,6 +11,19 @@ namespace MiniPLInterpreter
 		public IntValueNode (int value)
 		{
 			this.value = value;
+			this.Token = new Token (0, 0, "", TokenType.INT_VAL);
+		}
+
+		public IntValueNode (int value, Token t)
+		{
+			this.value = value;
+			this.token = t;
+		}
+
+		public TokenType EvaluationType
+		{
+			get { return TokenType.INT_VAL; }
+			set { }
 		}
 
 		public TokenType Type ()

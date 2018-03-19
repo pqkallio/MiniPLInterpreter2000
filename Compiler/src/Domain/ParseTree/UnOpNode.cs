@@ -8,9 +8,13 @@ namespace MiniPLInterpreter
 		private IExpressionNode operand;
 		private TokenType operation;
 		private Token token;
+		private TokenType evaluationType;
 
-		public UnOpNode ()
-		{}
+		public UnOpNode (Token t)
+		{
+			this.token = t;
+			this.evaluationType = TokenType.UNDEFINED;
+		}
 
 		public IExpressionNode Operand {
 			get { return operand; }
@@ -55,6 +59,12 @@ namespace MiniPLInterpreter
 		{
 			q.Enqueue (this);
 			((ISyntaxTreeNode)operand).AddNodesToQueue (q);
+		}
+
+		public TokenType EvaluationType
+		{
+			get { return this.evaluationType; }
+			set { this.evaluationType = value; }
 		}
 
 		public TokenType GetEvaluationType (TokenType parentType)

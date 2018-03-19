@@ -11,10 +11,11 @@ namespace MiniPLInterpreter
 		private Dictionary<string, IProperty> ids;
 		private Token token;
 
-		public DeclarationNode (VariableIdNode idNode, Dictionary<string, IProperty> ids)
+		public DeclarationNode (VariableIdNode idNode, Dictionary<string, IProperty> ids, Token t)
 		{
 			this.idNode = idNode;
 			this.ids = ids;
+			this.token = t;
 		}
 
 		public AssignNode AssignNode

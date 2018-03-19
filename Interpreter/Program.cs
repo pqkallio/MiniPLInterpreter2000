@@ -74,6 +74,16 @@ namespace Interpreter
 					foreach (Error e in se.getErrors ()) {
 						Console.WriteLine (e);
 					}
+
+					if (se.getErrors ().Count == 0) {
+						Console.WriteLine ("got here");
+						MiniPLInterpreter.Interpreter ip = new MiniPLInterpreter.Interpreter (p.SyntaxTree);
+						ip.Interpret ();
+
+						foreach (string id in ip.IDs.Keys) {
+							Console.WriteLine (id + ": " + ip.IDs [id].asString ());
+						}
+					}
 				}
 			}
 		}

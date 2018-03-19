@@ -145,6 +145,14 @@ namespace MiniPLInterpreter
 			}
 		};
 
+		public static readonly Dictionary<TokenType, string> LOGICAL_OPERATIONS = new Dictionary<TokenType, string> ()
+														{
+															{TokenType.BINARY_OP_LOG_AND, null},
+															{TokenType.BINARY_OP_LOG_EQ, null},
+															{TokenType.BINARY_OP_LOG_LT, null},
+															{TokenType.UNARY_OP_LOG_NEG, null}
+														};
+
 		public static readonly Dictionary<TokenType, string> STATEMENT_FASTFORWARD_TO = new Dictionary<TokenType, string> () 
 														{
 															{TokenType.END_STATEMENT, null},
@@ -157,5 +165,9 @@ namespace MiniPLInterpreter
 															{TokenType.END_STATEMENT, null},
 															{TokenType.END_OF_FILE, null}
 														};
+
+		public static readonly bool DEFAULT_BOOL_VALUE = false;
+		public static readonly int DEFAULT_INTEGER_VALUE = 0;
+		public static readonly string DEFAULT_STRING_VALUE = "";
 	}
 }

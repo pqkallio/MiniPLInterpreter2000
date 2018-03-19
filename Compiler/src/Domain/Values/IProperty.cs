@@ -10,6 +10,12 @@ namespace MiniPLInterpreter
 			get;
 			set;
 		}
+		int asInteger ();
+		string asString ();
+		bool asBoolean ();
+		void setInteger (int value);
+		void setString (string value);
+		void setBoolean (bool value);
 	}
 }
 

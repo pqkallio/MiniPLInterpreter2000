@@ -27,11 +27,6 @@ namespace MiniPLInterpreter
 			return sequitor.execute ();
 		}
 
-		public override string ToString ()
-		{
-			return "ROOT";
-		}
-
 		public void AddNodesToQueue (Queue q)
 		{
 			q.Enqueue (this);
@@ -48,6 +43,11 @@ namespace MiniPLInterpreter
 		{
 			get { return this.token; }
 			set { }
+		}
+
+		public override string ToString ()
+		{
+			return "ROOT";
 		}
 	}
 }

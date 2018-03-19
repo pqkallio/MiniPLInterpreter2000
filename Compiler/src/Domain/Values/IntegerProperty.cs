@@ -38,6 +38,30 @@ namespace MiniPLInterpreter
 		{
 			return this;
 		}
+
+		public int asInteger ()
+		{
+			return Value;
+		}
+
+		public string asString ()
+		{
+			return StringUtils.IntToString (Value);
+		}
+
+		public bool asBoolean ()
+		{
+			return Value != 0;
+		}
+
+		public void setInteger (int value)
+		{
+			Value = value;
+		}
+
+		public void setString (string value) {}
+
+		public void setBoolean (bool value) {}
 	}
 }
 
