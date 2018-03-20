@@ -1,30 +1,38 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace MiniPLInterpreter
 {
 	public class ForLoopNode : IExpressionContainer
 	{
 		private VariableIdNode idNode;
-		private BinOpNode indexAccumulator;
+		private AssignNode indexAccumulator;
 		private IExpressionNode max;
 		private StatementsNode statements;
 		private AssignNode rangeFrom;
 		private Token token;
 
-		public ForLoopNode (VariableIdNode idNode, Token t)
+		public ForLoopNode (VariableIdNode idNode, Dictionary<string, IProperty> ids, Token t)
 		{
 			this.idNode = idNode;
 			this.token = t;
-			indexAccumulator = new BinOpNode (t);
-			indexAccumulator.Operation = TokenType.BINARY_OP_ADD;
-			indexAccumulator.AddOperand (idNode);
-			indexAccumulator.AddOperand (new IntValueNode (1, t));
+			this.indexAccumulator = new AssignNode (idNode, ids, t);
+			BinOpNode accum = new BinOpNode (t);
+			accum.Operation = TokenType.BINARY_OP_ADD;
+			accum.AddOperand (idNode);
+			accum.AddOperand (new IntValueNode (1, t));
+			this.indexAccumulator.ExprNode = accum;
 		}
 
 		public TokenType Type ()
 		{
 			return TokenType.FOR_LOOP;
+		}
+
+		public AssignNode Accumulator
+		{
+			get { return indexAccumulator; }
 		}
 
 		public StatementsNode Statements

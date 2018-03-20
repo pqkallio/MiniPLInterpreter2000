@@ -17,6 +17,7 @@ namespace MiniPLInterpreter
 		ISemanticCheckValue VisitStringValueNode(StringValueNode node);
 		ISemanticCheckValue VisitUnOpNode(UnOpNode node);
 		ISemanticCheckValue VisitVariableIdNode(VariableIdNode node);
+		ISemanticCheckValue VisitBoolValueNode(BoolValueNode node);
 	}
 }
 

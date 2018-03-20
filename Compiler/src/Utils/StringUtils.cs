@@ -59,6 +59,23 @@ namespace MiniPLInterpreter
 			return negative ? -1 * value : value;
 		}
 
+		public static bool parseToBoolean (string str)
+		{
+			if (String.IsNullOrEmpty (str)) {
+				throw new ArgumentException ();
+			}
+
+			if (str.Equals ("true")) {
+				return true;
+			}
+
+			if (str.Equals ("false")) {
+				return false;
+			}
+
+			throw new ArgumentException ();
+		}
+
 		public static bool sequenceMatch (string input, int index, string sequence)
 		{
 			if (input == null || sequence == null) {

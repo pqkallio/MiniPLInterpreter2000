@@ -33,9 +33,15 @@ namespace MiniPLInterpreter
 			get { return this.errorMessage; }
 		}
 
-		public Token Token
+		public virtual Token Token
 		{
-			get { return this.token; }
+			get {
+					if (this.node != null) {
+						return this.node.Token;
+					}
+
+					return this.token;
+				}
 		}
 
 		public ISyntaxTreeNode Node {

@@ -8,12 +8,14 @@ namespace MiniPLInterpreter
 		private SyntaxTree syntaxTree;
 		private Dictionary<string, IProperty> ids;
 		private ExecutionVisitor executor;
+		private Printer printer;
 
-		public Interpreter (SyntaxTree syntaxTree)
+		public Interpreter (SyntaxTree syntaxTree, Printer printer)
 		{
 			this.syntaxTree = syntaxTree;
 			this.ids = new Dictionary<string, IProperty> ();
-			this.executor = new ExecutionVisitor (ids);
+			this.printer = printer;
+			this.executor = new ExecutionVisitor (ids, this.printer);
 		}
 
 		public void Interpret () {

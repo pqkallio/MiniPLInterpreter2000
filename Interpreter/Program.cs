@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using MiniPLInterpreter;
@@ -16,73 +17,24 @@ namespace Interpreter
 			using (StreamReader sr = new StreamReader (@args [0])) {
 				Dictionary<string, IProperty> ids = new Dictionary<string, IProperty> ();
 				Parser p = new Parser (ids);
+				Printer printer = new Printer (File.ReadLines(@args [0]).ToList ());
 				Scanner s = new Scanner (sr);
 				p.Scanner = s;
 				p.Parse ();
 
-				Console.WriteLine ("*************");
+				printer.printErrors (s.getErrors ());
 
-				foreach (Error e in s.getErrors()) {
-					int line = e.Token.Row;
-					int column = e.Token.Column;
+				printer.printErrors (p.getErrors ());
 
-					string l = GetLine (@args [0], line);
-					Console.WriteLine (e);
-					Console.WriteLine (l);
-					string x = "";
-					for (int i = 1; i < column; i++) {
-						x += ' ';
-					}
-					x += '^';
-					Console.WriteLine (x);
-				}
-
-				Console.WriteLine ("*************");
-
-				foreach (Error e in p.getErrors()) {
-					int line = e.Token.Row;
-					int column = e.Token.Column;
-
-					string l = GetLine (@args [0], line);
-					Console.WriteLine (e);
-					Console.WriteLine (l);
-					string x = "";
-					for (int i = 1; i < column; i++) {
-						x += ' ';
-					}
-					x += '^';
-					Console.WriteLine (x);
-				}
-
-				/*
-				SyntaxTree tree = p.SyntaxTree;
-
-				Queue q = tree.NodeOrder ();
-
-				while (q.Count > 0) {
-					object o = q.Dequeue ();
-					Console.WriteLine (o);
-				}
-				*/
-
-				Console.WriteLine ("*************");
 				if (p.SyntaxTreeBuilt) {
 					SemanticAnalyzer se = new SemanticAnalyzer (p.SyntaxTree, ids);
 					se.Analyze ();
-					Console.WriteLine ("*************");
 
-					foreach (Error e in se.getErrors ()) {
-						Console.WriteLine (e);
-					}
+					printer.printErrors (se.getErrors ());
 
 					if (se.getErrors ().Count == 0) {
-						Console.WriteLine ("got here");
-						MiniPLInterpreter.Interpreter ip = new MiniPLInterpreter.Interpreter (p.SyntaxTree);
+						MiniPLInterpreter.Interpreter ip = new MiniPLInterpreter.Interpreter (p.SyntaxTree, printer);
 						ip.Interpret ();
-
-						foreach (string id in ip.IDs.Keys) {
-							Console.WriteLine (id + ": " + ip.IDs [id].asString ());
-						}
 					}
 				}
 			}

@@ -159,7 +159,7 @@ namespace MiniPLInterpreter
 			try {
 				next = ParseVarId (scanner.getNextToken (t), idNode);
 				match (next, TokenType.RANGE_FROM);
-				AssignNode rangeFrom = nodeBuilder.CreateAssignNode(idNode);
+				AssignNode rangeFrom = nodeBuilder.CreateAssignNode(idNode, next);
 				forLoop.RangeFrom = rangeFrom;
 				next = ParseExpression (scanner.getNextToken (next), rangeFrom);
 				match (next, TokenType.RANGE_UPTO);
@@ -209,9 +209,10 @@ namespace MiniPLInterpreter
 			try {
 				Token next = scanner.getNextToken (t);
 				match (next, TokenType.PARENTHESIS_LEFT);
-				AssertNode assertNode = nodeBuilder.CreateAssertNode(statementsNode, t);
+				AssertNode assertNode = nodeBuilder.CreateAssertNode(statementsNode, t, next.Row, next.Column + 1);
 				next = ParseExpression (scanner.getNextToken (next), assertNode);
 				match (next, TokenType.PARENTHESIS_RIGHT);
+				assertNode.AssertStatementEndCol = next.Column;
 				return scanner.getNextToken (next);
 			} catch (UnexpectedTokenException ex) {
 				return FastForwardToStatementEnd (ex);
@@ -271,6 +272,7 @@ namespace MiniPLInterpreter
 			switch (t.Type) {
 				case TokenType.INT_VAL:
 				case TokenType.STR_VAL:
+				case TokenType.BOOL_VAL:
 				case TokenType.PARENTHESIS_LEFT:
 				case TokenType.ID:
 					BinOpNode binOp = nodeBuilder.CreateBinOpNode(node, t);
@@ -295,6 +297,10 @@ namespace MiniPLInterpreter
 				case TokenType.STR_VAL:
 					ISyntaxTreeNode strVal = nodeBuilder.CreateStringValueNode(t);
 					node.AddOperand (strVal);
+					return scanner.getNextToken (t);
+				case TokenType.BOOL_VAL:
+					ISyntaxTreeNode boolVal = nodeBuilder.CreateBoolValueNode(t);
+					node.AddOperand (boolVal);
 					return scanner.getNextToken (t);
 				case TokenType.ID:
 					ISyntaxTreeNode varId = nodeBuilder.CreateIdNode(t);
@@ -383,6 +389,9 @@ namespace MiniPLInterpreter
 					break;
 				case TokenType.INT_VAL:
 					assignNode.AddExpression (nodeBuilder.CreateDefaultIntValueNode(assignNode.Token));
+					break;
+				case TokenType.BOOL_VAL:
+					assignNode.AddExpression (nodeBuilder.CreateDefaultBoolValueNode (assignNode.Token));
 					break;
 			} 
 		}

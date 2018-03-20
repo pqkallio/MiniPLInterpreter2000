@@ -17,7 +17,7 @@ namespace MiniPLInterpreter
 
 		public ISemanticCheckValue VisitAssertNode(AssertNode node)
 		{
-			return voidProperty;
+			return node.Expression.Accept (this);
 		}
 
 		public ISemanticCheckValue VisitAssignNode(AssignNode node)
@@ -52,6 +52,13 @@ namespace MiniPLInterpreter
 		public ISemanticCheckValue VisitIntValueNode(IntValueNode node)
 		{
 			IntValueNode newNode = new IntValueNode (node.Value);
+
+			return newNode;
+		}
+
+		public ISemanticCheckValue VisitBoolValueNode(BoolValueNode node)
+		{
+			BoolValueNode newNode = new BoolValueNode (node.Value);
 
 			return newNode;
 		}

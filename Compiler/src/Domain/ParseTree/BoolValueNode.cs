@@ -3,16 +3,16 @@ using System.Collections;
 
 namespace MiniPLInterpreter
 {
-	public class IntValueNode : IExpressionNode, ISemanticCheckValue
+	public class BoolValueNode : IExpressionNode, ISemanticCheckValue
 	{
-		private int value;
+		private bool value;
 		private Token token;
 
-		public IntValueNode (int value)
-			: this(value, new Token (0, 0, "", TokenType.INT_VAL))
+		public BoolValueNode (bool value)
+			: this(value, new Token (0, 0, "", TokenType.BOOL_VAL))
 		{}
 
-		public IntValueNode (int value, Token t)
+		public BoolValueNode (bool value, Token t)
 		{
 			this.value = value;
 			this.token = t;
@@ -20,13 +20,13 @@ namespace MiniPLInterpreter
 
 		public TokenType EvaluationType
 		{
-			get { return TokenType.INT_VAL; }
+			get { return TokenType.BOOL_VAL; }
 			set { }
 		}
 
 		public TokenType Type ()
 		{
-			return TokenType.INT_VAL;
+			return TokenType.BOOL_VAL;
 		}
 
 		public object execute ()
@@ -34,7 +34,7 @@ namespace MiniPLInterpreter
 			return this.value;
 		}
 
-		public int Value {
+		public bool Value {
 			get { return this.value; }
 			set { this.value = value; }
 		}
@@ -74,12 +74,12 @@ namespace MiniPLInterpreter
 		}
 
 		public ISemanticCheckValue Accept(INodeVisitor visitor) {
-			return visitor.VisitIntValueNode (this);
+			return visitor.VisitBoolValueNode (this);
 		}
 
 		public IProperty asProperty ()
 		{
-			return new IntegerProperty(Value);
+			return new BooleanProperty(Value);
 		}
 
 		public Token Token

@@ -61,6 +61,8 @@ namespace MiniPLInterpreter
 
 		public ISemanticCheckValue VisitIntValueNode(IntValueNode node) {return null;}
 
+		public ISemanticCheckValue VisitBoolValueNode(BoolValueNode node) {return null;}
+
 		public ISemanticCheckValue VisitRootNode(RootNode node) {
 			if (node.Sequitor != null) {
 				node.Sequitor.Accept (this);

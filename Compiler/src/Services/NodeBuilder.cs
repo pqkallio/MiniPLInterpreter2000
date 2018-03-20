@@ -44,15 +44,18 @@ namespace MiniPLInterpreter
 		public DeclarationNode CreateDeclarationNode (VariableIdNode idNode, StatementsNode statementsNode, Token t)
 		{
 			DeclarationNode declarationNode = new DeclarationNode (idNode, ids, t);
-			declarationNode.AssignNode = CreateAssignNode (idNode);
+			declarationNode.AssignNode = CreateAssignNode (idNode, t);
 			statementsNode.Statement = declarationNode;
 
 			return declarationNode;
 		}
 
-		public AssignNode CreateAssignNode (VariableIdNode idNode)
+		public AssignNode CreateAssignNode (VariableIdNode idNode, Token t)
 		{
-			return new AssignNode (idNode, ids);
+			if (idNode.Token == null) {
+				idNode.Token = t;
+			}
+			return new AssignNode (idNode, ids, t);
 		}
 
 		public AssignNode CreateAssignNode (VariableIdNode idNode, StatementsNode statementsNode, Token t)
@@ -65,7 +68,7 @@ namespace MiniPLInterpreter
 
 		public ForLoopNode CreateForLoopNode (VariableIdNode idNode, StatementsNode statementsNode, Token t)
 		{
-			ForLoopNode node = new ForLoopNode (idNode, t);
+			ForLoopNode node = new ForLoopNode (idNode, ids, t);
 			statementsNode.Statement = node;
 
 			return node;
@@ -87,9 +90,9 @@ namespace MiniPLInterpreter
 			return ioPrintNode;
 		}
 
-		public AssertNode CreateAssertNode (StatementsNode statementsNode, Token t)
+		public AssertNode CreateAssertNode (StatementsNode statementsNode, Token t, int assertStatementRow, int assertStatementStartCol)
 		{
-			AssertNode assertNode = new AssertNode (t);
+			AssertNode assertNode = new AssertNode (t, assertStatementRow, assertStatementStartCol);
 			statementsNode.Statement = assertNode;
 
 			return assertNode;
@@ -123,6 +126,12 @@ namespace MiniPLInterpreter
 			return new StringValueNode (value, t);
 		}
 
+		public ISyntaxTreeNode CreateBoolValueNode (Token t)
+		{
+			bool value = StringUtils.parseToBoolean (t.Value);
+			return new BoolValueNode (value, t);
+		}
+
 		public IExpressionNode CreateDefaultIntValueNode(Token t)
 		{
 			return new IntValueNode (Constants.DEFAULT_INTEGER_VALUE, t);
@@ -131,6 +140,11 @@ namespace MiniPLInterpreter
 		public IExpressionNode CreateDefaultStringValueNode (Token t)
 		{
 			return new StringValueNode (Constants.DEFAULT_STRING_VALUE, t);
+		}
+
+		public IExpressionNode CreateDefaultBoolValueNode (Token t)
+		{
+			return new BoolValueNode (Constants.DEFAULT_BOOL_VALUE, t);
 		}
 	}
 }

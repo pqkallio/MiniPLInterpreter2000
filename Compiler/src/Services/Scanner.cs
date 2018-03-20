@@ -14,8 +14,8 @@ namespace MiniPLInterpreter
 	{
 		private List<Error> errors;
 		private StreamReader inputStream;
-		private int col = 0;
-		private int row = 1;
+		private int col = -1;
+		private int row = 0;
 
 		public Scanner (StreamReader inputStream)
 		{
@@ -36,7 +36,7 @@ namespace MiniPLInterpreter
 
 			if (c == Constants.LINEBREAK) {
 				row++;
-				col = 0;
+				col = -1;
 			} else {
 				col++;
 			}
@@ -122,6 +122,9 @@ namespace MiniPLInterpreter
 					notifyError (new TokenError (token, "Reserved keyword used as variable identifier"));
 				} else {
 					token.Type = Constants.RESERVED_SEQUENCES [val];
+					if (token.Type == TokenType.BOOL_VAL) {
+						token.Value = val;
+					}
 				}
 			} else {
 				token.Value = val;
@@ -247,12 +250,14 @@ namespace MiniPLInterpreter
 			bool escapeNextChar = false;
 			bool stringEnded = false;
 			StringBuilder sb = new StringBuilder ();
+			bool errored = false;
 
 			while (!inputStream.EndOfStream) {
 				char c = readStream ();
 
-				if (c == Constants.LINEBREAK) {
+				if (c == Constants.LINEBREAK && !errored) {
 					notifyError (new StringLiteralError (token, "String literal mustn't span multiple lines"));
+					errored = true;
 				} else if (escapeNextChar) {
 					escapeNextChar = false;
 

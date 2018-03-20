@@ -87,6 +87,9 @@
     <Compile Include="src\Domain\Values\VoidProperty.cs" />
     <Compile Include="src\Services\Interpreter.cs" />
     <Compile Include="src\Domain\Visitors\EvaluationVisitor.cs" />
+    <Compile Include="src\Services\Printer.cs" />
+    <Compile Include="src\Services\StringFormatter.cs" />
+    <Compile Include="src\Domain\ParseTree\BoolValueNode.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\" />

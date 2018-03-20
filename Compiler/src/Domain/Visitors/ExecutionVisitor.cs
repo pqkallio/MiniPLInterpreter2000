@@ -8,12 +8,14 @@ namespace MiniPLInterpreter
 		private Dictionary<string, IProperty> ids;
 		private EvaluationVisitor evaluator;
 		private VoidProperty voidProperty;
+		private Printer printer;
 
-		public ExecutionVisitor (Dictionary<string, IProperty> ids)
+		public ExecutionVisitor (Dictionary<string, IProperty> ids, Printer printer)
 		{
 			this.ids = ids;
 			this.evaluator = new EvaluationVisitor (this.ids);
 			this.voidProperty = new VoidProperty ();
+			this.printer = printer;
 		}
 
 		public ISemanticCheckValue VisitRootNode(RootNode node)
@@ -65,6 +67,11 @@ namespace MiniPLInterpreter
 			return node.Accept (evaluator);
 		}
 
+		public ISemanticCheckValue VisitBoolValueNode(BoolValueNode node)
+		{
+			return node.Accept (evaluator);
+		}
+
 		public ISemanticCheckValue VisitStringValueNode(StringValueNode node)
 		{
 			return node.Accept (evaluator);
@@ -83,7 +90,9 @@ namespace MiniPLInterpreter
 		public ISemanticCheckValue VisitAssertNode(AssertNode node)
 		{
 			IProperty evaluation = node.Accept(this.evaluator).asProperty();
-			Console.WriteLine (evaluation.GetTokenType());
+			if (!evaluation.asBoolean ()) {
+				printer.printAssertionFailure (node);
+			}
 
 			return voidProperty;
 		}
@@ -91,7 +100,7 @@ namespace MiniPLInterpreter
 		public ISemanticCheckValue VisitIOPrintNode(IOPrintNode node)
 		{
 			IProperty evaluation = node.Expression.Accept (this).asProperty ();
-			Console.WriteLine (evaluation.asString ());
+			Console.Write (evaluation.asString ());
 
 			return voidProperty;
 		}
@@ -109,12 +118,14 @@ namespace MiniPLInterpreter
 
 		public ISemanticCheckValue VisitForLoopNode(ForLoopNode node)
 		{
+			int max = node.MaxValue.Accept (this).asProperty ().asInteger ();
+			node.RangeFrom.Accept (this);
 			VariableIdNode idNode = node.IDNode;
 
-			IExpressionNode max = node.MaxValue;
-
-			node.Statements.Accept (this);
-
+			while (idNode.Accept (this).asProperty ().asInteger () <= max) {
+				node.Statements.Accept (this);
+				node.Accumulator.Accept (this);
+			}
 			return voidProperty;
 		}
 

@@ -28,18 +28,6 @@ namespace MiniPLInterpreter
 															{"assert", TokenType.ASSERT}
 														};
 
-		public static readonly Dictionary<string, TokenType> OLD_INDEPENDENT_CHARS = new Dictionary<string, TokenType> ()	
-														{
-															{"<", TokenType.BINARY_OP_LOG_LT},
-															{"=", TokenType.BINARY_OP_LOG_EQ},
-															{"&", TokenType.BINARY_OP_LOG_AND}, 
-															{"!", TokenType.UNARY_OP_LOG_NEG}, 
-															{";", TokenType.END_STATEMENT}, 
-															{"(", TokenType.PARENTHESIS_LEFT}, 
-															{")", TokenType.PARENTHESIS_RIGHT},
-															{"*", TokenType.BINARY_OP_MUL}
-														};
-
 		public static readonly Dictionary<char, TokenType> INDEPENDENT_CHARS = new Dictionary<char, TokenType> ()	
 														{
 															{'<', TokenType.BINARY_OP_LOG_LT},
@@ -52,12 +40,41 @@ namespace MiniPLInterpreter
 															{'*', TokenType.BINARY_OP_MUL}
 														};
 
+		public static readonly Dictionary<TokenType, string> tokenTypeStrings = new Dictionary<TokenType, string> () 
+														{
+															{TokenType.DECLARATION, "var"},
+															{TokenType.FOR_LOOP, "for"},
+															{TokenType.END_OF_BLOCK, "end"},
+															{TokenType.RANGE_FROM, "in"},
+															{TokenType.INT_VAR, "int"},
+															{TokenType.START_BLOCK, "do"},
+															{TokenType.READ, "read"},
+															{TokenType.PRINT, "print"},
+															{TokenType.STR_VAR, "string"},
+															{TokenType.BOOL_VAR, "bool"},
+															{TokenType.ASSERT, "assert"},
+															{TokenType.BINARY_OP_LOG_LT, "<"},
+															{TokenType.BINARY_OP_LOG_EQ, "="},
+															{TokenType.BINARY_OP_LOG_AND, "&"},
+															{TokenType.UNARY_OP_LOG_NEG, "!"},
+															{TokenType.END_STATEMENT, ";"},
+															{TokenType.PARENTHESIS_LEFT, "("},
+															{TokenType.PARENTHESIS_RIGHT, ")"},
+															{TokenType.BINARY_OP_MUL, "*"},
+															{TokenType.BINARY_OP_ADD, "+"},
+															{TokenType.BINARY_OP_SUB, "-"},
+															{TokenType.BINARY_OP_DIV, "/"},
+															{TokenType.SET_TYPE, ":"},
+															{TokenType.ASSIGN, ":="},
+														};
+
 		public static readonly Tuple<char, TokenType> BINARY_OP_ADD = Tuple.Create('+', TokenType.BINARY_OP_ADD);
 		public static readonly Tuple<char, TokenType> BINARY_OP_SUB = Tuple.Create('-', TokenType.BINARY_OP_SUB);
 		public static readonly Tuple<char, TokenType> BINARY_OP_DIV = Tuple.Create('/', TokenType.BINARY_OP_DIV);
 		public static readonly Tuple<char, TokenType> SET_TYPE = Tuple.Create(':', TokenType.SET_TYPE);
 		public static readonly Tuple<char, TokenType> ASSIGN = Tuple.Create('=', TokenType.ASSIGN);
 
+		/*
 		public static readonly Dictionary<string, TokenType> SUCCESSOR_DEPENDENT = new Dictionary<string, TokenType> ()
 														{
 															{":=", TokenType.ASSIGN},
@@ -67,7 +84,7 @@ namespace MiniPLInterpreter
 		public static readonly Dictionary<string, string> COMMENT_DELIMITERS = new Dictionary<string, string>()
 														{
 															{"//", "\n"},
-															{"/*", "*/"}
+															{"/*", "*\/"}
 														};
 
 		public static readonly Dictionary<string, TokenType>[] ALL_SEQUENCES = 
@@ -76,6 +93,7 @@ namespace MiniPLInterpreter
 															SUCCESSOR_DEPENDENT, 
 															RESERVED_SEQUENCES
 														};
+		*/
 
 		public static readonly char ESCAPE_CHAR = '\\';
 		public static readonly char STRING_DELIMITER = '"';
@@ -100,6 +118,12 @@ namespace MiniPLInterpreter
 		public static readonly string ILLEGAL_TYPE_ERROR_MESSAGE = "The type is not supported by this expression";
 		public static readonly string DECLARATION_ERROR_MESSAGE = "The variable has already been declared";
 
+		public static readonly string ASSERTION_FAILED = "Assertion failed: ";
+		public static readonly Tuple<char, char> PRINT_ROW_AND_COLUMN_PARENTHESES = Tuple.Create('[', ']');
+		public static readonly string PRINT_ROW = "Line: ";
+		public static readonly string PRINT_COL = "Column: ";
+		public static readonly string PRINT_ROW_COL_DELIMITER = "; ";
+
 		public static readonly Dictionary<char, char> UTF8_VALID_ID_CHAR_RANGES = new Dictionary<char, char> ()
 														{
 															{UTF8_SMALL_LETTERS_START, UTF8_SMALL_LETTERS_END},
@@ -110,39 +134,39 @@ namespace MiniPLInterpreter
 
 		public static readonly Dictionary<TokenType, Dictionary<TokenType, string>> LEGIT_OPERATIONS = new Dictionary<TokenType, Dictionary<TokenType, string>> ()
 		{
-			{TokenType.INT_VAL, 
-				new Dictionary<TokenType, string> () 
-					{
-						{TokenType.BINARY_OP_ADD, null},
-						{TokenType.BINARY_OP_DIV, null},
-						{TokenType.BINARY_OP_MUL, null},
-						{TokenType.BINARY_OP_NO_OP, null},
-						{TokenType.BINARY_OP_SUB, null},
-						{TokenType.BINARY_OP_LOG_EQ, null},
-						{TokenType.BINARY_OP_LOG_LT, null},
-						{TokenType.RANGE_FROM, null},
-						{TokenType.RANGE_UPTO, null}
-					}
-			},
-			{TokenType.STR_VAL, 
-				new Dictionary<TokenType, string> () 
-				{
-					{TokenType.BINARY_OP_ADD, null},
-					{TokenType.BINARY_OP_NO_OP, null},
-					{TokenType.BINARY_OP_LOG_EQ, null},
-					{TokenType.BINARY_OP_LOG_LT, null}
-				}
-			},
-			{TokenType.BOOL_VAL, 
-				new Dictionary<TokenType, string> () 
-				{
-					{TokenType.BINARY_OP_NO_OP, null},
-					{TokenType.BINARY_OP_LOG_EQ, null},
-					{TokenType.BINARY_OP_LOG_LT, null},
-					{TokenType.BINARY_OP_LOG_AND, null},
-					{TokenType.UNARY_OP_LOG_NEG, null}
-				}
-			}
+																			{TokenType.INT_VAL, 
+																				new Dictionary<TokenType, string> () 
+																					{
+																						{TokenType.BINARY_OP_ADD, null},
+																						{TokenType.BINARY_OP_DIV, null},
+																						{TokenType.BINARY_OP_MUL, null},
+																						{TokenType.BINARY_OP_NO_OP, null},
+																						{TokenType.BINARY_OP_SUB, null},
+																						{TokenType.BINARY_OP_LOG_EQ, null},
+																						{TokenType.BINARY_OP_LOG_LT, null},
+																						{TokenType.RANGE_FROM, null},
+																						{TokenType.RANGE_UPTO, null}
+																					}
+																			},
+																			{TokenType.STR_VAL, 
+																				new Dictionary<TokenType, string> () 
+																				{
+																					{TokenType.BINARY_OP_ADD, null},
+																					{TokenType.BINARY_OP_NO_OP, null},
+																					{TokenType.BINARY_OP_LOG_EQ, null},
+																					{TokenType.BINARY_OP_LOG_LT, null}
+																				}
+																			},
+																			{TokenType.BOOL_VAL, 
+																				new Dictionary<TokenType, string> () 
+																				{
+																					{TokenType.BINARY_OP_NO_OP, null},
+																					{TokenType.BINARY_OP_LOG_EQ, null},
+																					{TokenType.BINARY_OP_LOG_LT, null},
+																					{TokenType.BINARY_OP_LOG_AND, null},
+																					{TokenType.UNARY_OP_LOG_NEG, null}
+																				}
+																			}
 		};
 
 		public static readonly Dictionary<TokenType, string> LOGICAL_OPERATIONS = new Dictionary<TokenType, string> ()

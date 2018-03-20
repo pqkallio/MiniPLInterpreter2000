@@ -62,6 +62,11 @@ namespace MiniPLInterpreter
 			return node;
 		}
 
+		public ISemanticCheckValue VisitBoolValueNode(BoolValueNode node)
+		{
+			return node;
+		}
+
 		public ISemanticCheckValue VisitIOPrintNode(IOPrintNode node)
 		{
 			return node.Expression.Accept(this);

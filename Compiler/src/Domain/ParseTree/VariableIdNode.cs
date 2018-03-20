@@ -100,7 +100,7 @@ namespace MiniPLInterpreter
 		public Token Token
 		{
 			get { return this.token; }
-			set { }
+			set { this.token = value; }
 		}
 	}
 }
