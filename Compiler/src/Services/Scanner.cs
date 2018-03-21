@@ -14,14 +14,12 @@ namespace MiniPLInterpreter
 	{
 		private List<Error> errors;
 		private string[] sourceLines;
-		private StreamReader inputStream;
 		private int col = -1;
 		private int row = 0;
 		private bool EndOfStream = false;
 
-		public Scanner (StreamReader inputStream, string[] sourceLines)
+		public Scanner (string[] sourceLines)
 		{
-			this.inputStream = inputStream;
 			this.sourceLines = sourceLines;
 			this.errors = new List<Error> ();
 		}

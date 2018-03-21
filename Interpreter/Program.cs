@@ -14,29 +14,30 @@ namespace Interpreter
 			if (args.Length < 1) {
 				return;
 			}
-			using (StreamReader sr = new StreamReader (@args [0])) {
-				Dictionary<string, IProperty> ids = new Dictionary<string, IProperty> ();
-				Parser p = new Parser (ids);
-				string[] sourceLines = File.ReadLines (@args [0]).ToArray ();
-				Printer printer = new Printer (sourceLines);
-				Scanner s = new Scanner (sr, sourceLines);
-				p.Scanner = s;
-				p.Parse ();
+			System.Text.Encoding encoding = System.Text.Encoding.UTF8;
+			Console.OutputEncoding = encoding;
 
-				printer.printErrors (s.getErrors ());
+			Dictionary<string, IProperty> ids = new Dictionary<string, IProperty> ();
+			Parser p = new Parser (ids);
+			string[] sourceLines = File.ReadLines (@args [0], encoding).ToArray ();
+			Printer printer = new Printer (sourceLines);
+			Scanner s = new Scanner (sourceLines);
+			p.Scanner = s;
+			p.Parse ();
 
-				printer.printErrors (p.getErrors ());
+			printer.printErrors (s.getErrors ());
 
-				if (p.SyntaxTreeBuilt) {
-					SemanticAnalyzer se = new SemanticAnalyzer (p.SyntaxTree, ids);
-					se.Analyze ();
+			printer.printErrors (p.getErrors ());
 
-					printer.printErrors (se.getErrors ());
+			if (p.SyntaxTreeBuilt) {
+				SemanticAnalyzer se = new SemanticAnalyzer (p.SyntaxTree, ids);
+				se.Analyze ();
 
-					if (se.getErrors ().Count == 0) {
-						MiniPLInterpreter.Interpreter ip = new MiniPLInterpreter.Interpreter (p.SyntaxTree, printer);
-						ip.Interpret ();
-					}
+				printer.printErrors (se.getErrors ());
+
+				if (se.getErrors ().Count == 0) {
+					MiniPLInterpreter.Interpreter ip = new MiniPLInterpreter.Interpreter (p.SyntaxTree, printer);
+					ip.Interpret ();
 				}
 			}
 		}
