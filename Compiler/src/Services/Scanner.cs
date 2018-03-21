@@ -51,16 +51,17 @@ namespace MiniPLInterpreter
 			col++;
 
 			if (col >= sourceLines [row].Length) {
-				col = 0;
+				col = -1;
 				row++;
+
+				if (row >= sourceLines.Length) {
+					EndOfStream = true;
+				}
+
+				return Constants.NEWLINE;
 			}
 
-			if (row >= sourceLines.Length) {
-				EndOfStream = true;
-				return Constants.NULL_CHAR;
-			}
-
-			char c = sourceLines [row] [col]; 
+			char c = sourceLines [row] [col];
 
 			return c;
 		}
