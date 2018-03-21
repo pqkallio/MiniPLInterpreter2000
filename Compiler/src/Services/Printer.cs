@@ -5,9 +5,9 @@ namespace MiniPLInterpreter
 {
 	public class Printer
 	{
-		private List<string> sourceLines;
+		private string[] sourceLines;
 
-		public Printer (List<string> sourceLines)
+		public Printer (string[] sourceLines)
 		{
 			this.sourceLines = sourceLines;
 		}

@@ -53,8 +53,8 @@ namespace MiniPLInterpreter
 			if (this.token == null) {
 				return string.Format ("{0}: {1}", Title, ErrorMessage);
 			}
-
-			return string.Format ("{0}: {1}: {2} at row {3} column {4}", Title, ErrorMessage, Token.Value, Token.Row, Token.Column);
+			string value = Token.Value != null && Token.Value != "" ? Token.Value : Constants.tokenTypeStrings [Token.Type];
+			return string.Format ("{0}: {1}: {2}", Title, ErrorMessage, value);
 		}
 	}
 }

@@ -17,8 +17,9 @@ namespace Interpreter
 			using (StreamReader sr = new StreamReader (@args [0])) {
 				Dictionary<string, IProperty> ids = new Dictionary<string, IProperty> ();
 				Parser p = new Parser (ids);
-				Printer printer = new Printer (File.ReadLines(@args [0]).ToList ());
-				Scanner s = new Scanner (sr);
+				string[] sourceLines = File.ReadLines (@args [0]).ToArray ();
+				Printer printer = new Printer (sourceLines);
+				Scanner s = new Scanner (sr, sourceLines);
 				p.Scanner = s;
 				p.Parse ();
 

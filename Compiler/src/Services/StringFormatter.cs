@@ -8,13 +8,13 @@ namespace MiniPLInterpreter
 		public StringFormatter ()
 		{}
 
-		public static string formatError (Error error, List<string> sourceLines)
+		public static string formatError (Error error, string[] sourceLines)
 		{
 			int numRow = error.Token.Row;
 			int numCol = error.Token.Column;
 
 			string sourceLine = sourceLines[numRow];
-			string errorMessage = line (error.ToString ()) + line (sourceLine);
+			string errorMessage = line (error.ToString () + ' ' + formatRowAndColumn(numRow, numCol)) + line (sourceLine);
 
 			for (int i = 0; i < numCol; i++) {
 				errorMessage += ' ';
@@ -25,7 +25,7 @@ namespace MiniPLInterpreter
 			return errorMessage;
 		}
 
-		public static string formatFailedAssertion (AssertNode assertNode, List<string> sourceLines)
+		public static string formatFailedAssertion (AssertNode assertNode, string[] sourceLines)
 		{
 			int numRow = assertNode.AssertStatementRow;
 			int numStartCol = assertNode.AssertStatementStartCol;

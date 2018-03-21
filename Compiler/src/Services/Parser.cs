@@ -233,22 +233,26 @@ namespace MiniPLInterpreter
 
 		private Token ParseType (Token t, VariableIdNode idNode)
 		{
-			switch (t.Type) {
-				case TokenType.INT_VAR:
-					idNode.VariableType = TokenType.INT_VAL;
-					ids.Add(idNode.ID, (new IntegerProperty(Constants.DEFAULT_INTEGER_VALUE)));
-					return scanner.getNextToken (t);
-				case TokenType.STR_VAR:
-					idNode.VariableType = TokenType.STR_VAL;
-					ids.Add(idNode.ID, new StringProperty(Constants.DEFAULT_STRING_VALUE));
-					return scanner.getNextToken (t);
-				case TokenType.BOOL_VAR:
-					idNode.VariableType = TokenType.BOOL_VAL;
-					ids.Add(idNode.ID, new BooleanProperty(Constants.DEFAULT_BOOL_VALUE));
-					return scanner.getNextToken (t);
-				default:
-					throw new UnexpectedTokenException (t);
+			if (!ids.ContainsKey (idNode.ID)) {
+				switch (t.Type) {
+					case TokenType.INT_VAR:
+						idNode.VariableType = TokenType.INT_VAL;
+						ids.Add (idNode.ID, (new IntegerProperty (Constants.DEFAULT_INTEGER_VALUE)));
+						break;
+					case TokenType.STR_VAR:
+						idNode.VariableType = TokenType.STR_VAL;
+						ids.Add (idNode.ID, new StringProperty (Constants.DEFAULT_STRING_VALUE));
+						break;
+					case TokenType.BOOL_VAR:
+						idNode.VariableType = TokenType.BOOL_VAL;
+						ids.Add (idNode.ID, new BooleanProperty (Constants.DEFAULT_BOOL_VALUE));
+						break;
+					default:
+						throw new UnexpectedTokenException (t);
+				}
 			}
+
+			return scanner.getNextToken (t);
 		}
 
 		private Token ParseAssign (Token t, AssignNode assignNode)

@@ -13,16 +13,59 @@ namespace MiniPLInterpreter
 	public class Scanner : IErrorAggregator
 	{
 		private List<Error> errors;
+		private string[] sourceLines;
 		private StreamReader inputStream;
 		private int col = -1;
 		private int row = 0;
+		private bool EndOfStream = false;
 
-		public Scanner (StreamReader inputStream)
+		public Scanner (StreamReader inputStream, string[] sourceLines)
 		{
 			this.inputStream = inputStream;
+			this.sourceLines = sourceLines;
 			this.errors = new List<Error> ();
 		}
 
+		private char peekStream() {
+			if (EndOfStream) {
+				return Constants.NULL_CHAR;
+			}
+			
+			char c = readStream ();
+
+			col--;
+
+			if (col < 0) {
+				row--;
+				col = sourceLines [row].Length - 1;
+			}
+
+			return c;
+		}
+
+		private char readStream() {
+			if (EndOfStream) {
+				return Constants.NULL_CHAR;
+			}
+
+			col++;
+
+			if (col >= sourceLines [row].Length) {
+				col = 0;
+				row++;
+			}
+
+			if (row >= sourceLines.Length) {
+				EndOfStream = true;
+				return Constants.NULL_CHAR;
+			}
+
+			char c = sourceLines [row] [col]; 
+
+			return c;
+		}
+
+		/*
 		private char peekStream() {
 			return inputStream.EndOfStream ? '\0' : (char)inputStream.Peek ();
 		}
@@ -33,23 +76,45 @@ namespace MiniPLInterpreter
 			}
 
 			char c = (char)inputStream.Read ();
+			char d = c;
+			long readIndex = inputStream.BaseStream.Position;
+			bool isLineBreak = true;
 
-			if (c == Constants.LINEBREAK) {
-				row++;
-				col = -1;
-			} else {
-				col++;
+			for (int i = 0; i < Constants.LINEBREAK.Length; i++) {
+				if (Constants.LINEBREAK [i] != d) {
+					isLineBreak = false;
+					break;
+				}
+
+				d = (char)inputStream.Read ();
 			}
 
+			if (isLineBreak) {
+				row++;
+				col = -1;
+				long posBefore = inputStream.BaseStream.Position;
+				inputStream.BaseStream.Position = inputStream.BaseStream.Position - 1;
+				long posAfter = inputStream.BaseStream.Position;
+				char f = (char)inputStream.Peek ();
+				return Constants.NEWLINE;
+			}
+				
+			inputStream.BaseStream.Position = readIndex;
+			col++;
 			return c;
 		}
+		*/
 
 		public Token getNextToken(Token previous)
 		{
 			Token token = null;
 
-			while (!inputStream.EndOfStream) {
+			while (!EndOfStream) {
 				char c = readStream();
+
+				if (EndOfStream) {
+					break;
+				}
 
 				if (isWhitespace(c)) {
 					continue;
@@ -104,7 +169,7 @@ namespace MiniPLInterpreter
 			StringBuilder sb = new StringBuilder (c.ToString());
 			token.Type = TokenType.ID;
 
-			while (!inputStream.EndOfStream) {
+			while (!EndOfStream) {
 				c = peekStream ();
 
 				if (isIdCharacter(c)) {
@@ -146,9 +211,9 @@ namespace MiniPLInterpreter
 
 		private void parseSingleLineComment ()
 		{
-			while (!inputStream.EndOfStream) {
+			while (!EndOfStream) {
 				char c = readStream ();
-				if (c == Constants.LINEBREAK) {
+				if (c == Constants.NEWLINE) {
 					break;
 				}
 			}
@@ -159,10 +224,10 @@ namespace MiniPLInterpreter
 			int nestingDepth = 1;
 			bool starHit = false;
 
-			while (!inputStream.EndOfStream) {
+			while (!EndOfStream) {
 				char c = readStream ();
 
-				if (c == Constants.LINEBREAK) {
+				if (c == Constants.NEWLINE) {
 					starHit = false;
 				} else if (c == '*') {
 					starHit = true;
@@ -190,7 +255,7 @@ namespace MiniPLInterpreter
 			token.Type = TokenType.INT_VAL;
 			StringBuilder sb = new StringBuilder (c.ToString());
 
-			while (!inputStream.EndOfStream) {
+			while (!EndOfStream) {
 				c = peekStream ();
 				if (StringUtils.isInteger (c)) {
 					sb.Append (readStream ());
@@ -210,7 +275,7 @@ namespace MiniPLInterpreter
 				StringBuilder sb = new StringBuilder (c.ToString());
 				token.Type = TokenType.INT_VAL;
 
-				while (!inputStream.EndOfStream) {
+				while (!EndOfStream) {
 					c = peekStream ();
 
 					if (StringUtils.isInteger (c)) {
@@ -252,10 +317,10 @@ namespace MiniPLInterpreter
 			StringBuilder sb = new StringBuilder ();
 			bool errored = false;
 
-			while (!inputStream.EndOfStream) {
+			while (!EndOfStream) {
 				char c = readStream ();
 
-				if (c == Constants.LINEBREAK && !errored) {
+				if (c == Constants.NEWLINE && !errored) {
 					notifyError (new StringLiteralError (token, "String literal mustn't span multiple lines"));
 					errored = true;
 				} else if (escapeNextChar) {
@@ -330,7 +395,7 @@ namespace MiniPLInterpreter
 
 		private bool isWhitespace (char c)
 		{
-			return c == Constants.LINEBREAK || Constants.WHITESPACES.ContainsKey (c);
+			return c == Constants.NEWLINE || Constants.WHITESPACES.ContainsKey (c);
 		}
 
 		private bool isIdCharacter (char c)

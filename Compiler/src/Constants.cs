@@ -5,6 +5,7 @@ namespace MiniPLInterpreter
 {
 	public class Constants
 	{
+		public static readonly bool UNIX = Environment.OSVersion.ToString ().ToLower ().StartsWith ("unix"); 
 		public static readonly Dictionary<char, string> WHITESPACES = new Dictionary<char, string> ()
 														{
 															{' ', null},
@@ -74,30 +75,11 @@ namespace MiniPLInterpreter
 		public static readonly Tuple<char, TokenType> SET_TYPE = Tuple.Create(':', TokenType.SET_TYPE);
 		public static readonly Tuple<char, TokenType> ASSIGN = Tuple.Create('=', TokenType.ASSIGN);
 
-		/*
-		public static readonly Dictionary<string, TokenType> SUCCESSOR_DEPENDENT = new Dictionary<string, TokenType> ()
-														{
-															{":=", TokenType.ASSIGN},
-															{"..", TokenType.RANGE_UPTO}
-														};
-
-		public static readonly Dictionary<string, string> COMMENT_DELIMITERS = new Dictionary<string, string>()
-														{
-															{"//", "\n"},
-															{"/*", "*\/"}
-														};
-
-		public static readonly Dictionary<string, TokenType>[] ALL_SEQUENCES = 
-														{
-															//INDEPENDENT_CHARS, 
-															SUCCESSOR_DEPENDENT, 
-															RESERVED_SEQUENCES
-														};
-		*/
-
 		public static readonly char ESCAPE_CHAR = '\\';
 		public static readonly char STRING_DELIMITER = '"';
-		public static readonly char LINEBREAK = '\n';
+		public static readonly char NULL_CHAR = '\0';
+		public static readonly string LINEBREAK = UNIX ? "\n" : "\r\n";
+		public static readonly char NEWLINE = '\n';
 		public static readonly char COMMENT_START_CHAR = '/';
 		public static readonly char UTF8_SMALL_LETTERS_START = (char)0x41;
 		public static readonly char UTF8_SMALL_LETTERS_END = (char)0x5a;
