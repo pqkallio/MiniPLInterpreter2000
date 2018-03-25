@@ -154,16 +154,16 @@ namespace MiniPLInterpreter
 
 			switch (operation) {
 				case TokenType.BINARY_OP_ADD:
-					evaluation = firstOperand.asInteger () + secondOperand.asInteger ();
+					evaluation = checked(firstOperand.asInteger () + secondOperand.asInteger ());
 					break;
 				case TokenType.BINARY_OP_SUB:
-					evaluation = firstOperand.asInteger () - secondOperand.asInteger ();
+					evaluation = checked(firstOperand.asInteger () - secondOperand.asInteger ());
 					break;
 				case TokenType.BINARY_OP_MUL:
-					evaluation = firstOperand.asInteger () * secondOperand.asInteger ();
+					evaluation = checked(firstOperand.asInteger () * secondOperand.asInteger ());
 					break;
 				case TokenType.BINARY_OP_DIV:
-					evaluation = firstOperand.asInteger () / secondOperand.asInteger ();
+					evaluation = checked(firstOperand.asInteger () / secondOperand.asInteger ());
 					break;
 				default:
 					throw new ArgumentException (String.Format ("operation {0} not defined for integer values", operation));

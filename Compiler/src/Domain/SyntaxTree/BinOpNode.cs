@@ -42,33 +42,6 @@ namespace MiniPLInterpreter
 			set { this.operation = value; }
 		}
 
-		public TokenType Type () {
-			return TokenType.BINARY_OP;
-		}
-
-		public object execute () {
-			object leftEval = ((ISyntaxTreeNode)leftOperand).execute ();
-
-			if (rightOperand != null) {
-				object rightEval = ((ISyntaxTreeNode)rightOperand).execute ();
-
-				if (leftEval.GetType () == rightEval.GetType ()) {
-					if (leftEval.GetType () == typeof(string)) {
-						return StringUtils.Evaluate ((string)leftEval, (string)rightEval, operation);
-					} else if (leftEval.GetType () == typeof(int)) {
-						return NumericUtils.Evaluate ((int)leftEval, (int)rightEval, operation);
-					} else if (leftEval.GetType () == typeof(bool)) {
-						return BooleanUtils.EvaluateBinOp ((bool)leftEval, (bool)rightEval, operation);
-					}
-				}
-
-				// throw new ArgumentException (String.Format ("the operation {0} is not defined for type {1}", operation, leftEval.GetType ()));
-			}
-
-			return leftEval;
-
-		}
-
 		public void AddExpression(IExpressionNode expressionNode)
 		{
 			this.rightOperand = expressionNode;
@@ -79,36 +52,10 @@ namespace MiniPLInterpreter
 			return this.operation.ToString ();
 		}
 
-		public void AddNodesToQueue (Queue q)
-		{
-			q.Enqueue (this);
-			((ISyntaxTreeNode)leftOperand).AddNodesToQueue (q);
-			if (rightOperand != null) {
-				((ISyntaxTreeNode)rightOperand).AddNodesToQueue (q);
-			}
-		}
-
 		public TokenType EvaluationType
 		{
 			get { return this.evaluationType; }
 			set { this.evaluationType = value; }
-		}
-
-		public TokenType GetEvaluationType (TokenType parentType)
-		{
-			if (parentType == TokenType.ERROR) {
-				return parentType;
-			}
-
-			TokenType leftOperandType = leftOperand.GetEvaluationType (parentType);
-
-			if (leftOperandType == TokenType.ERROR) {
-				return leftOperandType;
-			}
-
-			TokenType rightOperandType = rightOperand.GetEvaluationType (leftOperandType);
-
-			return rightOperandType;
 		}
 
 		public IExpressionNode[] GetExpressions()
@@ -127,11 +74,6 @@ namespace MiniPLInterpreter
 		public TokenType GetOperation ()
 		{
 			return operation;
-		}
-
-		public TokenType GetValueType ()
-		{
-			return TokenType.UNDEFINED;
 		}
 
 		public ISemanticCheckValue Accept(INodeVisitor visitor) {

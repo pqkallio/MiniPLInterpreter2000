@@ -6,6 +6,7 @@ namespace MiniPLInterpreter
 	{
 		private bool value;
 		private bool declared;
+		private bool constant;
 
 		public BooleanProperty ()
 			: this(false)
@@ -15,6 +16,7 @@ namespace MiniPLInterpreter
 		{
 			this.value = value;
 			this.declared = false;
+			this.constant = false;
 		}
 
 		public Type GetPropertyType ()
@@ -36,6 +38,12 @@ namespace MiniPLInterpreter
 		{
 			get { return declared; }
 			set { declared = value; }
+		}
+
+		public bool Constant
+		{
+			get { return this.constant; }
+			set { this.constant = value; }
 		}
 
 		public IProperty asProperty ()

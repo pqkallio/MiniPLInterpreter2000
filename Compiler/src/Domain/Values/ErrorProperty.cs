@@ -23,6 +23,12 @@ namespace MiniPLInterpreter
 			set { }
 		}
 
+		public bool Constant
+		{
+			get { return false; }
+			set { }
+		}
+
 		public IProperty asProperty ()
 		{
 			return this;

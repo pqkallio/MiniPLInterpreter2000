@@ -100,7 +100,7 @@ namespace MiniPLInterpreter
 		public ISemanticCheckValue VisitIOPrintNode(IOPrintNode node)
 		{
 			IProperty evaluation = node.Expression.Accept (this).asProperty ();
-			Console.Write (evaluation.asString ());
+			printer.print (evaluation.asString ());
 
 			return voidProperty;
 		}
@@ -108,6 +108,7 @@ namespace MiniPLInterpreter
 		public ISemanticCheckValue VisitIOReadNode(IOReadNode node) 
 		{
 			string input = Console.ReadLine ();
+			input = input.Split (new[] {' ', '\t', '\n'})[0];
 
 			AssignNode assignNode = node.AssignNode;
 			setAssignValue (input, assignNode);

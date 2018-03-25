@@ -13,21 +13,9 @@ namespace MiniPLInterpreterTests
 		private StreamReader sr;
 		private List<Token> tokens;
 
-		private static Stream StringStream(string s)
+		private void InitScanner(string[] s)
 		{
-			MemoryStream stream = new MemoryStream ();
-			StreamWriter sw = new StreamWriter (stream);
-			sw.Write (s);
-			sw.Flush ();
-			stream.Position = 0;
-			return stream;
-		}
-
-		private void InitScanner(string s)
-		{
-			Stream stream = StringStream (s);
-			this.sr = new StreamReader (stream);
-			this.s = new Scanner (this.sr);
+			this.s = new Scanner (s);
 		}
 
 		[SetUp]

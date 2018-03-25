@@ -17,14 +17,9 @@ namespace MiniPLInterpreter
 
 		public AssertNode (Token t, int assertStatementRow, int assertStatementStartCol)
 		{
-			this.token = token;
+			this.token = t;
 			this.assertStatementRow = assertStatementRow;
 			this.assertStatementStartCol = assertStatementStartCol;
-		}
-
-		public TokenType Type ()
-		{
-			return TokenType.ASSERT;
 		}
 
 		public int AssertStatementRow
@@ -50,17 +45,6 @@ namespace MiniPLInterpreter
 			get { return expressionNode; }
 		}
 
-		public object execute ()
-		{
-			bool eval = (bool)((ISyntaxTreeNode)expressionNode).execute ();
-
-			if (!eval) {
-				Console.WriteLine (String.Format("Assertion failed: {0}", expressionNode.ToString()));
-			}
-
-			return null;
-		}
-
 		public void AddExpression (IExpressionNode expressionNode)
 		{
 			this.expressionNode = expressionNode;
@@ -69,12 +53,6 @@ namespace MiniPLInterpreter
 		public override string ToString ()
 		{
 			return "ASSERT";
-		}
-
-		public void AddNodesToQueue(Queue q)
-		{
-			q.Enqueue (this);
-			// expressionNode.AddNodesToQueue (q);
 		}
 
 		public ISemanticCheckValue Accept(INodeVisitor visitor) {

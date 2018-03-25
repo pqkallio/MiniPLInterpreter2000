@@ -5,11 +5,11 @@ namespace MiniPLInterpreter
 {
 	public class NodeBuilder
 	{
-		private Dictionary<string, IProperty> ids;
+		private Dictionary<string, IProperty> symbolTable;
 
-		public NodeBuilder (Dictionary<string, IProperty> ids)
+		public NodeBuilder (Dictionary<string, IProperty> symbolTable)
 		{
-			this.ids = ids;
+			this.symbolTable = symbolTable;
 		}
 
 		public RootNode CreateRootNode ()
@@ -32,18 +32,18 @@ namespace MiniPLInterpreter
 
 		public VariableIdNode CreateIdNode ()
 		{
-			return new VariableIdNode (ids);
+			return new VariableIdNode (symbolTable);
 		}
 
 		public ISyntaxTreeNode CreateIdNode(Token t)
 		{
 			string value = t.Value;
-			return new VariableIdNode (value, ids, t);
+			return new VariableIdNode (value, symbolTable, t);
 		}
 
 		public DeclarationNode CreateDeclarationNode (VariableIdNode idNode, StatementsNode statementsNode, Token t)
 		{
-			DeclarationNode declarationNode = new DeclarationNode (idNode, ids, t);
+			DeclarationNode declarationNode = new DeclarationNode (idNode, symbolTable, t);
 			declarationNode.AssignNode = CreateAssignNode (idNode, t);
 			statementsNode.Statement = declarationNode;
 
@@ -55,12 +55,12 @@ namespace MiniPLInterpreter
 			if (idNode.Token == null) {
 				idNode.Token = t;
 			}
-			return new AssignNode (idNode, ids, t);
+			return new AssignNode (idNode, symbolTable, t);
 		}
 
 		public AssignNode CreateAssignNode (VariableIdNode idNode, StatementsNode statementsNode, Token t)
 		{
-			AssignNode assignNode = new AssignNode (idNode, ids, t);
+			AssignNode assignNode = new AssignNode (idNode, symbolTable, t);
 			statementsNode.Statement = assignNode;
 
 			return assignNode;
@@ -68,7 +68,7 @@ namespace MiniPLInterpreter
 
 		public ForLoopNode CreateForLoopNode (VariableIdNode idNode, StatementsNode statementsNode, Token t)
 		{
-			ForLoopNode node = new ForLoopNode (idNode, ids, t);
+			ForLoopNode node = new ForLoopNode (idNode, symbolTable, t);
 			statementsNode.Statement = node;
 
 			return node;
@@ -76,7 +76,7 @@ namespace MiniPLInterpreter
 
 		public IOReadNode CreateIOReadNode (VariableIdNode idNode, StatementsNode statementsNode, Token t)
 		{
-			IOReadNode ioReadNode = new IOReadNode (idNode, ids, t);
+			IOReadNode ioReadNode = new IOReadNode (idNode, symbolTable, t);
 			statementsNode.Statement = ioReadNode;
 
 			return ioReadNode;

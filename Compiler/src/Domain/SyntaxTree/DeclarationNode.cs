@@ -4,17 +4,15 @@ using System.Collections.Generic;
 
 namespace MiniPLInterpreter
 {
-	public class DeclarationNode : ISyntaxTreeNode
+	public class DeclarationNode : ISyntaxTreeNode, IIdentifierContainer
 	{
 		private VariableIdNode idNode;
 		private AssignNode assignNode;
-		private Dictionary<string, IProperty> ids;
 		private Token token;
 
 		public DeclarationNode (VariableIdNode idNode, Dictionary<string, IProperty> ids, Token t)
 		{
 			this.idNode = idNode;
-			this.ids = ids;
 			this.token = t;
 		}
 
@@ -24,25 +22,10 @@ namespace MiniPLInterpreter
 			set { assignNode = value; }
 		}
 
-		public object execute ()
-		{
-			return null;
-		}
-
 		public VariableIdNode IDNode
 		{
 			get { return idNode; }
 			set { this.idNode = value; }
-		}
-
-		public TokenType Type()
-		{
-			return TokenType.DECLARATION;
-		}
-
-		public void AddNodesToQueue(Queue q)
-		{
-			q.Enqueue (this);
 		}
 
 		public ISemanticCheckValue Accept(INodeVisitor visitor) {

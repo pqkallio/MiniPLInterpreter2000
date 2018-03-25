@@ -5,22 +5,21 @@ namespace MiniPLInterpreter
 	public class SyntaxError : Error
 	{
 		private TokenType expectedType;
-		private string typeString;
+		private string[] expectationSet;
 
-		public SyntaxError (Token token, string typeString)
-			: this(token, TokenType.UNDEFINED)
-		{
-			this.typeString = typeString;
-		}
-
-		public SyntaxError (Token token)
-			: this(token, TokenType.UNDEFINED)
+		public SyntaxError (Token token, string[] expectationSet)
+			: this(token, TokenType.UNDEFINED, expectationSet)
 		{}
 
-		public SyntaxError (Token token, TokenType expectedType) 
-			: base(Constants.SYNTAX_ERROR_TITLE, Constants.SYNTAX_ERROR_MESSAGE, token)
+		public SyntaxError (Token token, TokenType expectedType)
+			: this(token, expectedType, null)
+		{}
+
+		public SyntaxError (Token token, TokenType expectedType, string[] expectationSet) 
+			: base(ErrorConstants.SYNTAX_ERROR_TITLE, ErrorConstants.SYNTAX_ERROR_MESSAGE, token)
 		{
 			this.expectedType = expectedType;
+			this.expectationSet = expectationSet;
 		}
 
 		public TokenType ExpectedType
@@ -28,20 +27,43 @@ namespace MiniPLInterpreter
 			get { return this.expectedType; }
 		}
 
+		public string[] ExpectationSet
+		{
+			get { return expectationSet; }
+		}
+
 		public override string ToString ()
 		{
-			if (expectedType == TokenType.UNDEFINED) {
-				if (typeString != null) {
-					return string.Format ("{0}: {1} expected near {2}/{3} at row {4}, column {5}",
-						Title, typeString, Token.Value, Token.Type, Token.Row, Token.Column);
-				} else {
-					return string.Format ("{0}: Undefined token {1}/{2} at row {3}, column {4}", 
-						Title, Token.Value, Token.Type, Token.Row, Token.Column);
-				}
-			} else {	
-				return string.Format ("{0}: {1} expected near {2}/{3} at row {4}, column {5}", 
-					Title, expectedType, Token.Value, Token.Type, Token.Row, Token.Column);
+			string error = Title + ": ";
+
+			if (ExpectationSet != null && ExpectationSet.Length != 0) {
+				return error + formatExpectationSetString ();
+			} else {
+				return error + formatExpectedTokenString ();
 			}
+		}
+
+		private string formatExpectationSetString ()
+		{
+			string expectation = "";
+
+			if (ExpectationSet.Length == 1) {
+				expectation += ExpectationSet [0];
+			} else {
+				int i;
+				for (i = 0; i < ExpectationSet.Length - 2; i++) {
+					expectation += ExpectationSet [i] + ", ";
+				}
+				expectation += ExpectationSet [i];
+				expectation += " or " + ExpectationSet [i + 1];
+			}
+
+			return expectation + " expected";
+		}
+
+		private string formatExpectedTokenString ()
+		{
+			return Constants.TOKEN_TYPE_STRINGS [ExpectedType] + " expected";
 		}
 	}
 }

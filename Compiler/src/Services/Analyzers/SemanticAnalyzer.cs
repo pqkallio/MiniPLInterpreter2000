@@ -7,13 +7,13 @@ namespace MiniPLInterpreter
 	public class SemanticAnalyzer : IErrorAggregator
 	{
 		private List<Error> errors;
-		Dictionary<string, IProperty> ids;
+		Dictionary<string, IProperty> symbolTable;
 		private SyntaxTree syntaxTree;
 
-		public SemanticAnalyzer (SyntaxTree syntaxTree, Dictionary<string, IProperty> ids)
+		public SemanticAnalyzer (SyntaxTree syntaxTree, Dictionary<string, IProperty> symbolTable)
 		{
 			this.syntaxTree = syntaxTree;
-			this.ids = ids;
+			this.symbolTable = symbolTable;
 			this.errors = new List<Error> ();
 		}
 			
@@ -37,7 +37,7 @@ namespace MiniPLInterpreter
 
 		public Dictionary<string, IProperty> IDs
 		{
-			get { return this.ids; }
+			get { return this.symbolTable; }
 		}
 	}
 }

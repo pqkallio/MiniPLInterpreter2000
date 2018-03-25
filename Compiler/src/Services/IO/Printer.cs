@@ -29,12 +29,12 @@ namespace MiniPLInterpreter
 			printLine (StringFormatter.formatFailedAssertion (assertNode, sourceLines));
 		}
 
-		public static void print (string str)
+		public void print (string str)
 		{
 			Console.Write (str);
 		}
 
-		public static void printLine (string str)
+		public void printLine (string str)
 		{
 			Console.WriteLine (str);
 		}

@@ -5,7 +5,7 @@ namespace MiniPLInterpreter
 	public class DeclarationError : SemanticError
 	{
 		public DeclarationError (ISyntaxTreeNode node)
-			:base(Constants.DECLARATION_ERROR_MESSAGE, node)
+			:base(ErrorConstants.DECLARATION_ERROR_MESSAGE, node)
 		{
 		}
 	}

@@ -26,20 +26,6 @@ namespace MiniPLInterpreter
 			set { this.operation = value; }
 		}
 
-		public TokenType Type () {
-			return TokenType.UNARY_OP;
-		}
-
-		public object execute () {
-			bool evaluation = (bool)((ISyntaxTreeNode)operand).execute ();
-
-			if (operation == TokenType.UNARY_OP_LOG_NEG) {
-				return !evaluation;
-			}
-
-			throw new ArgumentException (String.Format ("the operation {0} is not defined", operation));
-		}
-
 		public void AddExpression(IExpressionNode expressionNode)
 		{
 			this.operand = expressionNode;
@@ -55,25 +41,10 @@ namespace MiniPLInterpreter
 			return this.operation.ToString ();
 		}
 
-		public void AddNodesToQueue (Queue q)
-		{
-			q.Enqueue (this);
-			((ISyntaxTreeNode)operand).AddNodesToQueue (q);
-		}
-
 		public TokenType EvaluationType
 		{
 			get { return this.evaluationType; }
 			set { this.evaluationType = value; }
-		}
-
-		public TokenType GetEvaluationType (TokenType parentType)
-		{
-			if (parentType == TokenType.ERROR) {
-				return parentType;
-			}
-
-			return operand.GetEvaluationType (parentType);
 		}
 
 		public IExpressionNode[] GetExpressions()
@@ -86,11 +57,6 @@ namespace MiniPLInterpreter
 		public TokenType GetOperation ()
 		{
 			return operation;
-		}
-
-		public TokenType GetValueType ()
-		{
-			return TokenType.UNDEFINED;
 		}
 
 		public ISemanticCheckValue Accept(INodeVisitor visitor) {

@@ -5,9 +5,8 @@ namespace MiniPLInterpreter
 	public class IllegalTypeError : SemanticError
 	{
 		public IllegalTypeError (ISyntaxTreeNode node)
-			: base(Constants.ILLEGAL_TYPE_ERROR_MESSAGE, node)
-		{
-		}
+			: base(ErrorConstants.ILLEGAL_TYPE_ERROR_MESSAGE, node)
+		{}
 	}
 }
 

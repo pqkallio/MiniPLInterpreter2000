@@ -5,20 +5,25 @@ namespace MiniPLInterpreter
 {
 	public class Parser : IErrorAggregator
 	{
-		private SyntaxTree tree;
+		private SyntaxTree syntaxTree;
 		private List<Error> errors;
 		private Scanner scanner;
 		private bool syntaxTreeBuilt;
-		private Dictionary<string, IProperty> ids;
+		private Dictionary<string, IProperty> symbolTable;
 		private NodeBuilder nodeBuilder;
 
-		public Parser (Dictionary<string, IProperty> ids)
+		public Parser(Dictionary<string, IProperty> symbolTable)
+			: this(symbolTable, null)
+		{}
+
+		public Parser (Dictionary<string, IProperty> symbolTable, Scanner scanner)
 		{
-			this.tree = new SyntaxTree ();
+			this.syntaxTree = new SyntaxTree ();
 			this.errors = new List<Error> ();
-			this.syntaxTreeBuilt = true;
-			this.ids = ids;
-			this.nodeBuilder = new NodeBuilder (ids);
+			this.syntaxTreeBuilt = false;
+			this.symbolTable = symbolTable;
+			this.nodeBuilder = new NodeBuilder (symbolTable);
+			this.scanner = scanner;
 		}
 
 		public Scanner Scanner {
@@ -27,13 +32,20 @@ namespace MiniPLInterpreter
 		}
 
 		public SyntaxTree SyntaxTree {
-			get { return tree; }
+			get { return syntaxTree; }
 		}
 
-		public void Parse () {
+		public SyntaxTree Parse () {
+			syntaxTreeBuilt = true;
 			IStatementsContainer root = nodeBuilder.CreateRootNode ();
-			tree.Root = root;
+			syntaxTree.Root = root;
 			ParseProgram (scanner.getNextToken (null), root);
+
+			if (!syntaxTreeBuilt) {
+				return null;
+			}
+
+			return syntaxTree;
 		}
 
 		private void ParseProgram (Token t, IStatementsContainer root)
@@ -50,7 +62,7 @@ namespace MiniPLInterpreter
 					try {	
 						next = ParseStatements (t, root);
 					} catch (UnexpectedTokenException ex) {
-						notifyError(new SyntaxError(ex.Token));
+						notifyError(new SyntaxError(ex.Token, ex.ExpectedType, ex.ExpectationSet));
 
 						do {
 							next = scanner.getNextToken (null);
@@ -60,14 +72,14 @@ namespace MiniPLInterpreter
 					try {
 						match (next, TokenType.END_OF_FILE);
 					} catch (UnexpectedTokenException ex) {
-						notifyError (new SyntaxError (ex.Token));
+						notifyError (new SyntaxError (ex.Token, ex.ExpectedType, null));
 					}
 					
 					break;
 				case TokenType.END_OF_FILE:
 					break;
 				default:
-					notifyError (new SyntaxError (t));
+					notifyError (new SyntaxError (t, TokenType.UNDEFINED, Constants.EXPECTATION_SET_PROGRAM));
 					break;
 			}
 		}
@@ -94,10 +106,11 @@ namespace MiniPLInterpreter
 				case TokenType.END_OF_FILE:
 					return t;
 				case TokenType.ERROR:
+					notifyError (new SyntaxError (t, TokenType.UNDEFINED, Constants.EXPECTATION_SET_STATEMENTS));
 					next = FastForwardToStatementEnd(t);
 					return ParseStatements (scanner.getNextToken(next), parent);
 				default:
-					throw new UnexpectedTokenException (t);
+					throw new UnexpectedTokenException (t, TokenType.UNDEFINED, Constants.EXPECTATION_SET_STATEMENTS);
 			}
 		}
 
@@ -117,9 +130,10 @@ namespace MiniPLInterpreter
 				case TokenType.ASSERT:
 					return ParseAssert (t, statementsNode);
 				case TokenType.ERROR:
+					notifyError(new SyntaxError (t, TokenType.UNDEFINED, Constants.EXPECTATION_SET_STATEMENT));
 					return FastForwardToStatementEnd(t);
 				default:
-					throw new UnexpectedTokenException (t);
+					throw new UnexpectedTokenException (t, TokenType.UNDEFINED, Constants.EXPECTATION_SET_STATEMENT);
 			}
 		}
 
@@ -166,7 +180,7 @@ namespace MiniPLInterpreter
 				next = ParseExpression (scanner.getNextToken (next), forLoop);
 				match (next, TokenType.START_BLOCK);
 			} catch (UnexpectedTokenException ex) {
-				notifyError (new SyntaxError (ex.Token));
+				notifyError (new SyntaxError (ex.Token, ex.ExpectedType, ex.ExpectationSet));
 				next = FastForwardTo (Constants.BLOCK_DEF_FASTFORWARD_TO);
 			}
 
@@ -227,28 +241,28 @@ namespace MiniPLInterpreter
 					idNode.Token = t;
 					return scanner.getNextToken (t);
 				default:
-					throw new UnexpectedTokenException (t);
+					throw new UnexpectedTokenException (t, TokenType.ID, null);
 			}
 		}
 
 		private Token ParseType (Token t, VariableIdNode idNode)
 		{
-			if (!ids.ContainsKey (idNode.ID)) {
+			if (!symbolTable.ContainsKey (idNode.ID)) {
 				switch (t.Type) {
 					case TokenType.INT_VAR:
 						idNode.VariableType = TokenType.INT_VAL;
-						ids.Add (idNode.ID, (new IntegerProperty (Constants.DEFAULT_INTEGER_VALUE)));
+						symbolTable.Add (idNode.ID, (new IntegerProperty (Constants.DEFAULT_INTEGER_VALUE)));
 						break;
 					case TokenType.STR_VAR:
 						idNode.VariableType = TokenType.STR_VAL;
-						ids.Add (idNode.ID, new StringProperty (Constants.DEFAULT_STRING_VALUE));
+						symbolTable.Add (idNode.ID, new StringProperty (Constants.DEFAULT_STRING_VALUE));
 						break;
 					case TokenType.BOOL_VAR:
 						idNode.VariableType = TokenType.BOOL_VAL;
-						ids.Add (idNode.ID, new BooleanProperty (Constants.DEFAULT_BOOL_VALUE));
+						symbolTable.Add (idNode.ID, new BooleanProperty (Constants.DEFAULT_BOOL_VALUE));
 						break;
 					default:
-						throw new UnexpectedTokenException (t);
+						throw new UnexpectedTokenException (t, TokenType.UNDEFINED, Constants.EXPECTATION_SET_DECLARATION_TYPE);
 				}
 			}
 
@@ -266,7 +280,7 @@ namespace MiniPLInterpreter
 					setDefaultAssignment (assignNode);
 					return t;
 				default:
-					throw new UnexpectedTokenException (t);
+				throw new UnexpectedTokenException (t, TokenType.UNDEFINED, Constants.EXPECTATION_SET_ASSIGN);
 			}
 		}
 
@@ -287,7 +301,7 @@ namespace MiniPLInterpreter
 					next = ParseUnaryOp (t, unOp);
 					return ParseOperand (next, unOp);
 				default:
-					throw new UnexpectedTokenException (t);
+					throw new UnexpectedTokenException (t, TokenType.UNDEFINED, Constants.EXPECTATION_SET_EXPRESSION);
 			}
 		}
 
@@ -295,8 +309,12 @@ namespace MiniPLInterpreter
 		{
 			switch (t.Type) {
 				case TokenType.INT_VAL:
-					ISyntaxTreeNode intVal = nodeBuilder.CreateIntValueNode(t);
-					node.AddOperand (intVal);
+					try {
+						ISyntaxTreeNode intVal = nodeBuilder.CreateIntValueNode(t);
+						node.AddOperand (intVal);
+					} catch (OverflowException ex) {
+						notifyError(new IntegerOverflowError(t));
+					}
 					return scanner.getNextToken (t);
 				case TokenType.STR_VAL:
 					ISyntaxTreeNode strVal = nodeBuilder.CreateStringValueNode(t);
@@ -316,7 +334,7 @@ namespace MiniPLInterpreter
 					match (next, TokenType.PARENTHESIS_RIGHT);
 					return scanner.getNextToken (next);
 				default:
-					throw new UnexpectedTokenException (t);
+					throw new UnexpectedTokenException (t, TokenType.UNDEFINED, Constants.EXPECTATION_SET_EXPRESSION);
 			}
 		}
 
@@ -338,7 +356,7 @@ namespace MiniPLInterpreter
 				case TokenType.START_BLOCK:
 					return t;
 				default:
-					throw new UnexpectedTokenException (t);
+					throw new UnexpectedTokenException (t, TokenType.UNDEFINED, Constants.EXPECTATION_SET_BINOP);
 			}
 		}
 
@@ -350,7 +368,7 @@ namespace MiniPLInterpreter
 					unOp.Token = t;
 					return scanner.getNextToken (t);
 				default:
-					throw new UnexpectedTokenException (t);
+					throw new UnexpectedTokenException (t, TokenType.UNARY_OP_LOG_NEG, null);
 			}
 		}
 
@@ -379,13 +397,13 @@ namespace MiniPLInterpreter
 					binOp.Operation = TokenType.BINARY_OP_SUB;
 					return scanner.getNextToken (t);
 				default:
-					throw new UnexpectedTokenException (t);
+					throw new UnexpectedTokenException (t, TokenType.UNDEFINED, null);
 			}
 		}
 
 		private void setDefaultAssignment (AssignNode assignNode)
 		{
-			TokenType idType = assignNode.IDNode.GetValueType ();
+			TokenType idType = assignNode.IDNode.EvaluationType;
 
 			switch (idType) {
 				case TokenType.STR_VAL:
@@ -397,14 +415,16 @@ namespace MiniPLInterpreter
 				case TokenType.BOOL_VAL:
 					assignNode.AddExpression (nodeBuilder.CreateDefaultBoolValueNode (assignNode.Token));
 					break;
+				default:
+				throw new UnexpectedTokenException (assignNode.IDNode.Token, TokenType.UNDEFINED, Constants.EXPECTATION_SET_ID_VAL);
 			} 
 		}
 
-		private void match(Token t, TokenType type)
+		private void match(Token t, TokenType expectedType)
 		{
-			if (t.Type != type) {
+			if (t.Type != expectedType) {
 				syntaxTreeBuilt = false;
-				throw new UnexpectedTokenException (t);
+				throw new UnexpectedTokenException (t, expectedType, null);
 			}
 		}
 
@@ -423,13 +443,12 @@ namespace MiniPLInterpreter
 
 		private Token FastForwardToStatementEnd (UnexpectedTokenException ex)
 		{
-			notifyError (new SyntaxError (ex.Token));
+			notifyError (new SyntaxError (ex.Token, ex.ExpectedType, ex.ExpectationSet));
 			return FastForwardTo (Constants.STATEMENT_FASTFORWARD_TO);
 		}
 
 		private Token FastForwardToStatementEnd (Token token)
 		{
-			notifyError (new SyntaxError (token));
 			return FastForwardTo (Constants.STATEMENT_FASTFORWARD_TO);
 		}
 

@@ -19,22 +19,6 @@ namespace MiniPLInterpreter
 			set { sequitor = value; }
 		}
 
-		public TokenType Type () {
-			return TokenType.PROGRAM;
-		}
-
-		public object execute () {
-			return sequitor.execute ();
-		}
-
-		public void AddNodesToQueue (Queue q)
-		{
-			q.Enqueue (this);
-			if (sequitor != null) {
-				sequitor.AddNodesToQueue (q);
-			}
-		}
-
 		public ISemanticCheckValue Accept(INodeVisitor visitor) {
 			return visitor.VisitRootNode (this);
 		}

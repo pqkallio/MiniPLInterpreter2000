@@ -37,16 +37,6 @@ namespace MiniPLInterpreter
 			set { id = value; }
 		}
 
-		public object execute ()
-		{
-			return this.ids[ID];
-		}
-
-		public TokenType Type ()
-		{
-			return TokenType.ID;
-		}
-
 		public TokenType VariableType
 		{
 			get { return variableType; }
@@ -56,25 +46,6 @@ namespace MiniPLInterpreter
 		public override string ToString ()
 		{
 			return "id: " + ID;
-		}
-
-		public void AddNodesToQueue (Queue q)
-		{
-			q.Enqueue (this);
-		}
-
-		public TokenType GetEvaluationType (TokenType parentType)
-		{
-			TokenType thisType = ids [ID].GetTokenType ();
-			if (parentType == TokenType.UNDEFINED) {
-				return thisType;
-			}
-
-			if (parentType != thisType) {
-				return TokenType.ERROR;
-			}
-
-			return thisType;
 		}
 
 		public IExpressionNode[] GetExpressions()
@@ -88,11 +59,6 @@ namespace MiniPLInterpreter
 			set { }
 		}
 
-		public TokenType GetValueType ()
-		{
-			return ids[ID].GetTokenType ();
-		}
-
 		public ISemanticCheckValue Accept(INodeVisitor visitor) {
 			return visitor.VisitVariableIdNode (this);
 		}
@@ -104,4 +70,3 @@ namespace MiniPLInterpreter
 		}
 	}
 }
-

@@ -14,26 +14,11 @@ namespace MiniPLInterpreter
 
 		public SyntaxTree ()
 			: this (null)
-		{
-		}
-
-		public void execute ()
-		{
-			if (root != null) {
-				root.execute ();
-			}
-		}
+		{}
 
 		public IStatementsContainer Root {
 			get { return root; }
 			set { root = value; }
-		}
-
-		public Queue NodeOrder ()
-		{
-			Queue q = new Queue ();
-			root.AddNodesToQueue (q);
-			return q;
 		}
 
 		public override string ToString ()

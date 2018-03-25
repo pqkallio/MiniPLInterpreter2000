@@ -16,16 +16,6 @@ namespace MiniPLInterpreterTests
 		public ParserTest ()
 		{}
 
-		private static Stream StringStream(string s)
-		{
-			MemoryStream stream = new MemoryStream ();
-			StreamWriter sw = new StreamWriter (stream);
-			sw.Write (s);
-			sw.Flush ();
-			stream.Position = 0;
-			return stream;
-		}
-
 		[TearDown]
 		public void TearDown ()
 		{
@@ -34,16 +24,15 @@ namespace MiniPLInterpreterTests
 			}
 		}
 
-		private void InitParser (string s)
+		private void InitParser (string[] s)
 		{
 			Dictionary<string, IProperty> ids = new Dictionary<string, IProperty> ();
-			this.sr = new StreamReader (StringStream (s));
-			this.s = new Scanner (this.sr);
+			this.s = new Scanner (s);
 			this.p = new Parser (ids);
 			this.p.Scanner = this.s;
 		}
 
-		private void Parse (string s)
+		private void Parse (string[] s)
 		{
 			InitParser (s);
 			p.Parse ();
@@ -90,6 +79,10 @@ namespace MiniPLInterpreterTests
 		public void TestDeclarationAssignValueMissing ()
 		{
 			Parse (TestInputs.declarationAssignValueMissing);
+			foreach (Error e in p.getErrors()) {
+				Console.WriteLine (e);
+				Console.WriteLine (e.Token);
+			}
 			Assert.AreEqual (1, p.getErrors ().Count);
 			Assert.AreEqual (TokenType.UNDEFINED, GetExpectedType(0));
 		}

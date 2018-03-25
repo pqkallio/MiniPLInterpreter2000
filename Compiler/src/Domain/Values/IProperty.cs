@@ -10,6 +10,10 @@ namespace MiniPLInterpreter
 			get;
 			set;
 		}
+		bool Constant {
+			get;
+			set;
+		}
 		int asInteger ();
 		string asString ();
 		bool asBoolean ();

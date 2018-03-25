@@ -133,7 +133,6 @@ namespace MiniPLInterpreter
 
 			for (int i = 1; i < expressions.Length; i++) {
 				expression = expressions [i];
-				Console.WriteLine ("getEvaluation: " + expression.GetValueType());
 				IProperty retVal = expression.Accept (this).asProperty();
 				if (retVal.GetTokenType () != evaluatedType.GetTokenType ()) {
 					expression.EvaluationType = TokenType.ERROR;

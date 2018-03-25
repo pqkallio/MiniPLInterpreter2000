@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace MiniPLInterpreter
 {
-	public class ForLoopNode : IExpressionContainer
+	public class ForLoopNode : IExpressionContainer, IIdentifierContainer
 	{
 		private VariableIdNode idNode;
 		private AssignNode indexAccumulator;
@@ -23,11 +23,6 @@ namespace MiniPLInterpreter
 			accum.AddOperand (idNode);
 			accum.AddOperand (new IntValueNode (1, t));
 			this.indexAccumulator.ExprNode = accum;
-		}
-
-		public TokenType Type ()
-		{
-			return TokenType.FOR_LOOP;
 		}
 
 		public AssignNode Accumulator
@@ -60,29 +55,9 @@ namespace MiniPLInterpreter
 			set { idNode = value; }
 		}
 
-		public object execute() {
-			rangeFrom.execute ();
-			int maxVal = 5;//(int)((IntValueNode)max).execute ();
-			while (((IntegerProperty)idNode.execute ()).Value < maxVal) {
-				statements.execute ();
-				indexAccumulator.execute ();
-			}
-
-			return null;
-		}
-
 		public void AddExpression(IExpressionNode expressionNode)
 		{
 			this.max = expressionNode;
-		}
-
-		public void AddNodesToQueue (Queue q)
-		{
-			q.Enqueue (this);
-			idNode.AddNodesToQueue (q);
-			rangeFrom.AddNodesToQueue (q);
-			max.AddNodesToQueue (q);
-			statements.AddNodesToQueue (q);
 		}
 
 		public ISemanticCheckValue Accept(INodeVisitor visitor) {

@@ -41,19 +41,33 @@ namespace MiniPLInterpreter
 
 		public static int parseToInt(string str)
 		{
-			if (String.IsNullOrEmpty(str) || !isInteger(str)) {
+			if (!isInteger (str)) {
 				throw new ArgumentException ();
 			}
-
+	
 			bool negative = str [0] == '-';
 			bool signed = negative | str [0] == '+';
 			int downTo = signed ? 0 : -1;
 			int coefficient = 1;
 			int value = 0;
+			int[] barriers = { negative ? 8 : 7, 4, 6, 3, 8, 4, 7, 4, 1, 2 };
 
-			for (int i = str.Length - 1; i > downTo; i--) {
-				value += (int)Char.GetNumericValue (str [i]) * coefficient;
+			if (barriers.Length < str.Length - (downTo + 1)) {
+				throw new OverflowException();
+			}
+
+			bool overflow = false;
+			int i, j, current;
+
+			for (i = str.Length - 1, j = 0; i > downTo && j < barriers.Length; i--, j++) {
+				current = (int)Char.GetNumericValue (str [i]);
+				overflow = barriers [j] < current || (barriers [j] == current && overflow);
+				value += current * coefficient;
 				coefficient *= 10;
+			}
+
+			if (j > barriers.Length || (j == barriers.Length && overflow)) {
+				throw new OverflowException();
 			}
 
 			return negative ? -1 * value : value;
@@ -179,13 +193,13 @@ namespace MiniPLInterpreter
 			}
 
 			bool neg = value < 0;
-			int abs = neg ? -1 * value : value;
+			int remainder = value;
 
 			StringBuilder sb = new StringBuilder ();
 
-			while (abs > 0) {
-				sb.Insert (0, abs % 10);
-				abs /= 10;
+			while (remainder != 0) {
+				sb.Insert (0, neg ? (remainder % 10) * -1 : remainder % 10);
+				remainder /= 10;
 			}
 
 			if (neg) {

@@ -4,7 +4,6 @@ namespace MiniPLInterpreter
 {
 	public interface IExpressionNode : ISyntaxTreeNode
 	{
-		TokenType GetEvaluationType (TokenType parentType); // to be abolished
 		IExpressionNode[] GetExpressions ();
 		TokenType Operation { 
 			get;
@@ -14,7 +13,6 @@ namespace MiniPLInterpreter
 			get;
 			set;
 		}
-		TokenType GetValueType(); // to be replaced with EvaluationType
 	}
 }
 
