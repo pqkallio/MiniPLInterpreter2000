@@ -149,6 +149,10 @@ namespace MiniPLInterpreter
 			if (idNode == null) {
 				analyzer.notifyError (new SemanticError(node));
 			} else {
+				if (!analyzer.IDs.ContainsKey (idNode.ID)) {
+					analyzer.notifyError (new UninitializedVariableError (idNode));
+				}
+
 				IProperty property = analyzer.IDs [idNode.ID];
 
 				if (!property.Declared) {
