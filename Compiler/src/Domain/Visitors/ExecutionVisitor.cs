@@ -8,9 +8,9 @@ namespace MiniPLInterpreter
 		private Dictionary<string, IProperty> ids;
 		private EvaluationVisitor evaluator;
 		private VoidProperty voidProperty;
-		private Printer printer;
+		private IPrinter printer;
 
-		public ExecutionVisitor (Dictionary<string, IProperty> ids, Printer printer)
+		public ExecutionVisitor (Dictionary<string, IProperty> ids, IPrinter printer)
 		{
 			this.ids = ids;
 			this.evaluator = new EvaluationVisitor (this.ids);
@@ -134,13 +134,13 @@ namespace MiniPLInterpreter
 		{
 			switch (idNode.VariableType) {
 			case TokenType.INT_VAL:
-				ids [idNode.ID] = new IntegerProperty (Constants.DEFAULT_INTEGER_VALUE);
+				ids [idNode.ID] = new IntegerProperty (SemanticAnalysisConstants.DEFAULT_INTEGER_VALUE);
 				break;
 			case TokenType.STR_VAL:
-				ids [idNode.ID] = new StringProperty (Constants.DEFAULT_STRING_VALUE);
+				ids [idNode.ID] = new StringProperty (SemanticAnalysisConstants.DEFAULT_STRING_VALUE);
 				break;
 			case TokenType.BOOL_VAL:
-				ids [idNode.ID] = new BooleanProperty (Constants.DEFAULT_BOOL_VALUE);
+				ids [idNode.ID] = new BooleanProperty (SemanticAnalysisConstants.DEFAULT_BOOL_VALUE);
 				break;
 			default:
 				throw new ArgumentException ();

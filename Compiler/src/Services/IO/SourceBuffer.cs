@@ -34,7 +34,7 @@ namespace MiniPLInterpreter
 		}
 
 		public void readLines () {
-			sourceLines = File.ReadLines(FilePath, Encoding.ASCII).ToArray ();
+			sourceLines = File.ReadLines(FilePath, Encoding.UTF8).ToArray ();
 		}
 	}
 }

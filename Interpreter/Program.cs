@@ -20,7 +20,7 @@ namespace Interpreter
 			Dictionary<string, IProperty> ids = new Dictionary<string, IProperty> ();
 			Parser p = new Parser (ids);
 			string[] sourceLines = File.ReadLines (@args [0], encoding).ToArray ();
-			Printer printer = new Printer (sourceLines);
+			ConsolePrinter printer = new ConsolePrinter (sourceLines);
 			Scanner s = new Scanner (sourceLines);
 			p.Scanner = s;
 			p.Parse ();

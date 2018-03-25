@@ -79,7 +79,7 @@ namespace MiniPLInterpreter
 				case TokenType.END_OF_FILE:
 					break;
 				default:
-					notifyError (new SyntaxError (t, TokenType.UNDEFINED, Constants.EXPECTATION_SET_PROGRAM));
+					notifyError (new SyntaxError (t, TokenType.UNDEFINED, ParserConstants.EXPECTATION_SET_PROGRAM));
 					break;
 			}
 		}
@@ -106,11 +106,11 @@ namespace MiniPLInterpreter
 				case TokenType.END_OF_FILE:
 					return t;
 				case TokenType.ERROR:
-					notifyError (new SyntaxError (t, TokenType.UNDEFINED, Constants.EXPECTATION_SET_STATEMENTS));
+					notifyError (new SyntaxError (t, TokenType.UNDEFINED, ParserConstants.EXPECTATION_SET_STATEMENTS));
 					next = FastForwardToStatementEnd(t);
 					return ParseStatements (scanner.getNextToken(next), parent);
 				default:
-					throw new UnexpectedTokenException (t, TokenType.UNDEFINED, Constants.EXPECTATION_SET_STATEMENTS);
+					throw new UnexpectedTokenException (t, TokenType.UNDEFINED, ParserConstants.EXPECTATION_SET_STATEMENTS);
 			}
 		}
 
@@ -130,10 +130,10 @@ namespace MiniPLInterpreter
 				case TokenType.ASSERT:
 					return ParseAssert (t, statementsNode);
 				case TokenType.ERROR:
-					notifyError(new SyntaxError (t, TokenType.UNDEFINED, Constants.EXPECTATION_SET_STATEMENT));
+					notifyError(new SyntaxError (t, TokenType.UNDEFINED, ParserConstants.EXPECTATION_SET_STATEMENT));
 					return FastForwardToStatementEnd(t);
 				default:
-					throw new UnexpectedTokenException (t, TokenType.UNDEFINED, Constants.EXPECTATION_SET_STATEMENT);
+					throw new UnexpectedTokenException (t, TokenType.UNDEFINED, ParserConstants.EXPECTATION_SET_STATEMENT);
 			}
 		}
 
@@ -181,7 +181,7 @@ namespace MiniPLInterpreter
 				match (next, TokenType.START_BLOCK);
 			} catch (UnexpectedTokenException ex) {
 				notifyError (new SyntaxError (ex.Token, ex.ExpectedType, ex.ExpectationSet));
-				next = FastForwardTo (Constants.BLOCK_DEF_FASTFORWARD_TO);
+				next = FastForwardTo (ParserConstants.BLOCK_DEF_FASTFORWARD_TO);
 			}
 
 			try {
@@ -251,18 +251,18 @@ namespace MiniPLInterpreter
 				switch (t.Type) {
 					case TokenType.INT_VAR:
 						idNode.VariableType = TokenType.INT_VAL;
-						symbolTable.Add (idNode.ID, (new IntegerProperty (Constants.DEFAULT_INTEGER_VALUE)));
+						symbolTable.Add (idNode.ID, (new IntegerProperty (SemanticAnalysisConstants.DEFAULT_INTEGER_VALUE)));
 						break;
 					case TokenType.STR_VAR:
 						idNode.VariableType = TokenType.STR_VAL;
-						symbolTable.Add (idNode.ID, new StringProperty (Constants.DEFAULT_STRING_VALUE));
+						symbolTable.Add (idNode.ID, new StringProperty (SemanticAnalysisConstants.DEFAULT_STRING_VALUE));
 						break;
 					case TokenType.BOOL_VAR:
 						idNode.VariableType = TokenType.BOOL_VAL;
-						symbolTable.Add (idNode.ID, new BooleanProperty (Constants.DEFAULT_BOOL_VALUE));
+						symbolTable.Add (idNode.ID, new BooleanProperty (SemanticAnalysisConstants.DEFAULT_BOOL_VALUE));
 						break;
 					default:
-						throw new UnexpectedTokenException (t, TokenType.UNDEFINED, Constants.EXPECTATION_SET_DECLARATION_TYPE);
+						throw new UnexpectedTokenException (t, TokenType.UNDEFINED, ParserConstants.EXPECTATION_SET_DECLARATION_TYPE);
 				}
 			}
 
@@ -280,7 +280,7 @@ namespace MiniPLInterpreter
 					setDefaultAssignment (assignNode);
 					return t;
 				default:
-				throw new UnexpectedTokenException (t, TokenType.UNDEFINED, Constants.EXPECTATION_SET_ASSIGN);
+				throw new UnexpectedTokenException (t, TokenType.UNDEFINED, ParserConstants.EXPECTATION_SET_ASSIGN);
 			}
 		}
 
@@ -301,7 +301,7 @@ namespace MiniPLInterpreter
 					next = ParseUnaryOp (t, unOp);
 					return ParseOperand (next, unOp);
 				default:
-					throw new UnexpectedTokenException (t, TokenType.UNDEFINED, Constants.EXPECTATION_SET_EXPRESSION);
+					throw new UnexpectedTokenException (t, TokenType.UNDEFINED, ParserConstants.EXPECTATION_SET_EXPRESSION);
 			}
 		}
 
@@ -309,12 +309,14 @@ namespace MiniPLInterpreter
 		{
 			switch (t.Type) {
 				case TokenType.INT_VAL:
+					ISyntaxTreeNode intVal;
 					try {
-						ISyntaxTreeNode intVal = nodeBuilder.CreateIntValueNode(t);
-						node.AddOperand (intVal);
-					} catch (OverflowException ex) {
+						intVal = nodeBuilder.CreateIntValueNode(t);
+					} catch (OverflowException) {
 						notifyError(new IntegerOverflowError(t));
+						intVal = nodeBuilder.CreateDefaultIntValueNode (t);
 					}
+					node.AddOperand (intVal);
 					return scanner.getNextToken (t);
 				case TokenType.STR_VAL:
 					ISyntaxTreeNode strVal = nodeBuilder.CreateStringValueNode(t);
@@ -334,7 +336,7 @@ namespace MiniPLInterpreter
 					match (next, TokenType.PARENTHESIS_RIGHT);
 					return scanner.getNextToken (next);
 				default:
-					throw new UnexpectedTokenException (t, TokenType.UNDEFINED, Constants.EXPECTATION_SET_EXPRESSION);
+					throw new UnexpectedTokenException (t, TokenType.UNDEFINED, ParserConstants.EXPECTATION_SET_EXPRESSION);
 			}
 		}
 
@@ -356,7 +358,7 @@ namespace MiniPLInterpreter
 				case TokenType.START_BLOCK:
 					return t;
 				default:
-					throw new UnexpectedTokenException (t, TokenType.UNDEFINED, Constants.EXPECTATION_SET_BINOP);
+					throw new UnexpectedTokenException (t, TokenType.UNDEFINED, ParserConstants.EXPECTATION_SET_BINOP);
 			}
 		}
 
@@ -416,7 +418,7 @@ namespace MiniPLInterpreter
 					assignNode.AddExpression (nodeBuilder.CreateDefaultBoolValueNode (assignNode.Token));
 					break;
 				default:
-				throw new UnexpectedTokenException (assignNode.IDNode.Token, TokenType.UNDEFINED, Constants.EXPECTATION_SET_ID_VAL);
+					throw new UnexpectedTokenException (assignNode.IDNode.Token, TokenType.UNDEFINED, ParserConstants.EXPECTATION_SET_ID_VAL);
 			} 
 		}
 
@@ -444,12 +446,12 @@ namespace MiniPLInterpreter
 		private Token FastForwardToStatementEnd (UnexpectedTokenException ex)
 		{
 			notifyError (new SyntaxError (ex.Token, ex.ExpectedType, ex.ExpectationSet));
-			return FastForwardTo (Constants.STATEMENT_FASTFORWARD_TO);
+			return FastForwardTo (ParserConstants.STATEMENT_FASTFORWARD_TO);
 		}
 
 		private Token FastForwardToStatementEnd (Token token)
 		{
-			return FastForwardTo (Constants.STATEMENT_FASTFORWARD_TO);
+			return FastForwardTo (ParserConstants.STATEMENT_FASTFORWARD_TO);
 		}
 
 		public void notifyError (Error error)

@@ -31,7 +31,6 @@
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="src\Constants.cs" />
     <Compile Include="src\Utils\StringUtils.cs" />
     <Compile Include="src\Utils\NumericUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -46,7 +45,6 @@
     <Compile Include="src\Domain\Values\IntegerProperty.cs" />
     <Compile Include="src\Domain\Values\StringProperty.cs" />
     <Compile Include="src\Domain\Values\BooleanProperty.cs" />
-    <Compile Include="src\Utils\BooleanUtils.cs" />
     <Compile Include="src\Domain\Errors\SemanticError.cs" />
     <Compile Include="src\Domain\Errors\UnexpectedTokenException.cs" />
     <Compile Include="src\Services\NodeBuilder.cs" />
@@ -70,7 +68,6 @@
     <Compile Include="src\Services\Analyzers\Parser.cs" />
     <Compile Include="src\Services\Analyzers\Scanner.cs" />
     <Compile Include="src\Services\Analyzers\SemanticAnalyzer.cs" />
-    <Compile Include="src\Services\IO\Printer.cs" />
     <Compile Include="src\Services\IO\SourceBuffer.cs" />
     <Compile Include="src\Domain\SyntaxTree\SyntaxTree.cs" />
     <Compile Include="src\Domain\SyntaxTree\ISyntaxTreeNode.cs" />
@@ -94,6 +91,14 @@
     <Compile Include="src\Domain\SyntaxTree\BoolValueNode.cs" />
     <Compile Include="src\Domain\SyntaxTree\IIdentifierContainer.cs" />
     <Compile Include="src\Domain\ISemanticCheckValue.cs" />
+    <Compile Include="src\Services\Analyzers\ParserConstants.cs" />
+    <Compile Include="src\Services\Analyzers\ScannerConstants.cs" />
+    <Compile Include="src\Services\Analyzers\SemanticAnalysisConstants.cs" />
+    <Compile Include="src\Services\StringFormattingConstants.cs" />
+    <Compile Include="src\Services\IO\ConsoleReader.cs" />
+    <Compile Include="src\Services\IO\IReader.cs" />
+    <Compile Include="src\Services\IO\IPrinter.cs" />
+    <Compile Include="src\Services\IO\ConsolePrinter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\" />

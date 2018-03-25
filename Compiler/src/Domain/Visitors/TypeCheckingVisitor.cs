@@ -38,14 +38,14 @@ namespace MiniPLInterpreter
 			IProperty max = (IProperty)(node.MaxValue.Accept (this));
 			bool alright = true;
 
-			if (!Constants.LEGIT_OPERATIONS.ContainsKey(rangeFrom.GetTokenType ()) ||
-				!Constants.LEGIT_OPERATIONS [rangeFrom.GetTokenType ()].ContainsKey (TokenType.RANGE_FROM)) {
+			if (!SemanticAnalysisConstants.LEGIT_OPERATIONS.ContainsKey(rangeFrom.GetTokenType ()) ||
+				!SemanticAnalysisConstants.LEGIT_OPERATIONS [rangeFrom.GetTokenType ()].ContainsKey (TokenType.RANGE_FROM)) {
 				analyzer.notifyError(new IllegalTypeError(node.RangeFrom));
 				alright = false;
 			}
 
-			if (!Constants.LEGIT_OPERATIONS.ContainsKey(max.GetTokenType ()) ||
-				!Constants.LEGIT_OPERATIONS [max.GetTokenType ()].ContainsKey (TokenType.RANGE_UPTO)) {
+			if (!SemanticAnalysisConstants.LEGIT_OPERATIONS.ContainsKey(max.GetTokenType ()) ||
+				!SemanticAnalysisConstants.LEGIT_OPERATIONS [max.GetTokenType ()].ContainsKey (TokenType.RANGE_UPTO)) {
 				analyzer.notifyError(new IllegalTypeError(node.MaxValue));
 				alright = false;
 			}
@@ -106,13 +106,11 @@ namespace MiniPLInterpreter
 		{
 			IProperty evaluationType = getEvaluation(node.GetExpressions());
 
-			if (Constants.LEGIT_OPERATIONS.ContainsKey(evaluationType.GetTokenType ()) &&
-				Constants.LEGIT_OPERATIONS [evaluationType.GetTokenType ()].ContainsKey (node.Operation)) {
-				if (Constants.LOGICAL_OPERATIONS.ContainsKey (node.Operation)) {
-					Console.WriteLine ("boolean operation: " + node.Operation);
-					return new BooleanProperty (Constants.DEFAULT_BOOL_VALUE);
+			if (SemanticAnalysisConstants.LEGIT_OPERATIONS.ContainsKey(evaluationType.GetTokenType ()) &&
+				SemanticAnalysisConstants.LEGIT_OPERATIONS [evaluationType.GetTokenType ()].ContainsKey (node.Operation)) {
+				if (SemanticAnalysisConstants.LOGICAL_OPERATIONS.ContainsKey (node.Operation)) {
+					return new BooleanProperty (SemanticAnalysisConstants.DEFAULT_BOOL_VALUE);
 				}
-				Console.WriteLine ("not boolean operation: " + node.Operation);
 				return evaluationType;
 			}
 			return new ErrorProperty ();

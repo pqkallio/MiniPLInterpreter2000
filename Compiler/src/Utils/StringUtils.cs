@@ -8,8 +8,8 @@ namespace MiniPLInterpreter
 	{
 		public static bool isAlpha (char c)
 		{
-			return (c >= Constants.UTF8_CAPITAL_LETTERS_START && c <= Constants.UTF8_CAPITAL_LETTERS_END) ||
-				(c >= Constants.UTF8_SMALL_LETTERS_START && c <= Constants.UTF8_SMALL_LETTERS_END);
+			return (c >= StringFormattingConstants.UTF8_CAPITAL_LETTERS_START && c <= StringFormattingConstants.UTF8_CAPITAL_LETTERS_END) ||
+				(c >= StringFormattingConstants.UTF8_SMALL_LETTERS_START && c <= StringFormattingConstants.UTF8_SMALL_LETTERS_END);
 		}
 
 		public static bool isInteger (char c)
@@ -144,8 +144,8 @@ namespace MiniPLInterpreter
 
 			char c = input [0];
 
-			if (!(NumericUtils.IntBetween ((int)c, Constants.UTF8_SMALL_LETTERS_START, Constants.UTF8_SMALL_LETTERS_END) ||
-				NumericUtils.IntBetween ((int)c, Constants.UTF8_CAPITAL_LETTERS_START, Constants.UTF8_CAPITAL_LETTERS_END))) {
+			if (!(NumericUtils.IntBetween ((int)c, StringFormattingConstants.UTF8_SMALL_LETTERS_START, StringFormattingConstants.UTF8_SMALL_LETTERS_END) ||
+				NumericUtils.IntBetween ((int)c, StringFormattingConstants.UTF8_CAPITAL_LETTERS_START, StringFormattingConstants.UTF8_CAPITAL_LETTERS_END))) {
 				return false;
 			}
 
@@ -162,7 +162,7 @@ namespace MiniPLInterpreter
 		}
 
 		private static bool validIdChar(char c) {
-			Dictionary<char, char> validChars = Constants.UTF8_VALID_ID_CHAR_RANGES;
+			Dictionary<char, char> validChars = StringFormattingConstants.UTF8_VALID_ID_CHAR_RANGES;
 
 			foreach (char key in validChars.Keys) {
 				if (NumericUtils.IntBetween ((int)c, key, validChars [key])) {
@@ -171,19 +171,6 @@ namespace MiniPLInterpreter
 			}
 
 			return false;
-		}
-
-		public static object Evaluate (string leftOperand, string rightOperand, TokenType operation)
-		{
-			switch (operation) {
-				case TokenType.BINARY_OP_ADD:
-					return leftOperand + rightOperand;
-				case TokenType.BINARY_OP_LOG_EQ:
-				case TokenType.BINARY_OP_LOG_LT:
-					return BooleanUtils.EvaluateBinOp (leftOperand, rightOperand, operation);
-				default:
-					throw new ArgumentException (String.Format ("operation {0} not defined for string values", operation));
-			}
 		}
 
 		public static string IntToString (int value)

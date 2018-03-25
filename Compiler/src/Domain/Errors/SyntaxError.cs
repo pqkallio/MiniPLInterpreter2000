@@ -63,7 +63,7 @@ namespace MiniPLInterpreter
 
 		private string formatExpectedTokenString ()
 		{
-			return Constants.TOKEN_TYPE_STRINGS [ExpectedType] + " expected";
+			return StringFormattingConstants.TOKEN_TYPE_STRINGS [ExpectedType] + " expected";
 		}
 	}
 }

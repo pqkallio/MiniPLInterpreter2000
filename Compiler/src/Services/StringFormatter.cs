@@ -31,7 +31,7 @@ namespace MiniPLInterpreter
 			int numStartCol = assertNode.AssertStatementStartCol;
 			int lenAssertion = assertNode.AssertStatementEndCol - numStartCol;
 
-			string assertion = Constants.ASSERTION_FAILED;
+			string assertion = StringFormattingConstants.ASSERTION_FAILED;
 			assertion += sourceLines [numRow].Substring (numStartCol, lenAssertion) + ' ';
 			assertion += line (formatRowAndColumn (numRow, numStartCol));
 
@@ -40,10 +40,10 @@ namespace MiniPLInterpreter
 
 		public static string formatRowAndColumn (int numRow, int numCol)
 		{
-			Tuple<char, char> parentheses = Constants.PRINT_ROW_AND_COLUMN_PARENTHESES;
+			Tuple<char, char> parentheses = StringFormattingConstants.PRINT_ROW_AND_COLUMN_PARENTHESES;
 
-			string rowAndCol = parentheses.Item1 + Constants.PRINT_ROW + formatSourcePosition(numRow);
-			rowAndCol += Constants.PRINT_ROW_COL_DELIMITER + Constants.PRINT_COL + formatSourcePosition(numCol);
+			string rowAndCol = parentheses.Item1 + StringFormattingConstants.PRINT_ROW + formatSourcePosition(numRow);
+			rowAndCol += StringFormattingConstants.PRINT_ROW_COL_DELIMITER + StringFormattingConstants.PRINT_COL + formatSourcePosition(numCol);
 			rowAndCol += parentheses.Item2;
 
 			return rowAndCol;
@@ -56,7 +56,7 @@ namespace MiniPLInterpreter
 
 		public static string line (string str)
 		{
-			return str + '\n';
+			return str + StringFormattingConstants.LINEBREAK;
 		}
 	}
 }

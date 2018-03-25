@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace MiniPLInterpreter
 {
-	public class Printer
+	public class ConsolePrinter : IPrinter
 	{
 		private string[] sourceLines;
 
-		public Printer (string[] sourceLines)
+		public ConsolePrinter (string[] sourceLines)
 		{
 			this.sourceLines = sourceLines;
 		}

@@ -132,7 +132,7 @@ namespace MiniPLInterpreter
 		}
 
 		public IProperty binaryOperation (TokenType operation, IProperty firstOperand, IProperty secondOperand) {
-			if (Constants.LOGICAL_OPERATIONS.ContainsKey (operation)) {
+			if (SemanticAnalysisConstants.LOGICAL_OPERATIONS.ContainsKey (operation)) {
 				return booleanBinOp (operation, firstOperand, secondOperand);
 			}
 

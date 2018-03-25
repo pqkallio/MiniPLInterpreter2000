@@ -134,17 +134,17 @@ namespace MiniPLInterpreter
 
 		public IExpressionNode CreateDefaultIntValueNode(Token t)
 		{
-			return new IntValueNode (Constants.DEFAULT_INTEGER_VALUE, t);
+			return new IntValueNode (SemanticAnalysisConstants.DEFAULT_INTEGER_VALUE, t);
 		}
 
 		public IExpressionNode CreateDefaultStringValueNode (Token t)
 		{
-			return new StringValueNode (Constants.DEFAULT_STRING_VALUE, t);
+			return new StringValueNode (SemanticAnalysisConstants.DEFAULT_STRING_VALUE, t);
 		}
 
 		public IExpressionNode CreateDefaultBoolValueNode (Token t)
 		{
-			return new BoolValueNode (Constants.DEFAULT_BOOL_VALUE, t);
+			return new BoolValueNode (SemanticAnalysisConstants.DEFAULT_BOOL_VALUE, t);
 		}
 	}
 }

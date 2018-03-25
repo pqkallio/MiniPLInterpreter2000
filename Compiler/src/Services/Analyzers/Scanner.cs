@@ -26,7 +26,7 @@ namespace MiniPLInterpreter
 
 		private char peekStream() {
 			if (EndOfStream) {
-				return Constants.NULL_CHAR;
+				return ScannerConstants.NULL_CHAR;
 			}
 			
 			char c = readStream ();
@@ -43,7 +43,7 @@ namespace MiniPLInterpreter
 
 		private char readStream() {
 			if (EndOfStream) {
-				return Constants.NULL_CHAR;
+				return ScannerConstants.NULL_CHAR;
 			}
 
 			col++;
@@ -56,53 +56,13 @@ namespace MiniPLInterpreter
 					EndOfStream = true;
 				}
 
-				return Constants.NEWLINE;
+				return ScannerConstants.NEWLINE;
 			}
 
 			char c = sourceLines [row] [col];
 
 			return c;
 		}
-
-		/*
-		private char peekStream() {
-			return inputStream.EndOfStream ? '\0' : (char)inputStream.Peek ();
-		}
-
-		private char readStream() {
-			if (inputStream.EndOfStream) {
-				return '\0';
-			}
-
-			char c = (char)inputStream.Read ();
-			char d = c;
-			long readIndex = inputStream.BaseStream.Position;
-			bool isLineBreak = true;
-
-			for (int i = 0; i < Constants.LINEBREAK.Length; i++) {
-				if (Constants.LINEBREAK [i] != d) {
-					isLineBreak = false;
-					break;
-				}
-
-				d = (char)inputStream.Read ();
-			}
-
-			if (isLineBreak) {
-				row++;
-				col = -1;
-				long posBefore = inputStream.BaseStream.Position;
-				inputStream.BaseStream.Position = inputStream.BaseStream.Position - 1;
-				long posAfter = inputStream.BaseStream.Position;
-				char f = (char)inputStream.Peek ();
-				return Constants.NEWLINE;
-			}
-				
-			inputStream.BaseStream.Position = readIndex;
-			col++;
-			return c;
-		}
-		*/
 
 		public Token getNextToken(Token previous)
 		{
@@ -130,8 +90,6 @@ namespace MiniPLInterpreter
 				token = new Token (row, col, "", TokenType.END_OF_FILE);
 			}
 
-			Console.WriteLine (token);
-
 			return token;
 		}
 
@@ -139,19 +97,19 @@ namespace MiniPLInterpreter
 		{
 			Token token = new Token (row, col);
 
-			if (Constants.INDEPENDENT_CHARS.ContainsKey (c)) {
-				token.Type = Constants.INDEPENDENT_CHARS [c];
-			} else if (c == Constants.SET_TYPE.Item1) {
+			if (ScannerConstants.INDEPENDENT_CHARS.ContainsKey (c)) {
+				token.Type = ScannerConstants.INDEPENDENT_CHARS [c];
+			} else if (c == ScannerConstants.SET_TYPE.Item1) {
 				parseSetTypeOrAssign (token);
 			} else if (c == '.') {
 				parseForLoopRangeUpto (token);
-			} else if (c == Constants.BINARY_OP_ADD.Item1 || c == Constants.BINARY_OP_SUB.Item1) {
+			} else if (c == ScannerConstants.BINARY_OP_ADD.Item1 || c == ScannerConstants.BINARY_OP_SUB.Item1) {
 				parseAddOrSub (token, previous, c);
-			} else if (c == Constants.STRING_DELIMITER) {
+			} else if (c == ScannerConstants.STRING_DELIMITER) {
 				parseString (token);
 			} else if (StringUtils.isInteger (c)) {
 				parseInteger (token, c);
-			} else if (c == Constants.BINARY_OP_DIV.Item1) {
+			} else if (c == ScannerConstants.BINARY_OP_DIV.Item1) {
 				parseDivOrComment (ref token, c);
 			} else if (StringUtils.isAlpha(c)) {
 				parseIdOrKeyword (token, previous, c);
@@ -180,12 +138,12 @@ namespace MiniPLInterpreter
 
 			string val = sb.ToString ();
 
-			if (Constants.RESERVED_SEQUENCES.ContainsKey (val)) {
+			if (ScannerConstants.RESERVED_SEQUENCES.ContainsKey (val)) {
 				if (previous != null && previous.Type == TokenType.DECLARATION) {
 					token.Value = val;
-					notifyError (new TokenError (token, "Reserved keyword used as variable identifier"));
+					notifyError (new TokenError (token, "reserved keyword used as variable identifier"));
 				} else {
-					token.Type = Constants.RESERVED_SEQUENCES [val];
+					token.Type = ScannerConstants.RESERVED_SEQUENCES [val];
 					if (token.Type == TokenType.BOOL_VAL) {
 						token.Value = val;
 					}
@@ -197,9 +155,9 @@ namespace MiniPLInterpreter
 
 		private void parseDivOrComment (ref Token token, char c)
 		{
-			token.Type = Constants.BINARY_OP_DIV.Item2;
+			token.Type = ScannerConstants.BINARY_OP_DIV.Item2;
 
-			if (peekStream () == Constants.BINARY_OP_DIV.Item1) {
+			if (peekStream () == ScannerConstants.BINARY_OP_DIV.Item1) {
 				token = null;
 				parseSingleLineComment ();
 			} else if (peekStream () == '*') {
@@ -212,7 +170,7 @@ namespace MiniPLInterpreter
 		{
 			while (!EndOfStream) {
 				char c = readStream ();
-				if (c == Constants.NEWLINE) {
+				if (c == ScannerConstants.NEWLINE) {
 					break;
 				}
 			}
@@ -226,7 +184,7 @@ namespace MiniPLInterpreter
 			while (!EndOfStream) {
 				char c = readStream ();
 
-				if (c == Constants.NEWLINE) {
+				if (c == ScannerConstants.NEWLINE) {
 					starHit = false;
 				} else if (c == '*') {
 					starHit = true;
@@ -268,7 +226,7 @@ namespace MiniPLInterpreter
 
 		private void parseAddOrSub (Token token, Token previous, char c)
 		{
-			token.Type = c == Constants.BINARY_OP_ADD.Item1 ? Constants.BINARY_OP_ADD.Item2 : Constants.BINARY_OP_SUB.Item2;
+			token.Type = c == ScannerConstants.BINARY_OP_ADD.Item1 ? ScannerConstants.BINARY_OP_ADD.Item2 : ScannerConstants.BINARY_OP_SUB.Item2;
 
 			if (StringUtils.isInteger (peekStream()) && (previous == null || !isBinaryOperand(previous))) {
 				StringBuilder sb = new StringBuilder (c.ToString());
@@ -300,11 +258,11 @@ namespace MiniPLInterpreter
 
 		private void parseSetTypeOrAssign(Token token)
 		{
-			if (peekStream() == Constants.ASSIGN.Item1) {
+			if (peekStream() == ScannerConstants.ASSIGN.Item1) {
 				readStream();
-				token.Type = Constants.ASSIGN.Item2;
+				token.Type = ScannerConstants.ASSIGN.Item2;
 			} else {
-				token.Type = Constants.SET_TYPE.Item2;
+				token.Type = ScannerConstants.SET_TYPE.Item2;
 			}
 		}
 
@@ -319,27 +277,31 @@ namespace MiniPLInterpreter
 			while (!EndOfStream) {
 				char c = readStream ();
 
-				if (c == Constants.NEWLINE && !errored) {
-					notifyError (new StringLiteralError (token, "String literal mustn't span multiple lines"));
+				if (c == ScannerConstants.NEWLINE && !errored) {
+					notifyError (new StringLiteralError (token, ErrorConstants.LINEBREAK_IN_STR_LITERAL_MESSAGE));
 					errored = true;
 				} else if (escapeNextChar) {
 					escapeNextChar = false;
 
 					switch (c) {
-					case 'n':
-						sb.Append ('\n');
-						break;
-					case 't':
-						sb.Append ('\t');
-						break;
-						// and so on until all the cases are covered...
-					default:
-						sb.Append (c);
-						break;
+						case 'n':
+							sb.Append ('\n');
+							break;
+						case 't':
+							sb.Append ('\t');
+							break;
+						case 'r':
+							sb.Append ('\r');
+							break;
+						case '0':
+							break;
+						default:
+							sb.Append (c);
+							break;
 					}
 				} else {
-					escapeNextChar = c == Constants.ESCAPE_CHAR;
-					stringEnded = c == Constants.STRING_DELIMITER;
+					escapeNextChar = c == ScannerConstants.ESCAPE_CHAR;
+					stringEnded = c == ScannerConstants.STRING_DELIMITER;
 
 					if (stringEnded) {
 						break;
@@ -352,7 +314,7 @@ namespace MiniPLInterpreter
 			}
 
 			if (!stringEnded) {
-				notifyError (new StringLiteralError (token, "EOF encountered while parsing string literal"));
+				notifyError (new StringLiteralError (token, ErrorConstants.EOF_WHILE_SCANNING_MESSAGE));
 				token.Type = TokenType.ERROR;
 			} else {
 				token.Value = sb.ToString ();
@@ -394,7 +356,7 @@ namespace MiniPLInterpreter
 
 		private bool isWhitespace (char c)
 		{
-			return c == Constants.NEWLINE || Constants.WHITESPACES.ContainsKey (c);
+			return c == ScannerConstants.NEWLINE || ScannerConstants.WHITESPACES.ContainsKey (c);
 		}
 
 		private bool isIdCharacter (char c)
