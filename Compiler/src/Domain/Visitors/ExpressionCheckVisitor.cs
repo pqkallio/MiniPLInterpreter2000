@@ -151,6 +151,7 @@ namespace MiniPLInterpreter
 			} else {
 				if (!analyzer.IDs.ContainsKey (idNode.ID)) {
 					analyzer.notifyError (new UninitializedVariableError (idNode));
+					return voidProperty;
 				}
 
 				IProperty property = analyzer.IDs [idNode.ID];
