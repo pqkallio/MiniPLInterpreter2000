@@ -34,7 +34,7 @@ namespace MiniPLInterpreter
 			}
 
 			IProperty rightHandEval = getEvaluation (node.RightOperand);
-			IProperty evaluation = binaryOperation (node.Operation, leftHandEval, rightHandEval);
+			IProperty evaluation = binaryOperation (node.Operation, leftHandEval, rightHandEval, node.Token);
 
 			return evaluation;
 		}
@@ -131,14 +131,14 @@ namespace MiniPLInterpreter
 			return evaluatedType;
 		}
 
-		public IProperty binaryOperation (TokenType operation, IProperty firstOperand, IProperty secondOperand) {
+		public IProperty binaryOperation (TokenType operation, IProperty firstOperand, IProperty secondOperand, Token token) {
 			if (SemanticAnalysisConstants.LOGICAL_OPERATIONS.ContainsKey (operation)) {
 				return booleanBinOp (operation, firstOperand, secondOperand);
 			}
 
 			switch (firstOperand.GetTokenType ()) {
 				case TokenType.INT_VAL:
-					return integerBinOp (operation, firstOperand, secondOperand);
+					return integerBinOp (operation, firstOperand, secondOperand, token);
 				case TokenType.STR_VAL:
 					return stringBinOp (operation, firstOperand, secondOperand);
 				case TokenType.BOOL_VAL:
@@ -148,21 +148,36 @@ namespace MiniPLInterpreter
 			}
 		}
 
-		public IProperty integerBinOp (TokenType operation, IProperty firstOperand, IProperty secondOperand)
+		public IProperty integerBinOp (TokenType operation, IProperty firstOperand, IProperty secondOperand, Token token)
 		{
 			int evaluation;
 
 			switch (operation) {
 				case TokenType.BINARY_OP_ADD:
-					evaluation = checked(firstOperand.asInteger () + secondOperand.asInteger ());
+					try {
+						evaluation = checked(firstOperand.asInteger () + secondOperand.asInteger ());
+					} catch (OverflowException) {
+						throw new RuntimeException (ErrorConstants.INTEGER_OVERFLOW_ERROR_MESSAGE, token);
+					}
 					break;
 				case TokenType.BINARY_OP_SUB:
-					evaluation = checked(firstOperand.asInteger () - secondOperand.asInteger ());
+					try {	
+						evaluation = checked(firstOperand.asInteger () - secondOperand.asInteger ());
+					} catch (OverflowException) {
+						throw new RuntimeException (ErrorConstants.INTEGER_OVERFLOW_ERROR_MESSAGE, token);
+					}
 					break;
 				case TokenType.BINARY_OP_MUL:
-					evaluation = checked(firstOperand.asInteger () * secondOperand.asInteger ());
+					try {	
+						evaluation = checked(firstOperand.asInteger () * secondOperand.asInteger ());
+					} catch (OverflowException) {
+						throw new RuntimeException (ErrorConstants.INTEGER_OVERFLOW_ERROR_MESSAGE, token);
+					}
 					break;
 				case TokenType.BINARY_OP_DIV:
+					if (secondOperand.asInteger () == 0) {
+						throw new RuntimeException (ErrorConstants.DIVISION_BY_ZERO_MESSAGE, token);
+					}
 					evaluation = checked(firstOperand.asInteger () / secondOperand.asInteger ());
 					break;
 				default:

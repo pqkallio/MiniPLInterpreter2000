@@ -35,7 +35,7 @@ namespace MiniPLInterpreter
 			return this.errors;
 		}
 
-		public Dictionary<string, IProperty> IDs
+		public Dictionary<string, IProperty> SymbolicTable
 		{
 			get { return this.symbolTable; }
 		}

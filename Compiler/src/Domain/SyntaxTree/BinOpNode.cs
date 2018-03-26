@@ -44,7 +44,7 @@ namespace MiniPLInterpreter
 
 		public void AddExpression(IExpressionNode expressionNode)
 		{
-			this.rightOperand = expressionNode;
+			AddOperand(expressionNode);
 		}
 
 		public override string ToString ()

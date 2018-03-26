@@ -99,7 +99,12 @@ namespace MiniPLInterpreter
 
 		public ISemanticCheckValue VisitVariableIdNode(VariableIdNode node)
 		{
-			return analyzer.IDs[node.ID];
+			if (analyzer.SymbolicTable.ContainsKey (node.ID)) {
+				return analyzer.SymbolicTable[node.ID];
+			}
+
+			analyzer.notifyError (new UninitializedVariableError (node));
+			return new ErrorProperty ();
 		}
 
 		private IProperty VisitOperationNode (IExpressionNode node)
@@ -119,6 +124,7 @@ namespace MiniPLInterpreter
 		private IProperty getEvaluation(params IExpressionNode[] expressions)
 		{
 			IExpressionNode expression = expressions [0];
+
 			IProperty evaluatedType = expression.Accept (this).asProperty ();
 			if (evaluatedType.GetTokenType () == TokenType.ERROR) {
 				expression.EvaluationType = TokenType.ERROR;

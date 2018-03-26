@@ -1,67 +1,25 @@
 ﻿<Properties StartupItem="Interpreter/Interpreter.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Compiler/src/Domain/Visitors/ExpressionCheckVisitor.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Compiler/src/Domain/Visitors/EvaluationVisitor.cs">
     <Files>
-      <File FileName="Compiler/src/Services/Analyzers/Parser.cs" Line="474" Column="1" />
-      <File FileName="Compiler/src/Domain/Visitors/TypeCheckingVisitor.cs" Line="110" Column="1" />
-      <File FileName="Compiler/src/Services/NodeBuilder.cs" Line="147" Column="46" />
-      <File FileName="Compiler/src/Domain/Visitors/EvaluationVisitor.cs" Line="135" Column="24" />
-      <File FileName="Compiler/src/Domain/Visitors/ExecutionVisitor.cs" Line="49" Column="24" />
-      <File FileName="Compiler/src/Services/IO/IReader.cs" Line="7" Column="22" />
-      <File FileName="Compiler/src/Services/IO/IPrinter.cs" Line="12" Column="3" />
-      <File FileName="Compiler/src/Services/IO/ConsolePrinter.cs" Line="6" Column="40" />
-      <File FileName="Compiler/src/Services/Interpreter.cs" Line="13" Column="47" />
-      <File FileName="Compiler/src/Services/Analyzers/Scanner.cs" Line="144" Column="28" />
-      <File FileName="Compiler/src/Domain/Visitors/ExpressionCheckVisitor.cs" Line="154" Column="26" />
+      <File FileName="Compiler/src/Domain/Errors/IntegerOverflowError.cs" Line="8" Column="37" />
+      <File FileName="Compiler/src/Domain/Visitors/ExpressionCheckVisitor.cs" Line="40" Column="4" />
+      <File FileName="Compiler/src/Domain/Visitors/TypeCheckingVisitor.cs" Line="153" Column="4" />
+      <File FileName="Compiler/src/Domain/Errors/DivisionByZeroError.cs" Line="8" Column="97" />
+      <File FileName="Compiler/src/Domain/Visitors/EvaluationVisitor.cs" Line="311" Column="1" />
     </Files>
-    <Pads>
-      <Pad Id="ProjectPad">
-        <State name="__root__">
-          <Node name="MiniPLInterpreter" expanded="True">
-            <Node name="Interpreter" expanded="True" />
-            <Node name="MiniPLInterpreter" expanded="True">
-              <Node name="src" expanded="True">
-                <Node name="Domain" expanded="True">
-                  <Node name="Visitors" expanded="True">
-                    <Node name="ExpressionCheckVisitor.cs" selected="True" />
-                  </Node>
-                </Node>
-              </Node>
-            </Node>
-          </Node>
-        </State>
-      </Pad>
-      <Pad Id="MonoDevelop.NUnit.TestPad">
-        <State name="__root__">
-          <Node name="MiniPLInterpreter" expanded="True">
-            <Node name="MiniPLInterpreterTests" selected="True" />
-          </Node>
-        </State>
-      </Pad>
-    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
-      <Breakpoint file="/home/pqkallio/MonoDevelopProjects/Compiler/Compiler/src/Domain/Visitors/ExecutionVisitor.cs" line="54" column="1" />
+      <Breakpoint file="/home/pqkallio/MonoDevelopProjects/Compiler/Compiler/src/Services/Analyzers/Parser.cs" line="224" column="1" />
+      <Breakpoint file="/home/pqkallio/MonoDevelopProjects/Compiler/Interpreter/Program.cs" line="14" column="1" />
+      <Breakpoint file="/home/pqkallio/MonoDevelopProjects/Compiler/Compiler/src/Domain/SyntaxTree/BinOpNode.cs" line="33" column="1" />
+      <Breakpoint file="/home/pqkallio/MonoDevelopProjects/Compiler/Compiler/src/Services/Analyzers/Parser.cs" line="298" column="41" />
+      <Breakpoint file="/home/pqkallio/MonoDevelopProjects/Compiler/Compiler/src/Services/Analyzers/Parser.cs" line="336" column="50" />
+      <Breakpoint file="/home/pqkallio/MonoDevelopProjects/Compiler/Compiler/src/Services/NodeBuilder.cs" line="111" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MonoDevelop.Ide.ItemProperties.Interpreter>
-    <MonoDevelop.Ide.CustomExecutionModes>
-      <Data Name="TestText" Id="47d82eb1-4bfd-468c-a383-0c36dbf1b4dc" ModeId="Default">
-        <CommandData>
-          <Item Key="MonoDevelop.Ide.Execution.CustomArgsCustomizer">
-            <Value Arguments="~/test.txt" ctype="CustomArgsExecutionModeData">
-              <EnvironmentVariables />
-            </Value>
-          </Item>
-          <Item Key="MonoDevelop.Ide.Execution.MonoExecutionCustomizer">
-            <Value ctype="MonoExecutionParameters" />
-          </Item>
-        </CommandData>
-      </Data>
-    </MonoDevelop.Ide.CustomExecutionModes>
-  </MonoDevelop.Ide.ItemProperties.Interpreter>
   <MonoDevelop.Ide.ItemProperties.MiniPLInterpreter>
     <MonoDevelop.Ide.CustomExecutionModes>
       <Data Name="TestText" Id="2798571e-17c1-49a6-ac3f-d5a7733623c2" ModeId="Default">
@@ -78,4 +36,56 @@
       </Data>
     </MonoDevelop.Ide.CustomExecutionModes>
   </MonoDevelop.Ide.ItemProperties.MiniPLInterpreter>
+  <MonoDevelop.Ide.ItemProperties.Interpreter>
+    <MonoDevelop.Ide.CustomExecutionModes>
+      <Data Name="TestText" Id="47d82eb1-4bfd-468c-a383-0c36dbf1b4dc" ModeId="Default">
+        <CommandData>
+          <Item Key="MonoDevelop.Ide.Execution.CustomArgsCustomizer">
+            <Value Arguments="~/test.txt" ctype="CustomArgsExecutionModeData">
+              <EnvironmentVariables />
+            </Value>
+          </Item>
+          <Item Key="MonoDevelop.Ide.Execution.MonoExecutionCustomizer">
+            <Value ctype="MonoExecutionParameters" />
+          </Item>
+        </CommandData>
+      </Data>
+      <Data Name="MustBuild" Id="5a583aaf-510d-488c-a055-9a4e90c83a65" ModeId="Default">
+        <CommandData>
+          <Item Key="MonoDevelop.Ide.Execution.CustomArgsCustomizer">
+            <Value Arguments="MustBuild.mpl" WorkingDirectory="/home/pqkallio" ctype="CustomArgsExecutionModeData">
+              <EnvironmentVariables />
+            </Value>
+          </Item>
+          <Item Key="MonoDevelop.Ide.Execution.MonoExecutionCustomizer">
+            <Value ctype="MonoExecutionParameters" />
+          </Item>
+        </CommandData>
+      </Data>
+      <Data Name="MustFailWhileParsing" Id="c08822d9-bbad-460e-863c-e445b189007e" ModeId="Default">
+        <CommandData>
+          <Item Key="MonoDevelop.Ide.Execution.CustomArgsCustomizer">
+            <Value Arguments="MustFailWhileParsing.mpl" WorkingDirectory="/home/pqkallio" ctype="CustomArgsExecutionModeData">
+              <EnvironmentVariables />
+            </Value>
+          </Item>
+          <Item Key="MonoDevelop.Ide.Execution.MonoExecutionCustomizer">
+            <Value ctype="MonoExecutionParameters" />
+          </Item>
+        </CommandData>
+      </Data>
+      <Data Name="MustFailForSemantics" Id="f946f852-f38b-4a46-acec-bc8f0243f98d" ModeId="Default">
+        <CommandData>
+          <Item Key="MonoDevelop.Ide.Execution.CustomArgsCustomizer">
+            <Value Arguments="MustFailForSemantics.mpl" WorkingDirectory="/home/pqkallio" ctype="CustomArgsExecutionModeData">
+              <EnvironmentVariables />
+            </Value>
+          </Item>
+          <Item Key="MonoDevelop.Ide.Execution.MonoExecutionCustomizer">
+            <Value ctype="MonoExecutionParameters" />
+          </Item>
+        </CommandData>
+      </Data>
+    </MonoDevelop.Ide.CustomExecutionModes>
+  </MonoDevelop.Ide.ItemProperties.Interpreter>
 </Properties>

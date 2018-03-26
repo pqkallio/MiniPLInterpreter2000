@@ -18,23 +18,13 @@ namespace MiniPLInterpreter
 
 		public ISemanticCheckValue VisitAssignNode(AssignNode node)
 		{
-			try {
-				checkIdNode (node);
-			} catch {
-				analyzer.notifyError(new NullPointerError(node));
+			IProperty property = getVariableProperty (node);
+
+			if (property == voidProperty) {
 				return voidProperty;
 			}
 
 			VariableIdNode idNode = node.IDNode;
-
-			IProperty property;
-
-			try {
-				property = analyzer.IDs [idNode.ID];
-			} catch {
-				analyzer.notifyError (new UninitializedVariableError (node));
-				return voidProperty;
-			}
 
 			checkPropertyDeclared (idNode, property, true);
 
@@ -42,9 +32,9 @@ namespace MiniPLInterpreter
 				analyzer.notifyError (new IllegalAssignmentError (node));
 			}
 
-			IProperty evaluated = node.Accept (this.typeChecker).asProperty();
+			IProperty evaluated = node.Accept (this.typeChecker).asProperty ();
 
-			if (property.GetTokenType () != evaluated.GetTokenType ()) {
+			if (!checkPropertyType(property, evaluated.GetTokenType ())) {
 				analyzer.notifyError (new IllegalTypeError(idNode));
 			}
 
@@ -58,16 +48,13 @@ namespace MiniPLInterpreter
 
 		public ISemanticCheckValue VisitDeclarationNode(DeclarationNode node)
 		{
-			try {
-				checkIdNode (node);
-			} catch {
-				analyzer.notifyError(new NullPointerError(node));
+			IProperty property = getVariableProperty (node);
+
+			if (property == voidProperty) {
 				return voidProperty;
 			}
 
 			VariableIdNode idNode = node.IDNode;
-
-			IProperty property = idNode.Accept(this.typeChecker).asProperty();
 
 			if (property.Declared) {
 				analyzer.notifyError (new DeclarationError (idNode));
@@ -130,7 +117,7 @@ namespace MiniPLInterpreter
 		{
 			IProperty evaluation = node.Accept(this.typeChecker).asProperty();
 
-			if (evaluation.GetTokenType () != TokenType.BOOL_VAL) {
+			if (!checkPropertyType(evaluation, TokenType.BOOL_VAL)) {
 				analyzer.notifyError (new IllegalTypeError (node));
 			}
 
@@ -144,25 +131,20 @@ namespace MiniPLInterpreter
 
 		public ISemanticCheckValue VisitIOReadNode(IOReadNode node) 
 		{
+			IProperty property = getVariableProperty (node);
+
+			if (property == voidProperty) {
+				return voidProperty;
+			}
+
 			VariableIdNode idNode = node.IDNode;
 
-			if (idNode == null) {
-				analyzer.notifyError (new SemanticError(node));
-			} else {
-				if (!analyzer.IDs.ContainsKey (idNode.ID)) {
-					analyzer.notifyError (new UninitializedVariableError (idNode));
-					return voidProperty;
-				}
+			if (!property.Declared) {
+				analyzer.notifyError (new UninitializedVariableError (idNode));
+			}
 
-				IProperty property = analyzer.IDs [idNode.ID];
-
-				if (!property.Declared) {
-					analyzer.notifyError (new UninitializedVariableError (idNode));
-				}
-
-				if (property.GetTokenType () == TokenType.BOOL_VAL) {
-					analyzer.notifyError (new IllegalTypeError(idNode));
-				}
+			if (checkPropertyType(property, TokenType.BOOL_VAL)) {
+				analyzer.notifyError (new IllegalTypeError(idNode));
 			}
 
 			return voidProperty;
@@ -170,54 +152,73 @@ namespace MiniPLInterpreter
 
 		public ISemanticCheckValue VisitForLoopNode(ForLoopNode node)
 		{
-			VariableIdNode idNode = node.IDNode;
+			IProperty property = getVariableProperty (node);
 
-			if (idNode == null) {
-				analyzer.notifyError (new SemanticError(node));
-			} else {
-				IProperty property = idNode.Accept(this.typeChecker).asProperty();
-
-				if (!property.Declared) {
-					analyzer.notifyError (new UninitializedVariableError (idNode));
-				}
-
-				if (property.GetTokenType () != TokenType.INT_VAL) {
-					analyzer.notifyError (new IllegalTypeError(idNode));
-				}
+			if (property == voidProperty) {
+				return voidProperty;
 			}
 
-			analyzer.IDs [idNode.ID].Constant = true;
+			VariableIdNode idNode = node.IDNode;
+
+			if (!property.Declared) {
+				analyzer.notifyError (new UninitializedVariableError (idNode));
+			}
+
+			if (property.GetTokenType () != TokenType.INT_VAL) {
+				analyzer.notifyError (new IllegalTypeError(idNode));
+			}
+
+			analyzer.SymbolicTable [idNode.ID].Constant = true;
 
 			IExpressionNode max = node.MaxValue;
 
 			if (max == null) {
 				analyzer.notifyError (new SemanticError(node));
 			} else {
-				IProperty p = max.Accept(this.typeChecker).asProperty();
+				IProperty maxProperty = max.Accept(this.typeChecker).asProperty();
 
-				if (p.GetTokenType () != TokenType.INT_VAL) {
+				if (!checkPropertyType(maxProperty, TokenType.INT_VAL)) {
 					analyzer.notifyError (new IllegalTypeError(max));
 				}
 			}
 
-			IProperty p2 = node.RangeFrom.Accept (this.typeChecker).asProperty();
+			IProperty rangeFromProperty = node.RangeFrom.Accept (this.typeChecker).asProperty();
 
-			if (p2.GetTokenType () != TokenType.INT_VAL) {
+			if (!checkPropertyType(rangeFromProperty, TokenType.INT_VAL)) {
 				analyzer.notifyError (new IllegalTypeError(node.RangeFrom));
 			}
 
 			node.Statements.Accept (this);
 
-			analyzer.IDs [idNode.ID].Constant = false;
+			analyzer.SymbolicTable [idNode.ID].Constant = false;
 
 			return voidProperty;
 		}
 
-		private void checkIdNode (IIdentifierContainer node)
+		private IProperty getVariableProperty(IIdentifierContainer node)
 		{
 			if (node.IDNode == null) {
-				throw new NullReferenceException ();
+				analyzer.notifyError(new UninitializedVariableError(node));
+				return voidProperty;
 			}
+
+			VariableIdNode idNode = node.IDNode;
+
+			IProperty property = idNode.Accept(this.typeChecker).asProperty();
+
+			if (property.GetTokenType () == TokenType.ERROR) {
+				analyzer.notifyError(new UninitializedVariableError(node));
+				return voidProperty;
+			}
+
+			return property;
+		}
+
+		private bool checkPropertyType (IProperty property, TokenType expected)
+		{
+			TokenType tokenType = property.GetTokenType ();
+
+			return tokenType == TokenType.ERROR || tokenType == expected;
 		}
 
 		private void checkPropertyDeclared(ISyntaxTreeNode node, IProperty property, bool declarationExpected)
