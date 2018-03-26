@@ -226,6 +226,8 @@ namespace MiniPLInterpreter
 				AssertNode assertNode = nodeBuilder.CreateAssertNode(statementsNode, t, next.Row, next.Column + 1);
 				next = ParseExpression (scanner.getNextToken (next), assertNode);
 				match (next, TokenType.PARENTHESIS_RIGHT);
+				assertNode.IOPrintNode = new IOPrintNode (assertNode.Expression.Token);
+				assertNode.IOPrintNode.AddExpression (new StringValueNode("Assertion failed: " + assertNode.Expression.ToString()  + "\n"));
 				assertNode.AssertStatementEndCol = next.Column;
 				return scanner.getNextToken (next);
 			} catch (UnexpectedTokenException ex) {
@@ -280,7 +282,7 @@ namespace MiniPLInterpreter
 					setDefaultAssignment (assignNode);
 					return t;
 				default:
-				throw new UnexpectedTokenException (t, TokenType.UNDEFINED, ParserConstants.EXPECTATION_SET_ASSIGN);
+					throw new UnexpectedTokenException (t, TokenType.UNDEFINED, ParserConstants.EXPECTATION_SET_ASSIGN);
 			}
 		}
 

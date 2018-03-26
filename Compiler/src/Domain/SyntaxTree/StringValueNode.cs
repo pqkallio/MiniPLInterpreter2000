@@ -56,6 +56,11 @@ namespace MiniPLInterpreter
 			get { return this.token; }
 			set { }
 		}
+
+		public override string ToString ()
+		{
+			return '\"' + Value + '\"';
+		}
 	}
 }
 

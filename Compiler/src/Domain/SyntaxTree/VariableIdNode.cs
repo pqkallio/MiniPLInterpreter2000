@@ -45,7 +45,7 @@ namespace MiniPLInterpreter
 
 		public override string ToString ()
 		{
-			return "id: " + ID;
+			return ID;
 		}
 
 		public IExpressionNode[] GetExpressions()

@@ -6,6 +6,7 @@ namespace MiniPLInterpreter
 	public class AssertNode : IExpressionContainer
 	{
 		private IExpressionNode expressionNode;
+		private IOPrintNode ioPrintNode;
 		private Token token;
 		private int assertStatementRow;
 		private int assertStatementStartCol;
@@ -20,6 +21,11 @@ namespace MiniPLInterpreter
 			this.token = t;
 			this.assertStatementRow = assertStatementRow;
 			this.assertStatementStartCol = assertStatementStartCol;
+		}
+
+		public IOPrintNode IOPrintNode {
+			get { return this.ioPrintNode; }
+			set { this.ioPrintNode = value; }
 		}
 
 		public int AssertStatementRow

@@ -38,7 +38,9 @@ namespace MiniPLInterpreter
 
 		public override string ToString ()
 		{
-			return this.operation.ToString ();
+			string str = StringFormattingConstants.TOKEN_TYPE_STRINGS [Operation] + "(" + Operand.ToString () + ")";
+
+			return str;
 		}
 
 		public TokenType EvaluationType

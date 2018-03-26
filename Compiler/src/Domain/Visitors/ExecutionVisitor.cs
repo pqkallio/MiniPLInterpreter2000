@@ -93,7 +93,7 @@ namespace MiniPLInterpreter
 		{
 			IProperty evaluation = node.Accept(this.evaluator).asProperty();
 			if (!evaluation.asBoolean ()) {
-				printer.printAssertionFailure (node);
+				node.IOPrintNode.Accept(this);
 			}
 
 			return voidProperty;

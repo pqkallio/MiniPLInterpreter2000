@@ -49,7 +49,19 @@ namespace MiniPLInterpreter
 
 		public override string ToString ()
 		{
-			return this.operation.ToString ();
+			string str;
+
+			if (RightOperand != null) {
+				if (RightOperand.Operation != TokenType.BINARY_OP_NO_OP) {
+					str = LeftOperand.ToString () + " " + StringFormattingConstants.TOKEN_TYPE_STRINGS [Operation] + " (" + RightOperand.ToString () + ")";
+				} else {
+					str = LeftOperand.ToString () + " " + StringFormattingConstants.TOKEN_TYPE_STRINGS [Operation] + " " + RightOperand.ToString ();
+				}
+			} else {
+				str = LeftOperand.ToString ();
+			}
+
+			return str;
 		}
 
 		public TokenType EvaluationType
