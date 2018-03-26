@@ -9,20 +9,26 @@ namespace MiniPLInterpreter
 		private Dictionary<string, IProperty> ids;
 		private ExecutionVisitor executor;
 		private IPrinter printer;
+		private IReader reader;
 
-		public Interpreter (SyntaxTree syntaxTree, IPrinter printer)
+		public Interpreter (SyntaxTree syntaxTree, IPrinter printer, IReader reader)
 		{
 			this.syntaxTree = syntaxTree;
 			this.ids = new Dictionary<string, IProperty> ();
 			this.printer = printer;
-			this.executor = new ExecutionVisitor (ids, this.printer);
+			this.reader = reader;
+			this.executor = new ExecutionVisitor (ids, this.printer, this.reader);
 		}
 
 		public void Interpret () {
 			try {
 				this.syntaxTree.Root.Accept (this.executor);
+			} catch (RuntimeException ex) {
+				printer.printRuntimeException (ex);
+				throw ex;
 			} catch (Exception ex) {
-				Console.WriteLine ("An error occured during execution:" + StringFormattingConstants.LINEBREAK + ex.Message);
+				printer.printLine ("A runtime error occured:" + StringFormattingConstants.LINEBREAK + ex.GetType().Name + ": " + ex.Message);
+				throw ex;
 			}
 		}
 

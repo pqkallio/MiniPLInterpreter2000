@@ -9,12 +9,13 @@ namespace MiniPLInterpreter
 		private Parser parser;
 		private SemanticAnalyzer semanticAnalyzer;
 		private Dictionary<string, IProperty> symbolTable;
+		private string[] sourceLines;
 
 		public CompilerFrontend ()
 		{}
 
 		private void Init(string filePath) {
-			string[] sourceLines = readSource (filePath);
+			this.sourceLines = readSource (filePath);
 			this.symbolTable = new Dictionary<string, IProperty> ();
 			this.scanner = new Scanner (sourceLines);
 			this.parser = new Parser (symbolTable, scanner);
@@ -34,6 +35,11 @@ namespace MiniPLInterpreter
 			semanticAnalyzer.Analyze ();
 
 			return syntaxTree;
+		}
+
+		public string[] SourceLines
+		{
+			get { return sourceLines; }
 		}
 
 		private string[] readSource(string filePath)
@@ -58,7 +64,7 @@ namespace MiniPLInterpreter
 			return errors;
 		}
 
-		private List<Error> getErrors ()
+		public List<Error> getErrors ()
 		{
 			List<Error> errors = new List<Error> ();
 

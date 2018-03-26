@@ -10,6 +10,7 @@ namespace MiniPLInterpreter
 		void printAssertionFailure (AssertNode assertNode);
 		void print (string str);
 		void printLine (string str);
+		void printRuntimeException (RuntimeException exception);
 	}
 }
 

@@ -1,33 +1,31 @@
 ﻿<Properties StartupItem="Interpreter/Interpreter.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Compiler/src/Domain/ParseTree/VariableIdNode.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Compiler/src/Domain/Visitors/ExpressionCheckVisitor.cs">
     <Files>
-      <File FileName="Compiler/src/Services/SemanticAnalyzer.cs" Line="28" Column="1" />
-      <File FileName="Compiler/src/Domain/ParseTree/IExpressionNode.cs" Line="12" Column="2" />
-      <File FileName="Compiler/src/Services/Parser.cs" Line="339" Column="12" />
-      <File FileName="Compiler/src/Services/Scanner.cs" Line="1" Column="1" />
-      <File FileName="Compiler/src/Domain/ParseTree/StatementsNode.cs" Line="29" Column="3" />
-      <File FileName="Compiler/src/Constants.cs" Line="98" Column="110" />
-      <File FileName="Compiler/src/Domain/Errors/SemanticError.cs" Line="15" Column="1" />
-      <File FileName="Compiler/src/Domain/Errors/StringLiteralError.cs" Line="9" Column="16" />
-      <File FileName="Compiler/src/Domain/ParseTree/VariableIdNode.cs" Line="12" Column="59" />
-      <File FileName="Compiler/src/Domain/Errors/Error.cs" Line="49" Column="5" NotebookId="1" />
-      <File FileName="Compiler/src/Domain/ParseTree/AssignNode.cs" Line="74" Column="5" NotebookId="1" />
-      <File FileName="Compiler/src/Domain/ParseTree/DeclarationNode.cs" Line="27" Column="4" NotebookId="1" />
-      <File FileName="Compiler/src/Domain/ParseTree/ISyntaxTreeNode.cs" Line="10" Column="33" NotebookId="1" />
+      <File FileName="Compiler/src/Services/Analyzers/Parser.cs" Line="474" Column="1" />
+      <File FileName="Compiler/src/Domain/Visitors/TypeCheckingVisitor.cs" Line="110" Column="1" />
+      <File FileName="Compiler/src/Services/NodeBuilder.cs" Line="147" Column="46" />
+      <File FileName="Compiler/src/Domain/Visitors/EvaluationVisitor.cs" Line="135" Column="24" />
+      <File FileName="Compiler/src/Domain/Visitors/ExecutionVisitor.cs" Line="49" Column="24" />
+      <File FileName="Compiler/src/Services/IO/IReader.cs" Line="7" Column="22" />
+      <File FileName="Compiler/src/Services/IO/IPrinter.cs" Line="12" Column="3" />
+      <File FileName="Compiler/src/Services/IO/ConsolePrinter.cs" Line="6" Column="40" />
+      <File FileName="Compiler/src/Services/Interpreter.cs" Line="13" Column="47" />
+      <File FileName="Compiler/src/Services/Analyzers/Scanner.cs" Line="144" Column="28" />
+      <File FileName="Compiler/src/Domain/Visitors/ExpressionCheckVisitor.cs" Line="154" Column="26" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="MiniPLInterpreter" expanded="True">
+            <Node name="Interpreter" expanded="True" />
             <Node name="MiniPLInterpreter" expanded="True">
               <Node name="src" expanded="True">
                 <Node name="Domain" expanded="True">
-                  <Node name="ParseTree" expanded="True">
-                    <Node name="VariableIdNode.cs" selected="True" />
+                  <Node name="Visitors" expanded="True">
+                    <Node name="ExpressionCheckVisitor.cs" selected="True" />
                   </Node>
                 </Node>
-                <Node name="Services" expanded="True" />
               </Node>
             </Node>
           </Node>
@@ -44,27 +42,10 @@
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
-      <Breakpoint file="/home/pqkallio/MonoDevelopProjects/Compiler/Compiler/src/Services/Parser.cs" line="227" column="1" />
-      <Breakpoint file="/home/pqkallio/MonoDevelopProjects/Compiler/Interpreter/Program.cs" line="51" column="1" />
+      <Breakpoint file="/home/pqkallio/MonoDevelopProjects/Compiler/Compiler/src/Domain/Visitors/ExecutionVisitor.cs" line="54" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MonoDevelop.Ide.ItemProperties.MiniPLInterpreter>
-    <MonoDevelop.Ide.CustomExecutionModes>
-      <Data Name="TestText" Id="2798571e-17c1-49a6-ac3f-d5a7733623c2" ModeId="Default">
-        <CommandData>
-          <Item Key="MonoDevelop.Ide.Execution.CustomArgsCustomizer">
-            <Value Arguments="test.txt" ctype="CustomArgsExecutionModeData">
-              <EnvironmentVariables />
-            </Value>
-          </Item>
-          <Item Key="MonoDevelop.Ide.Execution.MonoExecutionCustomizer">
-            <Value ctype="MonoExecutionParameters" />
-          </Item>
-        </CommandData>
-      </Data>
-    </MonoDevelop.Ide.CustomExecutionModes>
-  </MonoDevelop.Ide.ItemProperties.MiniPLInterpreter>
   <MonoDevelop.Ide.ItemProperties.Interpreter>
     <MonoDevelop.Ide.CustomExecutionModes>
       <Data Name="TestText" Id="47d82eb1-4bfd-468c-a383-0c36dbf1b4dc" ModeId="Default">
@@ -81,4 +62,20 @@
       </Data>
     </MonoDevelop.Ide.CustomExecutionModes>
   </MonoDevelop.Ide.ItemProperties.Interpreter>
+  <MonoDevelop.Ide.ItemProperties.MiniPLInterpreter>
+    <MonoDevelop.Ide.CustomExecutionModes>
+      <Data Name="TestText" Id="2798571e-17c1-49a6-ac3f-d5a7733623c2" ModeId="Default">
+        <CommandData>
+          <Item Key="MonoDevelop.Ide.Execution.CustomArgsCustomizer">
+            <Value Arguments="test.txt" ctype="CustomArgsExecutionModeData">
+              <EnvironmentVariables />
+            </Value>
+          </Item>
+          <Item Key="MonoDevelop.Ide.Execution.MonoExecutionCustomizer">
+            <Value ctype="MonoExecutionParameters" />
+          </Item>
+        </CommandData>
+      </Data>
+    </MonoDevelop.Ide.CustomExecutionModes>
+  </MonoDevelop.Ide.ItemProperties.MiniPLInterpreter>
 </Properties>

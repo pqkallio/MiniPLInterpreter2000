@@ -99,6 +99,7 @@
     <Compile Include="src\Services\IO\IReader.cs" />
     <Compile Include="src\Services\IO\IPrinter.cs" />
     <Compile Include="src\Services\IO\ConsolePrinter.cs" />
+    <Compile Include="src\Domain\Errors\RuntimeException.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\" />

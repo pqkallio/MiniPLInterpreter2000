@@ -9,13 +9,15 @@ namespace MiniPLInterpreter
 		private EvaluationVisitor evaluator;
 		private VoidProperty voidProperty;
 		private IPrinter printer;
+		private IReader reader;
 
-		public ExecutionVisitor (Dictionary<string, IProperty> ids, IPrinter printer)
+		public ExecutionVisitor (Dictionary<string, IProperty> ids, IPrinter printer, IReader reader)
 		{
 			this.ids = ids;
 			this.evaluator = new EvaluationVisitor (this.ids);
 			this.voidProperty = new VoidProperty ();
 			this.printer = printer;
+			this.reader = reader;
 		}
 
 		public ISemanticCheckValue VisitRootNode(RootNode node)
@@ -107,7 +109,7 @@ namespace MiniPLInterpreter
 
 		public ISemanticCheckValue VisitIOReadNode(IOReadNode node) 
 		{
-			string input = Console.ReadLine ();
+			string input = reader.readLine ();
 			input = input.Split (new[] {' ', '\t', '\n'})[0];
 
 			AssignNode assignNode = node.AssignNode;
@@ -133,17 +135,17 @@ namespace MiniPLInterpreter
 		private void addNewId (VariableIdNode idNode)
 		{
 			switch (idNode.VariableType) {
-			case TokenType.INT_VAL:
-				ids [idNode.ID] = new IntegerProperty (SemanticAnalysisConstants.DEFAULT_INTEGER_VALUE);
-				break;
-			case TokenType.STR_VAL:
-				ids [idNode.ID] = new StringProperty (SemanticAnalysisConstants.DEFAULT_STRING_VALUE);
-				break;
-			case TokenType.BOOL_VAL:
-				ids [idNode.ID] = new BooleanProperty (SemanticAnalysisConstants.DEFAULT_BOOL_VALUE);
-				break;
-			default:
-				throw new ArgumentException ();
+				case TokenType.INT_VAL:
+					ids [idNode.ID] = new IntegerProperty (SemanticAnalysisConstants.DEFAULT_INTEGER_VALUE);
+					break;
+				case TokenType.STR_VAL:
+					ids [idNode.ID] = new StringProperty (SemanticAnalysisConstants.DEFAULT_STRING_VALUE);
+					break;
+				case TokenType.BOOL_VAL:
+					ids [idNode.ID] = new BooleanProperty (SemanticAnalysisConstants.DEFAULT_BOOL_VALUE);
+					break;
+				default:
+					throw new RuntimeException (ErrorConstants.RUNTIME_ERROR_MESSAGE, idNode.Token);
 			}
 		}
 
@@ -153,7 +155,7 @@ namespace MiniPLInterpreter
 			switch (expectedType) {
 				case TokenType.INT_VAL:
 					if (!StringUtils.isInteger (input)) {
-						throw new ArgumentException ();
+					throw new RuntimeException (ErrorConstants.NOT_AN_INTEGER_MESSAGE, assignNode.Token);
 					}
 					assignNode.AddExpression (new IntValueNode (StringUtils.parseToInt (input)));
 					break;
@@ -161,7 +163,7 @@ namespace MiniPLInterpreter
 					assignNode.AddExpression (new StringValueNode (input));
 					break;
 				default:
-					throw new ArgumentException ();	
+					throw new RuntimeException (ErrorConstants.RUNTIME_ERROR_MESSAGE, assignNode.Token);
 			}
 		}
 	}

@@ -8,6 +8,7 @@ namespace MiniPLInterpreter
 		public static readonly string SYNTAX_ERROR_TITLE = "Syntax error";
 		public static readonly string SEMANTIC_ERROR_TITLE = "Semantic error";
 		public static readonly string INTEGER_OVERFLOW_ERROR_TITLE = "Integer overflow error";
+		public static readonly string RUNTIME_EXCEPTION_TITLE = "Runtime exception";
 
 		public static readonly string STRING_LITERAL_ERROR_MESSAGE = "error while scanning string literal";
 		public static readonly string TOKEN_ERROR_MESSAGE = "error while scanning token";
@@ -21,6 +22,8 @@ namespace MiniPLInterpreter
 		public static readonly string NULL_POINTER_ERROR_MESSAGE = "null pointer encountered";
 		public static readonly string LINEBREAK_IN_STR_LITERAL_MESSAGE = "string literal mustn't span multiple lines";
 		public static readonly string EOF_WHILE_SCANNING_MESSAGE = "EOF encountered while parsing string literal";
+		public static readonly string NOT_AN_INTEGER_MESSAGE = "the read value is not an integer";
+		public static readonly string RUNTIME_ERROR_MESSAGE = "unexpected runtime error";
 	}
 }
 

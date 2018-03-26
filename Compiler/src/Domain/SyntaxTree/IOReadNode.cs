@@ -10,10 +10,10 @@ namespace MiniPLInterpreter
 		private AssignNode assignNode;
 		private Token token;
 
-		public IOReadNode (VariableIdNode idNode, Dictionary<string, IProperty> ids, Token t)
+		public IOReadNode (VariableIdNode idNode, Dictionary<string, IProperty> symbolTable, Token t)
 		{
 			this.idNode = idNode;
-			this.assignNode = new AssignNode (this.idNode, ids);
+			this.assignNode = new AssignNode (this.idNode, symbolTable, t);
 			this.token = t;
 		}
 

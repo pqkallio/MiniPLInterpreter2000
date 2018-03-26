@@ -11,15 +11,15 @@ namespace MiniPLInterpreter
 		private IExpressionNode exprNode;
 		private Token token;
 
-		public AssignNode (VariableIdNode idNode, Dictionary<string, IProperty> ids)
-			: this (idNode, ids, null)
+		public AssignNode (VariableIdNode idNode, Dictionary<string, IProperty> symbolTable)
+			: this (idNode, symbolTable, null)
 		{}
 
-		public AssignNode (VariableIdNode idNode, Dictionary<string, IProperty> ids, Token t)
+		public AssignNode (VariableIdNode idNode, Dictionary<string, IProperty> symbolTable, Token token)
 		{
 			this.idNode = idNode;
 			this.exprNode = null;
-			this.token = t;
+			this.token = token;
 		}
 
 		public VariableIdNode IDNode {

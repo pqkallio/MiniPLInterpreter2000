@@ -7,9 +7,18 @@ namespace MiniPLInterpreter
 	{
 		private string[] sourceLines;
 
+		public ConsolePrinter()
+		{}
+
 		public ConsolePrinter (string[] sourceLines)
 		{
 			this.sourceLines = sourceLines;
+		}
+
+		public string[] SourceLines
+		{
+			get { return this.sourceLines; }
+			set { this.sourceLines = value; }
 		}
 
 		public void printErrors (List<Error> errors)
@@ -21,7 +30,12 @@ namespace MiniPLInterpreter
 
 		public void printError (Error error)
 		{
-			printLine(StringFormatter.formatError (error, sourceLines));
+			printLine (StringFormatter.formatError (error, sourceLines));
+		}
+
+		public void printRuntimeException (RuntimeException exception)
+		{
+			printLine (StringFormatter.formatRuntimeException (exception, sourceLines));
 		}
 
 		public void printAssertionFailure (AssertNode assertNode)

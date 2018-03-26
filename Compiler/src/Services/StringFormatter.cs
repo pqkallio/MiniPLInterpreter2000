@@ -25,6 +25,16 @@ namespace MiniPLInterpreter
 			return errorMessage;
 		}
 
+		public static string formatRuntimeException (RuntimeException exception, string[] sourceLines)
+		{
+			int numRow = exception.Token.Row;
+			int numCol = exception.Token.Column;
+
+			string sourceLine = sourceLines [numRow];
+			string errorMessage = line (exception.ToString () + ' ' + formatRowAndColumn (numRow, numCol)) + line (sourceLine);
+			return errorMessage;
+		}
+
 		public static string formatFailedAssertion (AssertNode assertNode, string[] sourceLines)
 		{
 			int numRow = assertNode.AssertStatementRow;
