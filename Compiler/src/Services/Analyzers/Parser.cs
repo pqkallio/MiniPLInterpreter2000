@@ -181,7 +181,7 @@ namespace MiniPLInterpreter
 				match (next, TokenType.START_BLOCK);
 			} catch (UnexpectedTokenException ex) {
 				notifyError (new SyntaxError (ex.Token, ex.ExpectedType, ex.ExpectationSet));
-				next = FastForwardTo (ParserConstants.BLOCK_DEF_FASTFORWARD_TO);
+				next = FastForwardTo (ParserConstants.BLOCK_DEF_FASTFORWARD_TO, ex.Token);
 			}
 
 			try {
@@ -432,11 +432,11 @@ namespace MiniPLInterpreter
 			}
 		}
 
-		private Token FastForwardTo (Dictionary<TokenType, string> tokenTypes)
+		private Token FastForwardTo (Dictionary<TokenType, string> tokenTypes, Token errorToken)
 		{
 			syntaxTreeBuilt = false;
 
-			Token token = scanner.getNextToken (null);
+			Token token = errorToken;
 
 			while (!tokenTypes.ContainsKey(token.Type)) {
 				token = scanner.getNextToken (token);
@@ -448,12 +448,13 @@ namespace MiniPLInterpreter
 		private Token FastForwardToStatementEnd (UnexpectedTokenException ex)
 		{
 			notifyError (new SyntaxError (ex.Token, ex.ExpectedType, ex.ExpectationSet));
-			return FastForwardTo (ParserConstants.STATEMENT_FASTFORWARD_TO);
+
+			return FastForwardTo (ParserConstants.STATEMENT_FASTFORWARD_TO, ex.Token);
 		}
 
 		private Token FastForwardToStatementEnd (Token token)
 		{
-			return FastForwardTo (ParserConstants.STATEMENT_FASTFORWARD_TO);
+			return FastForwardTo (ParserConstants.STATEMENT_FASTFORWARD_TO, token);
 		}
 
 		public void notifyError (Error error)

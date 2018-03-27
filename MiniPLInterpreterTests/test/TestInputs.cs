@@ -86,7 +86,8 @@ namespace MiniPLInterpreterTests
 			"assert (x = nTimes);"};
 
 		public static readonly string[] invalidInput4 =
-		{"var for : int := 4 + (6 * 2)?",
+		{"var for : string := \"4 + (6 * 2)?",
+			"98\";",
 			"print X;"};
 
 		public static readonly string[] statementNotEnded =

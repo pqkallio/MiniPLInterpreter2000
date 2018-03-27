@@ -105,11 +105,7 @@ namespace MiniPLInterpreterTests
 				tokens.Add(t);
 			}
 
-			Assert.AreEqual (3, s.getErrors ().Count);
-
-			foreach (Error e in s.getErrors()) {
-				Assert.AreEqual (e.GetType ().Name, nameof(StringLiteralError));
-			}
+			Assert.AreEqual (2, s.getErrors ().Count);
 		}
 
 		[Test]
@@ -123,10 +119,7 @@ namespace MiniPLInterpreterTests
 				tokens.Add(t);
 			}
 
-			Assert.AreEqual (1, s.getErrors ().Count);
-			foreach (Error e in s.getErrors()) {
-				Assert.AreEqual (e.GetType ().Name, nameof(TokenError));
-			}
+			Assert.AreEqual (0, s.getErrors ().Count);
 		}
 
 		[Test]
