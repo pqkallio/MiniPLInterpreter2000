@@ -110,7 +110,7 @@ namespace MiniPLInterpreter
 					next = FastForwardToStatementEnd(t);
 					return ParseStatements (scanner.getNextToken(next), parent);
 				default:
-					throw new UnexpectedTokenException (t, TokenType.UNDEFINED, ParserConstants.EXPECTATION_SET_STATEMENTS);
+					return t;;
 			}
 		}
 
@@ -168,7 +168,7 @@ namespace MiniPLInterpreter
 		{
 			VariableIdNode idNode = nodeBuilder.CreateIdNode ();
 			ForLoopNode forLoop = nodeBuilder.CreateForLoopNode(idNode, statementsNode, t);
-			Token next;
+			Token next = null;
 
 			try {
 				next = ParseVarId (scanner.getNextToken (t), idNode);
@@ -180,6 +180,9 @@ namespace MiniPLInterpreter
 				next = ParseExpression (scanner.getNextToken (next), forLoop);
 				match (next, TokenType.START_BLOCK);
 			} catch (UnexpectedTokenException ex) {
+				if (ex.Token.Type == TokenType.END_OF_BLOCK) {
+					return FastForwardToStatementEnd (ex);
+				}
 				notifyError (new SyntaxError (ex.Token, ex.ExpectedType, ex.ExpectationSet));
 				next = FastForwardTo (ParserConstants.BLOCK_DEF_FASTFORWARD_TO, ex.Token);
 			}
@@ -188,10 +191,20 @@ namespace MiniPLInterpreter
 				StatementsNode statements = nodeBuilder.CreateStatementsNode (t);
 				forLoop.Statements = statements;
 				next = ParseStatements (scanner.getNextToken (next), statements);
+			} catch (UnexpectedTokenException ex) {
+				return FastForwardToStatementEnd (ex);
+			}
+
+			try {
 				match (next, TokenType.END_OF_BLOCK);
 				next = scanner.getNextToken (next);
+			} catch (UnexpectedTokenException ex) {
+				next = FastForwardToEndOfBlock (ex);
+			}
+
+			try {
 				match (next, TokenType.FOR_LOOP);
-				return scanner.getNextToken(next);	
+				return scanner.getNextToken (next);
 			} catch (UnexpectedTokenException ex) {
 				return FastForwardToStatementEnd (ex);
 			}
@@ -360,7 +373,7 @@ namespace MiniPLInterpreter
 				case TokenType.START_BLOCK:
 					return t;
 				default:
-					throw new UnexpectedTokenException (t, TokenType.UNDEFINED, ParserConstants.EXPECTATION_SET_BINOP);
+					return t;
 			}
 		}
 
@@ -455,6 +468,29 @@ namespace MiniPLInterpreter
 		private Token FastForwardToStatementEnd (Token token)
 		{
 			return FastForwardTo (ParserConstants.STATEMENT_FASTFORWARD_TO, token);
+		}
+
+		private Token FastForwardToEndOfBlock (UnexpectedTokenException ex)
+		{
+			notifyError (new SyntaxError (ex.Token, ex.ExpectedType, ex.ExpectationSet));
+			Token token = ex.Token;
+			int blockDepth = 0;
+
+			while (token.Type != TokenType.END_OF_FILE) {
+				if (token.Type == TokenType.END_OF_BLOCK) {
+					if (blockDepth == 0) {
+						return scanner.getNextToken (null);
+					}
+					blockDepth--;
+				}
+
+				if (token.Type == TokenType.FOR_LOOP) {
+					blockDepth++;
+				}
+				token = scanner.getNextToken (null);
+			}
+
+			return token;
 		}
 
 		public void notifyError (Error error)

@@ -10,11 +10,13 @@ namespace MiniPLInterpreter
 
 		public static string formatError (Error error, string[] sourceLines)
 		{
-			int numRow = error.Token.Row;
-			int numCol = error.Token.Column;
+			int numRow = error.Token.Row < sourceLines.Length ? error.Token.Row : sourceLines.Length - 1;
+			int numCol = Math.Max(error.Token.Column, 0);
+
+			string errorMessage = line(error.ToString () + ' ' + formatRowAndColumn(numRow, numCol));
 
 			string sourceLine = sourceLines[numRow];
-			string errorMessage = line (error.ToString () + ' ' + formatRowAndColumn(numRow, numCol)) + line (sourceLine);
+			errorMessage += line (sourceLine);
 
 			for (int i = 0; i < numCol; i++) {
 				errorMessage += ' ';

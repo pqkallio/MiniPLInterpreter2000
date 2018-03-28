@@ -3,7 +3,7 @@
 
 namespace MiniPLInterpreterTests
 {
-	public class TestInputs
+	public class ScannerTestInputs
 	{
 		public static readonly string[] validInput1 = {
 			"// ///// One line comment",
@@ -89,59 +89,5 @@ namespace MiniPLInterpreterTests
 		{"var for : string := \"4 + (6 * 2)?",
 			"98\";",
 			"print X;"};
-
-		public static readonly string[] statementNotEnded =
-		{"var x : int := 4 + (6 * 2)"};
-		
-		public static readonly string[] rightParenthesisMissing =
-		{"var x : int := 4 + (6 * 2;"};
-
-		public static readonly string[] declarationColonMissing =
-			{	"var x  int := 4 + (6 * 2);"};
-
-		public static readonly string[] declarationAssignMissing =
-				{"var x : int = 4 + (6 * 2);"};
-		
-		public static readonly string[] declarationAssignValueMissing =
-					{"var x : int := ;"};
-
-		public static readonly string[] illegalStartOfStatement =
-						{"(6 * 2) var x : int := 4 + (6 * 2);"};
-
-		public static readonly string[] forLoopMissingVar =
-							{"for  in 0..nTimes-1 do ",
-			"   print x;",
-			"   print \" : Hello, World!\\n\";",
-								"end for;"};
-		
-		public static readonly string[] forLoopMissingRangeFrom =
-		{"for x  0..nTimes-1 do ",
-			"   print x;",
-			"   print \" : Hello, World!\\n\";",
-			"end for;"};
-
-		public static readonly string[] forLoopMissingRangeFromExpression =
-		{"for x in ..nTimes-1 do ",
-			"   print x;",
-			"   print \" : Hello, World!\\n\";",
-		"end for;"};
-
-		public static readonly string[] forLoopMissingRangeUptoExpression =
-		{"for x in 0.. do ",
-			"   print x;",
-			"   print \" : Hello, World!\\n\";",
-			"end for;"};
-
-		public static readonly string[] forLoopMissingRangeUpto =
-			{"for x in 0 30 do ",
-			"   print x;",
-			"   print \" : Hello, World!\\n\";",
-				"end for;"};
-
-		public static readonly string[] forLoopMissingStartBlock =
-				{"for x in 0..nTimes-1 ",
-			"   print x;",
-			"   print \" : Hello, World!\\n\";",
-					"end for;"};
 	}
 }

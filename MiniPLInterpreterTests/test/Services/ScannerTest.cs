@@ -10,7 +10,6 @@ namespace MiniPLInterpreterTests
 	public class ScannerTest
 	{
 		private Scanner s;
-		private StreamReader sr;
 		private List<Token> tokens;
 
 		private void InitScanner(string[] s)
@@ -24,18 +23,10 @@ namespace MiniPLInterpreterTests
 			this.tokens = new List<Token> ();
 		}
 
-		[TearDown]
-		public void TearDown ()
-		{
-			if (this.sr != null) {
-				this.sr.Close ();
-			}
-		}
-
 		[Test]
 		public void TestValidInput1Tokens ()
 		{
-			InitScanner (TestInputs.validInput1);
+			InitScanner (ScannerTestInputs.validInput1);
 			Token t = null;
 
 			while (t == null || t.Type != TokenType.END_OF_FILE) {
@@ -51,7 +42,7 @@ namespace MiniPLInterpreterTests
 		[Test]
 		public void TestValidInput2Tokens ()
 		{
-			InitScanner (TestInputs.validInput2);
+			InitScanner (ScannerTestInputs.validInput2);
 			Token t = null;
 
 			while (t == null || t.Type != TokenType.END_OF_FILE) {
@@ -66,7 +57,7 @@ namespace MiniPLInterpreterTests
 		[Test]
 		public void TestValidInput3Tokens ()
 		{
-			InitScanner (TestInputs.validInput3);
+			InitScanner (ScannerTestInputs.validInput3);
 			Token t = null;
 
 			while (t == null || t.Type != TokenType.END_OF_FILE) {
@@ -81,7 +72,7 @@ namespace MiniPLInterpreterTests
 		[Test]
 		public void TestValidInput4Tokens ()
 		{
-			InitScanner (TestInputs.validInput4);
+			InitScanner (ScannerTestInputs.validInput4);
 			Token t = null;
 
 			while (t == null || t.Type != TokenType.END_OF_FILE) {
@@ -97,7 +88,7 @@ namespace MiniPLInterpreterTests
 		[Test]
 		public void TestInvalidInput1Tokens ()
 		{
-			InitScanner (TestInputs.invalidInput1);
+			InitScanner (ScannerTestInputs.invalidInput1);
 			Token t = null;
 
 			while (t == null || t.Type != TokenType.END_OF_FILE) {
@@ -111,7 +102,7 @@ namespace MiniPLInterpreterTests
 		[Test]
 		public void TestInvalidInput2Tokens ()
 		{
-			InitScanner (TestInputs.invalidInput2);
+			InitScanner (ScannerTestInputs.invalidInput2);
 			Token t = null;
 
 			while (t == null || t.Type != TokenType.END_OF_FILE) {
@@ -125,13 +116,12 @@ namespace MiniPLInterpreterTests
 		[Test]
 		public void TestInvalidInput3Tokens ()
 		{
-			InitScanner (TestInputs.invalidInput3);
+			InitScanner (ScannerTestInputs.invalidInput3);
 			Token t = null;
 
 			while (t == null || t.Type != TokenType.END_OF_FILE) {
 				t = s.getNextToken (t);
 				tokens.Add(t);
-				Console.WriteLine (t.Type);
 			}
 
 			Assert.AreEqual (1, s.getErrors ().Count);
@@ -143,13 +133,12 @@ namespace MiniPLInterpreterTests
 		[Test]
 		public void TestTwoErrorsInOneStatement ()
 		{
-			InitScanner (TestInputs.invalidInput4);
+			InitScanner (ScannerTestInputs.invalidInput4);
 			Token t = null;
 
 			while (t == null || t.Type != TokenType.END_OF_FILE) {
 				t = s.getNextToken (t);
 				tokens.Add(t);
-				Console.WriteLine (t.Type);
 			}
 
 			Assert.AreEqual (2, s.getErrors ().Count);

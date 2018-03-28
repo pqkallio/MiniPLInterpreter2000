@@ -11,18 +11,9 @@ namespace MiniPLInterpreterTests
 	{
 		private Scanner s;
 		private Parser p;
-		private StreamReader sr;
 
 		public ParserTest ()
 		{}
-
-		[TearDown]
-		public void TearDown ()
-		{
-			if (this.sr != null) {
-				this.sr.Close ();
-			}
-		}
 
 		private void InitParser (string[] s)
 		{
@@ -46,7 +37,7 @@ namespace MiniPLInterpreterTests
 		[Test]
 		public void TestStatementNotEnded ()
 		{
-			Parse (TestInputs.statementNotEnded);
+			Parse (ParserTestInputs.statementNotEnded);
 			Assert.AreEqual (1, p.getErrors ().Count);
 			Assert.AreEqual (TokenType.END_STATEMENT, GetExpectedType(0));
 		}
@@ -54,7 +45,7 @@ namespace MiniPLInterpreterTests
 		[Test]
 		public void TestRightParenthesisMissing ()
 		{
-			Parse (TestInputs.rightParenthesisMissing);
+			Parse (ParserTestInputs.rightParenthesisMissing);
 			Assert.AreEqual (1, p.getErrors ().Count);
 			Assert.AreEqual (TokenType.PARENTHESIS_RIGHT, GetExpectedType(0));
 		}
@@ -62,7 +53,7 @@ namespace MiniPLInterpreterTests
 		[Test]
 		public void TestDeclarationColonMissing ()
 		{
-			Parse (TestInputs.declarationColonMissing);
+			Parse (ParserTestInputs.declarationColonMissing);
 			Assert.AreEqual (1, p.getErrors ().Count);
 			Assert.AreEqual (TokenType.SET_TYPE, GetExpectedType(0));
 		}
@@ -70,7 +61,7 @@ namespace MiniPLInterpreterTests
 		[Test]
 		public void TestDeclarationAssignMissing ()
 		{
-			Parse (TestInputs.declarationAssignMissing);
+			Parse (ParserTestInputs.declarationAssignMissing);
 			Assert.AreEqual (1, p.getErrors ().Count);
 			Assert.AreEqual (TokenType.UNDEFINED, GetExpectedType(0));
 		}
@@ -78,11 +69,7 @@ namespace MiniPLInterpreterTests
 		[Test]
 		public void TestDeclarationAssignValueMissing ()
 		{
-			Parse (TestInputs.declarationAssignValueMissing);
-			foreach (Error e in p.getErrors()) {
-				Console.WriteLine (e);
-				Console.WriteLine (e.Token);
-			}
+			Parse (ParserTestInputs.declarationAssignValueMissing);
 			Assert.AreEqual (1, p.getErrors ().Count);
 			Assert.AreEqual (TokenType.UNDEFINED, GetExpectedType(0));
 		}
@@ -90,7 +77,7 @@ namespace MiniPLInterpreterTests
 		[Test]
 		public void TestIllegalStartOfStatement ()
 		{
-			Parse (TestInputs.illegalStartOfStatement);
+			Parse (ParserTestInputs.illegalStartOfStatement);
 			Assert.AreEqual (1, p.getErrors ().Count);
 			Assert.AreEqual (TokenType.UNDEFINED, GetExpectedType(0));
 		}
@@ -98,7 +85,7 @@ namespace MiniPLInterpreterTests
 		[Test]
 		public void TestForLoopMissingVar ()
 		{
-			Parse (TestInputs.forLoopMissingVar);
+			Parse (ParserTestInputs.forLoopMissingVar);
 			Assert.AreEqual (1, p.getErrors ().Count);
 			Assert.AreEqual (TokenType.ID, GetExpectedType(0));
 		}
@@ -106,7 +93,7 @@ namespace MiniPLInterpreterTests
 		[Test]
 		public void TestForLoopMissingRangeFrom ()
 		{
-			Parse (TestInputs.forLoopMissingRangeFrom);
+			Parse (ParserTestInputs.forLoopMissingRangeFrom);
 			Assert.AreEqual (1, p.getErrors ().Count);
 			Assert.AreEqual (TokenType.RANGE_FROM, GetExpectedType(0));
 		}
@@ -114,7 +101,7 @@ namespace MiniPLInterpreterTests
 		[Test]
 		public void TestForLoopMissingRangeFromExpression ()
 		{
-			Parse (TestInputs.forLoopMissingRangeFromExpression);
+			Parse (ParserTestInputs.forLoopMissingRangeFromExpression);
 			Assert.AreEqual (1, p.getErrors ().Count);
 			Assert.AreEqual (TokenType.UNDEFINED, GetExpectedType(0));
 		}
@@ -122,15 +109,15 @@ namespace MiniPLInterpreterTests
 		[Test]
 		public void TestForLoopMissingRangeUpto ()
 		{
-			Parse (TestInputs.forLoopMissingRangeUpto);
+			Parse (ParserTestInputs.forLoopMissingRangeUpto);
 			Assert.AreEqual (1, p.getErrors ().Count);
-			Assert.AreEqual (TokenType.UNDEFINED, GetExpectedType(0));
+			Assert.AreEqual (TokenType.RANGE_UPTO, GetExpectedType(0));
 		}
 
 		[Test]
 		public void TestForLoopMissingRangeUptoExpression ()
 		{
-			Parse (TestInputs.forLoopMissingRangeUptoExpression);
+			Parse (ParserTestInputs.forLoopMissingRangeUptoExpression);
 			Assert.AreEqual (1, p.getErrors ().Count);
 			Assert.AreEqual (TokenType.UNDEFINED, GetExpectedType(0));
 		}
@@ -138,9 +125,23 @@ namespace MiniPLInterpreterTests
 		[Test]
 		public void TestForLoopMissingStartBlock ()
 		{
-			Parse (TestInputs.forLoopMissingStartBlock);
+			Parse (ParserTestInputs.forLoopMissingStartBlock);
 			Assert.AreEqual (1, p.getErrors ().Count);
 			Assert.AreEqual (TokenType.START_BLOCK, GetExpectedType(0));
+		}
+
+		[Test]
+		public void TestForLoopNoStatements ()
+		{
+			Parse (ParserTestInputs.forLoopNoStatements);
+			Assert.AreEqual (0, p.getErrors ().Count);
+		}
+
+		[Test]
+		public void TestAllIsWell ()
+		{
+			Parse (ParserTestInputs.validMassiveInputForParserTesting);
+			Assert.AreEqual (0, p.getErrors ().Count);
 		}
 	}
 }

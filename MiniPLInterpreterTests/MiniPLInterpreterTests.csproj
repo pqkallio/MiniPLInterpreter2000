@@ -39,8 +39,9 @@
     <Compile Include="test\Utils\NumericUtilsTest.cs" />
     <Compile Include="test\Utils\StringUtilsTest.cs" />
     <Compile Include="test\Services\ScannerTest.cs" />
-    <Compile Include="test\TestInputs.cs" />
     <Compile Include="test\Services\ParserTest.cs" />
+    <Compile Include="test\ScannerTestInputs.cs" />
+    <Compile Include="test\ParserTestInputs.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
