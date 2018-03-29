@@ -356,38 +356,63 @@ namespace MiniPLInterpreter
 			}
 		}
 
+		/// <summary>
+		/// Parses a read statement into an IOReadNode.
+		/// </summary>
+		/// <returns>The next token</returns>
+		/// <param name="token">Token.</param>
+		/// <param name="statementsNode">A StatementsNode.</param>
 		private Token ParseRead(Token token, StatementsNode statementsNode)
 		{
 			try {
 				VariableIdNode varId = nodeBuilder.CreateIdNode ();
+				// create the IOReadNode and affiliate it with the statementsNode
 				nodeBuilder.CreateIOReadNode(varId, statementsNode, token);
+				// parses the variable id that the read operation's value is saved to
 				return ParseVarId (scanner.getNextToken(token), varId);
 			} catch (UnexpectedTokenException ex) {
 				return FastForwardToStatementEnd (ex);
 			}
 		}
 
+		/// <summary>
+		/// Parses a print statement into an IOPrintNode
+		/// </summary>
+		/// <returns>The next token.</returns>
+		/// <param name="token">Token.</param>
+		/// <param name="statementsNode">A StatementsNode.</param>
 		private Token ParsePrint (Token token, StatementsNode statementsNode)
 		{
 			try {
+				// build the print statement node
 				IOPrintNode printNode = nodeBuilder.CreateIOPrintNode(statementsNode, token);
+				// parse the expression to print
 				return ParseExpression (scanner.getNextToken(token), printNode);
 			} catch (UnexpectedTokenException ex) {
 				return FastForwardToStatementEnd (ex);
 			}
 		}
 
+		/// <summary>
+		/// Parses an assert statement into an AssertNode
+		/// </summary>
+		/// <returns>The next token.</returns>
+		/// <param name="token">Token.</param>
+		/// <param name="statementsNode">A StatementsNode.</param>
 		private Token ParseAssert (Token token, StatementsNode statementsNode)
 		{
 			try {
 				Token next = scanner.getNextToken (token);
 				match (next, TokenType.PARENTHESIS_LEFT);
 
+				// create the AssertNode
 				AssertNode assertNode = nodeBuilder.CreateAssertNode(statementsNode, token);
 
+				// parse the expression to assert when executed
 				next = ParseExpression (scanner.getNextToken (next), assertNode);
 				match (next, TokenType.PARENTHESIS_RIGHT);
 
+				// create an IOPrinterNode to print a message in case of a failed assertion
 				nodeBuilder.CreateIOPrintNodeForAssertNode(assertNode);
 
 				return scanner.getNextToken (next);
@@ -396,6 +421,12 @@ namespace MiniPLInterpreter
 			}
 		}
 
+		/// <summary>
+		/// Parses a variable id into a VariableIdNode
+		/// </summary>
+		/// <returns>The next token.</returns>
+		/// <param name="token">Token.</param>
+		/// <param name="idNode">An IdentifierNode.</param>
 		private Token ParseVarId(Token token, VariableIdNode idNode)
 		{
 			switch (token.Type) {
@@ -409,12 +440,23 @@ namespace MiniPLInterpreter
 			}
 		}
 
+		/// <summary>
+		/// Parses a variable's type into a VariableIdNode and adds the variable to the symbol table.
+		/// </summary>
+		/// <returns>The next token.</returns>
+		/// <param name="token">Token.</param>
+		/// <param name="idNode">Identifier node.</param>
 		private Token ParseType (Token token, VariableIdNode idNode)
 		{
+			// In case the symbol table already contains the variable, we don't try ro add it twice.
+			// This would of course be an error since it means the declaration for this variable
+			// has already been made earlier, but this will be handled during the semantic analysis.
 			if (!symbolTable.ContainsKey (idNode.ID)) {
 				switch (token.Type) {
 					case TokenType.INT_VAR:
+						// set the id node's type
 						idNode.VariableType = TokenType.INT_VAL;
+						// add the id to the symbol table, with its value set to default value
 						symbolTable.Add (idNode.ID, (new IntegerProperty (SemanticAnalysisConstants.DEFAULT_INTEGER_VALUE)));
 						break;
 					case TokenType.STR_VAR:
@@ -433,14 +475,22 @@ namespace MiniPLInterpreter
 			return scanner.getNextToken (token);
 		}
 
+		/// <summary>
+		/// Parses an assignment during a declaration statement into an AssignNode. 
+		/// </summary>
+		/// <returns>The next token.</returns>
+		/// <param name="token">Token.</param>
+		/// <param name="assignNode">An AssignNode.</param>
 		private Token ParseAssign (Token token, AssignNode assignNode)
 		{
 			switch (token.Type) {
 				case TokenType.ASSIGN:
+					// if assignment during a declaration was made, parse the expression to the AssignNode
 					assignNode.Token = token;
 					Token next = scanner.getNextToken (token);
 					return ParseExpression (next, assignNode);
 				case TokenType.END_STATEMENT:
+					// otherwise, set a default assignment
 					setDefaultAssignment (assignNode);
 					return token;
 				default:
@@ -448,6 +498,12 @@ namespace MiniPLInterpreter
 			}
 		}
 
+		/// <summary>
+		/// Parses the an expression into a node that implements IExpressionContainer interface.
+		/// </summary>
+		/// <returns>The next token.</returns>
+		/// <param name="token">Token.</param>
+		/// <param name="node">An IExpressionContainer.</param>
 		private Token ParseExpression (Token token, IExpressionContainer node)
 		{
 			Token next;
@@ -458,11 +514,16 @@ namespace MiniPLInterpreter
 				case TokenType.BOOL_VAL:
 				case TokenType.PARENTHESIS_LEFT:
 				case TokenType.ID:
+					// parse a binary operation
 					BinOpNode binOp = nodeBuilder.CreateBinOpNode(node, token);
+					// parse the first operand
 					next = ParseOperand (token, binOp);
+					// parse the rest of the operation
 					return ParseBinaryOp (next, binOp);
 				case TokenType.UNARY_OP_LOG_NEG:
+					// parse a unary operation
 					UnOpNode unOp = nodeBuilder.CreateUnOpNode (node, token);
+					// parse the operation, then the operand
 					next = ParseUnaryOp (token, unOp);
 					return ParseOperand (next, unOp);
 				default:
@@ -470,11 +531,19 @@ namespace MiniPLInterpreter
 			}
 		}
 
+		/// <summary>
+		/// Parses an expression operand into an IExpressionContainer
+		/// </summary>
+		/// <returns>The next token.</returns>
+		/// <param name="token">Token.</param>
+		/// <param name="parent">An IExpressionContainer.</param>
 		private Token ParseOperand (Token token, IExpressionContainer parent)
 		{
+			// an operand can be an integer, string, boolean, variable or an expression
+			// check the token's type to know what we're parsing
 			switch (token.Type) {
 				case TokenType.INT_VAL:
-					ParseIntegerOperand(token, parent);	
+					ParseIntegerOperand(token, parent);
 					break;
 				case TokenType.STR_VAL:
 					nodeBuilder.CreateStringValueNode(token, parent);
@@ -496,15 +565,30 @@ namespace MiniPLInterpreter
 			return scanner.getNextToken (token);
 		}
 
+		/// <summary>
+		/// Parses an integer operand into an IExpressionContainer
+		/// </summary>
+		/// <param name="token">Token.</param>
+		/// <param name="parent">An IExpressionContainer.</param>
 		private void ParseIntegerOperand(Token token, IExpressionContainer parent) {
 			try {
+				// try to create an IntValueNode for the value
 				nodeBuilder.CreateIntValueNode (token, parent);
 			} catch (OverflowException) {
+				// In case the token's value is an integer that cannot be represented as a
+				// signed 32-bit integer, an OverflowException is thrown.
+				// In this case, the parses reports an IntegerOverflowError.
 				notifyError (new IntegerOverflowError (token));
 				nodeBuilder.CreateDefaultIntValueNode (token, parent);
 			}
 		}
 
+		/// <summary>
+		/// Parses a binary operation's operation and righthand side into a BinOpNode
+		/// </summary>
+		/// <returns>The next token.</returns>
+		/// <param name="token">Token.</param>
+		/// <param name="binOp">A BinOpNode.</param>
 		private Token ParseBinaryOp (Token token, BinOpNode binOp)
 		{
 			switch (token.Type) {
@@ -515,13 +599,24 @@ namespace MiniPLInterpreter
 				case TokenType.BINARY_OP_LOG_LT:
 				case TokenType.BINARY_OP_LOG_EQ:
 				case TokenType.BINARY_OP_LOG_AND:
+					// In case it is a binary operation, the operation and the
+					// righthand side is parsed
 					Token next = ParseOperation (token, binOp);
 					return ParseOperand (next, binOp);
 				default:
+					// in case it wasn't a binary operation, the BinOpNode's
+					// operation remains "no operation" and the righthand side
+					// is not parsed
 					return token;
 			}
 		}
 
+		/// <summary>
+		/// Parses a unary operation into a UnOpNode.
+		/// </summary>
+		/// <returns>The next token.</returns>
+		/// <param name="token">Token.</param>
+		/// <param name="unOp">A UnOpNode.</param>
 		private Token ParseUnaryOp (Token token, UnOpNode unOp)
 		{
 			switch (token.Type) {
@@ -534,6 +629,12 @@ namespace MiniPLInterpreter
 			}
 		}
 
+		/// <summary>
+		/// Parses a binary operation's operation into a BinOpNode,
+		/// </summary>
+		/// <returns>The next token.</returns>
+		/// <param name="token">Token.</param>
+		/// <param name="binOp">A BinOpNode.</param>
 		private Token ParseOperation (Token token, BinOpNode binOp)
 		{
 			switch (token.Type) {
@@ -551,6 +652,10 @@ namespace MiniPLInterpreter
 			}
 		}
 
+		/// <summary>
+		/// Sets a default assignment to an AssignNode.
+		/// </summary>
+		/// <param name="assignNode">An AssignNode.</param>
 		private void setDefaultAssignment (AssignNode assignNode)
 		{
 			TokenType idType = assignNode.IDNode.EvaluationType;
@@ -570,20 +675,36 @@ namespace MiniPLInterpreter
 			} 
 		}
 
+		/// <summary>
+		/// Match the specified token and expectedType.
+		/// </summary>
+		/// <param name="token">Token.</param>
+		/// <param name="expectedType">A TokenType.</param>
 		private void match(Token token, TokenType expectedType)
 		{
+			// If the token's type doesn't match the expected type, an UnexpectedTokenException is thrown
+			// and the AST's build status is set to false
+			// The calling method must then handle the exception or throw it.
 			if (token.Type != expectedType) {
 				syntaxTreeBuilt = false;
 				throw new UnexpectedTokenException (token, expectedType, null);
 			}
 		}
 
+		/// <summary>
+		/// Fastforwards to the source code's end.
+		/// </summary>
+		/// <returns>The last token, namely the EOF token.</returns>
+		/// <param name="ex">An UnexpectedTokenException.</param>
 		private Token FastForwardToSourceEnd (UnexpectedTokenException ex)
 		{
+			// report the error
 			notifyError(new SyntaxError(ex.Token, ex.ExpectedType, ex.ExpectationSet));
 
+			syntaxTreeBuilt = false;
 			Token token;
 
+			// ask for new token's until the end of file has been reached
 			do {
 				token = scanner.getNextToken (null);
 			} while (token.Type != TokenType.END_OF_FILE);
@@ -591,12 +712,21 @@ namespace MiniPLInterpreter
 			return token;
 		}
 
+		/// <summary>
+		/// Fastforwards to the next token whose type is listed in the tokenTypes argument's
+		/// keyset.
+		/// </summary>
+		/// <returns>The token fastforwarded to.</returns>
+		/// <param name="tokenTypes">Token types.</param>
+		/// <param name="errorToken">The token that caused the error.</param>
 		private Token FastForwardTo (Dictionary<TokenType, string> tokenTypes, Token errorToken)
 		{
 			syntaxTreeBuilt = false;
 
 			Token token = errorToken;
 
+			// ask for another token until the token's type matches one of
+			// the types in the keyset
 			while (!tokenTypes.ContainsKey(token.Type)) {
 				token = scanner.getNextToken (token);
 			}
@@ -604,6 +734,11 @@ namespace MiniPLInterpreter
 			return token;
 		}
 
+		/// <summary>
+		/// Fastforwards to the statement's end.
+		/// </summary>
+		/// <returns>The token that ends the statement.</returns>
+		/// <param name="ex">An UnexpectedTokenException.</param>
 		private Token FastForwardToStatementEnd (UnexpectedTokenException ex)
 		{
 			notifyError (new SyntaxError (ex.Token, ex.ExpectedType, ex.ExpectationSet));
@@ -611,27 +746,45 @@ namespace MiniPLInterpreter
 			return FastForwardTo (ParserConstants.STATEMENT_FASTFORWARD_TO, ex.Token);
 		}
 
+		/// <summary>
+		/// Fastforwards to the statement's end.
+		/// </summary>
+		/// <returns>The token that ends the statement.</returns>
+		/// <param name="token">A Token.</param>
 		private Token FastForwardToStatementEnd (Token token)
 		{
 			return FastForwardTo (ParserConstants.STATEMENT_FASTFORWARD_TO, token);
 		}
 
+		/// <summary>
+		/// Fastforwards to the end of a for-loop block.
+		/// </summary>
+		/// <returns>The token that ends the for-loop block</returns>
+		/// <param name="ex">An UnexpectedTokenException.</param>
 		private Token FastForwardToEndOfBlock (UnexpectedTokenException ex)
 		{
 			notifyError (new SyntaxError (ex.Token, ex.ExpectedType, ex.ExpectationSet));
 			Token token = ex.Token;
+			// since blocks can be nested, we must track the depth we're in to make sure
+			// we find the correct end statement
 			int blockDepth = 0;
+			bool blockEndFound = false;
 
 			while (token.Type != TokenType.END_OF_FILE) {
-				if (token.Type == TokenType.END_OF_BLOCK) {
-					if (blockDepth == 0) {
-						return scanner.getNextToken (null);
+				if (token.Type == TokenType.END_OF_BLOCK) {		// if an end of block is found
+					if (blockDepth == 0) {						// and the depth matches
+						return scanner.getNextToken (null);		// return the next token
 					}
-					blockDepth--;
-				}
-
-				if (token.Type == TokenType.FOR_LOOP) {
-					blockDepth++;
+					blockEndFound = true;
+				} else if (token.Type == TokenType.FOR_LOOP) {	// if we find another for-loop token
+					if (blockEndFound) {						// and the last token was an end block token
+						blockDepth--;							// decrease the depth
+						blockEndFound = false;
+					} else {
+						blockDepth++;							// otherwise, increase the depth
+					}
+				} else {
+					blockEndFound = false;
 				}
 				token = scanner.getNextToken (null);
 			}
