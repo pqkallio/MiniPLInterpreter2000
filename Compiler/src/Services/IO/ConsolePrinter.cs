@@ -38,11 +38,6 @@ namespace MiniPLInterpreter
 			printLine (StringFormatter.formatRuntimeException (exception, sourceLines));
 		}
 
-		public void printAssertionFailure (AssertNode assertNode)
-		{
-			printLine (StringFormatter.formatFailedAssertion (assertNode, sourceLines));
-		}
-
 		public void print (string str)
 		{
 			Console.Write (str);

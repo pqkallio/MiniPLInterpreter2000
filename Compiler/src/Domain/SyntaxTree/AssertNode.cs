@@ -8,44 +8,17 @@ namespace MiniPLInterpreter
 		private IExpressionNode expressionNode;
 		private IOPrintNode ioPrintNode;
 		private Token token;
-		private int assertStatementRow;
-		private int assertStatementStartCol;
-		private int assertStatementEndCol;
 
 		public AssertNode (Token t)
-			: this(t, 0, 0)
-		{}
-
-		public AssertNode (Token t, int assertStatementRow, int assertStatementStartCol)
 		{
 			this.token = t;
-			this.assertStatementRow = assertStatementRow;
-			this.assertStatementStartCol = assertStatementStartCol;
 		}
 
 		public IOPrintNode IOPrintNode {
 			get { return this.ioPrintNode; }
 			set { this.ioPrintNode = value; }
 		}
-
-		public int AssertStatementRow
-		{
-			get { return this.assertStatementRow; }
-			set { this.assertStatementRow = value; }
-		}
-
-		public int AssertStatementStartCol
-		{
-			get { return this.assertStatementStartCol; }
-			set { this.assertStatementStartCol = value; }
-		}
-
-		public int AssertStatementEndCol
-		{
-			get { return this.assertStatementEndCol; }
-			set { this.assertStatementEndCol = value; }
-		}
-
+			
 		public IExpressionNode Expression
 		{
 			get { return expressionNode; }

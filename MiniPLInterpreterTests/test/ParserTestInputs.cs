@@ -4,6 +4,8 @@ namespace MiniPLInterpreterTests
 {
 	public class ParserTestInputs
 	{
+		public static readonly string[] emptyInput = {};
+
 		public static readonly string[] statementNotEnded =
 		{"var x : int := 4 + (6 * 2)"};
 

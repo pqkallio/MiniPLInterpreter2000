@@ -7,6 +7,17 @@ namespace MiniPLInterpreter
 	{
 		private static readonly Dictionary<TokenType, string> TOKEN_TYPE_STRINGS = StringFormattingConstants.TOKEN_TYPE_STRINGS;
 
+		public static readonly Dictionary<TokenType, string> BINARY_OPERATIONS = new Dictionary<TokenType, string> ()
+		{
+			{TokenType.BINARY_OP_ADD, null},
+			{TokenType.BINARY_OP_DIV, null},
+			{TokenType.BINARY_OP_LOG_AND, null},
+			{TokenType.BINARY_OP_LOG_EQ, null},
+			{TokenType.BINARY_OP_LOG_LT, null},
+			{TokenType.BINARY_OP_MUL, null},
+			{TokenType.BINARY_OP_SUB, null}
+		};
+
 		public static readonly Dictionary<TokenType, string> STATEMENT_FASTFORWARD_TO = new Dictionary<TokenType, string> () 
 		{
 			{TokenType.END_STATEMENT, null},

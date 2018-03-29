@@ -5,6 +5,8 @@ namespace MiniPLInterpreterTests
 {
 	public class ScannerTestInputs
 	{
+		public static readonly string[] emptyInput = {};
+
 		public static readonly string[] validInput1 = {
 			"// ///// One line comment",
 			"",

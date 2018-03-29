@@ -50,6 +50,8 @@ namespace MiniPLInterpreter
 		public static readonly char STRING_DELIMITER = '"';
 		public static readonly char NULL_CHAR = '\0';
 		public static readonly char NEWLINE = '\n';
+		public static readonly char DOT = '.';
+		public static readonly char UNDERSCORE = '_';
 	}
 }
 

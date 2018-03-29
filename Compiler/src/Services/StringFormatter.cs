@@ -37,17 +37,9 @@ namespace MiniPLInterpreter
 			return errorMessage;
 		}
 
-		public static string formatFailedAssertion (AssertNode assertNode, string[] sourceLines)
+		public static string formatFailedAssertion (AssertNode assertNode)
 		{
-			int numRow = assertNode.AssertStatementRow;
-			int numStartCol = assertNode.AssertStatementStartCol;
-			int lenAssertion = assertNode.AssertStatementEndCol - numStartCol;
-
-			string assertion = StringFormattingConstants.ASSERTION_FAILED;
-			assertion += sourceLines [numRow].Substring (numStartCol, lenAssertion) + ' ';
-			assertion += line (formatRowAndColumn (numRow, numStartCol));
-
-			return assertion;
+			return line(StringFormattingConstants.ASSERTION_FAILED + assertNode.Expression.ToString());
 		}
 
 		public static string formatRowAndColumn (int numRow, int numCol)

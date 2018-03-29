@@ -24,6 +24,20 @@ namespace MiniPLInterpreterTests
 		}
 
 		[Test]
+		public void TestEmptyFile ()
+		{
+			InitScanner (ScannerTestInputs.emptyInput);
+			Token t = null;
+
+			while (t == null || t.Type != TokenType.END_OF_FILE) {
+				t = s.getNextToken (t);
+				tokens.Add(t);
+			}
+			Assert.AreEqual (1, tokens.Count);
+			Assert.AreEqual (0, s.getErrors ().Count);
+		}
+
+		[Test]
 		public void TestValidInput1Tokens ()
 		{
 			InitScanner (ScannerTestInputs.validInput1);

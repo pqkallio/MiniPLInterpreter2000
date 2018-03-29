@@ -41,6 +41,14 @@ namespace MiniPLInterpreter
 			return new VariableIdNode (value, symbolTable, t);
 		}
 
+		public IExpressionNode CreateIdNode(Token t, IExpressionContainer parent)
+		{
+			VariableIdNode node = new VariableIdNode (t.Value, symbolTable, t);
+			parent.AddExpression (node);
+
+			return node;
+		}
+
 		public DeclarationNode CreateDeclarationNode (VariableIdNode idNode, StatementsNode statementsNode, Token t)
 		{
 			DeclarationNode declarationNode = new DeclarationNode (idNode, symbolTable, t);
@@ -90,12 +98,29 @@ namespace MiniPLInterpreter
 			return ioPrintNode;
 		}
 
-		public AssertNode CreateAssertNode (StatementsNode statementsNode, Token t, int assertStatementRow, int assertStatementStartCol)
+		public IOPrintNode CreateIOPrintNodeForAssertNode (AssertNode assertNode)
 		{
-			AssertNode assertNode = new AssertNode (t, assertStatementRow, assertStatementStartCol);
+			assertNode.IOPrintNode = new IOPrintNode (assertNode.Expression.Token);
+			assertNode.IOPrintNode.AddExpression (new StringValueNode(StringFormatter.formatFailedAssertion(assertNode)));
+
+			return assertNode.IOPrintNode;
+		}
+
+		public AssertNode CreateAssertNode (StatementsNode statementsNode, Token t)
+		{
+			AssertNode assertNode = new AssertNode (t);
 			statementsNode.Statement = assertNode;
 
 			return assertNode;
+		}
+
+		public BinOpNode CreateBinOpNode(IExpressionContainer parent, IExpressionNode leftHandSide, Token operation) {
+			BinOpNode binOp = new BinOpNode (parent.Token);
+			binOp.AddExpression (leftHandSide);
+			binOp.Operation = operation.Type;
+			parent.AddExpression (binOp);
+
+			return binOp;
 		}
 
 		public BinOpNode CreateBinOpNode (IExpressionContainer parent, Token t)
@@ -114,6 +139,47 @@ namespace MiniPLInterpreter
 			return unOp;
 		}
 
+		public IExpressionNode CreateValueNode (Token t, IExpressionContainer node, TokenType valueType)
+		{
+			switch (valueType) {
+				case TokenType.INT_VAL:
+					return CreateIntValueNode (t, node);
+				case TokenType.STR_VAL:
+					return CreateStringValueNode (t, node);
+				case TokenType.BOOL_VAL:
+					return CreateBoolValueNode (t, node);
+				default:
+					throw new ArgumentException();
+			}
+		}
+
+		public IExpressionNode CreateIntValueNode(Token t, IExpressionContainer parent)
+		{
+			int value = StringUtils.parseToInt (t.Value);
+			IntValueNode node = new IntValueNode (value, t);
+			parent.AddExpression (node);
+
+			return node;
+		}
+
+		public IExpressionNode CreateStringValueNode (Token t, IExpressionContainer parent)
+		{
+			string value = t.Value;
+			StringValueNode node = new StringValueNode (value, t);
+			parent.AddExpression (node);
+
+			return node;
+		}
+
+		public IExpressionNode CreateBoolValueNode (Token t, IExpressionContainer parent)
+		{
+			bool value = StringUtils.parseToBoolean (t.Value);
+			BoolValueNode node = new BoolValueNode (value, t);
+			parent.AddExpression (node);
+
+			return node;
+		}
+
 		public IExpressionNode CreateIntValueNode(Token t)
 		{
 			int value = StringUtils.parseToInt (t.Value);
@@ -130,6 +196,30 @@ namespace MiniPLInterpreter
 		{
 			bool value = StringUtils.parseToBoolean (t.Value);
 			return new BoolValueNode (value, t);
+		}
+
+		public IExpressionNode CreateDefaultIntValueNode(Token t, IExpressionContainer parent)
+		{
+			IntValueNode node = new IntValueNode (SemanticAnalysisConstants.DEFAULT_INTEGER_VALUE, t);
+			parent.AddExpression (node);
+
+			return node;
+		}
+
+		public IExpressionNode CreateDefaultStringValueNode (Token t, IExpressionContainer parent)
+		{
+			StringValueNode node = new StringValueNode (SemanticAnalysisConstants.DEFAULT_STRING_VALUE, t);
+			parent.AddExpression (node);
+
+			return node;
+		}
+
+		public IExpressionNode CreateDefaultBoolValueNode (Token t, IExpressionContainer parent)
+		{
+			BoolValueNode node = new BoolValueNode (SemanticAnalysisConstants.DEFAULT_BOOL_VALUE, t);
+			parent.AddExpression (node);
+
+			return node;
 		}
 
 		public IExpressionNode CreateDefaultIntValueNode(Token t)

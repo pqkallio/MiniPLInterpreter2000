@@ -35,6 +35,13 @@ namespace MiniPLInterpreterTests
 		}
 
 		[Test]
+		public void TestEmptyInput ()
+		{
+			Parse (ParserTestInputs.emptyInput);
+			Assert.AreEqual (0, p.getErrors ().Count);
+		}
+
+		[Test]
 		public void TestStatementNotEnded ()
 		{
 			Parse (ParserTestInputs.statementNotEnded);
