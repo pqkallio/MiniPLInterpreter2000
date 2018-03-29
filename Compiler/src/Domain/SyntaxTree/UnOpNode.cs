@@ -3,7 +3,7 @@ using System.Collections;
 
 namespace MiniPLInterpreter
 {
-	public class UnOpNode : IExpressionContainer, IOperandContainer, IExpressionNode
+	public class UnOpNode : IExpressionContainer, IExpressionNode
 	{
 		private IExpressionNode operand;
 		private TokenType operation;
@@ -29,11 +29,6 @@ namespace MiniPLInterpreter
 		public void AddExpression(IExpressionNode expressionNode)
 		{
 			this.operand = expressionNode;
-		}
-
-		public void AddOperand(ISyntaxTreeNode operandNode)
-		{
-			this.operand = (IExpressionNode)operandNode;
 		}
 
 		public override string ToString ()

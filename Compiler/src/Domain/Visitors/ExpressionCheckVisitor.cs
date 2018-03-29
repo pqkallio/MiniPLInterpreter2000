@@ -126,6 +126,8 @@ namespace MiniPLInterpreter
 		
 		public ISemanticCheckValue VisitIOPrintNode(IOPrintNode node)
 		{
+			node.Expression.Accept (this.typeChecker).asProperty ();
+
 			return voidProperty;
 		}
 

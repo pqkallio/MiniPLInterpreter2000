@@ -101,6 +101,7 @@
     <Compile Include="src\Services\IO\ConsolePrinter.cs" />
     <Compile Include="src\Domain\Errors\RuntimeException.cs" />
     <Compile Include="src\Domain\Errors\DivisionByZeroError.cs" />
+    <Compile Include="src\Domain\Errors\InvalidIdentifierError.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\" />

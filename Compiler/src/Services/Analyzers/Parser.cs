@@ -198,6 +198,8 @@ namespace MiniPLInterpreter
 			try {
 				match (next, TokenType.END_OF_BLOCK);
 				next = scanner.getNextToken (next);
+				match (next, TokenType.FOR_LOOP);
+				return scanner.getNextToken (next);
 			} catch (UnexpectedTokenException ex) {
 				next = FastForwardToEndOfBlock (ex);
 			}
@@ -320,34 +322,33 @@ namespace MiniPLInterpreter
 			}
 		}
 
-		private Token ParseOperand (Token t, IOperandContainer node)
+		private Token ParseOperand (Token t, IExpressionContainer node)
 		{
 			switch (t.Type) {
 				case TokenType.INT_VAL:
-					ISyntaxTreeNode intVal;
+					IExpressionNode intVal;
 					try {
 						intVal = nodeBuilder.CreateIntValueNode(t);
 					} catch (OverflowException) {
 						notifyError(new IntegerOverflowError(t));
 						intVal = nodeBuilder.CreateDefaultIntValueNode (t);
 					}
-					node.AddOperand (intVal);
+					node.AddExpression (intVal);
 					return scanner.getNextToken (t);
 				case TokenType.STR_VAL:
-					ISyntaxTreeNode strVal = nodeBuilder.CreateStringValueNode(t);
-					node.AddOperand (strVal);
+					IExpressionNode strVal = nodeBuilder.CreateStringValueNode(t);
+					node.AddExpression (strVal);
 					return scanner.getNextToken (t);
 				case TokenType.BOOL_VAL:
-					ISyntaxTreeNode boolVal = nodeBuilder.CreateBoolValueNode(t);
-					node.AddOperand (boolVal);
+					IExpressionNode boolVal = nodeBuilder.CreateBoolValueNode(t);
+					node.AddExpression (boolVal);
 					return scanner.getNextToken (t);
 				case TokenType.ID:
-					ISyntaxTreeNode varId = nodeBuilder.CreateIdNode(t);
-					node.AddOperand (varId);
+					IExpressionNode varId = nodeBuilder.CreateIdNode(t);
+					node.AddExpression (varId);
 					return scanner.getNextToken (t);
 				case TokenType.PARENTHESIS_LEFT:
-					IExpressionContainer exprContainer = (IExpressionContainer)node;
-					Token next = ParseExpression (scanner.getNextToken (t), exprContainer);
+					Token next = ParseExpression (scanner.getNextToken (t), node);
 					match (next, TokenType.PARENTHESIS_RIGHT);
 					return scanner.getNextToken (next);
 				default:

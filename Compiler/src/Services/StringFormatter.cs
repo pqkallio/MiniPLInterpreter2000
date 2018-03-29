@@ -11,7 +11,7 @@ namespace MiniPLInterpreter
 		public static string formatError (Error error, string[] sourceLines)
 		{
 			int numRow = error.Token.Row < sourceLines.Length ? error.Token.Row : sourceLines.Length - 1;
-			int numCol = Math.Max(error.Token.Column, 0);
+			int numCol = error.Token.Row < sourceLines.Length ? error.Token.Column : sourceLines[sourceLines.Length - 1].Length;
 
 			string errorMessage = line(error.ToString () + ' ' + formatRowAndColumn(numRow, numCol));
 

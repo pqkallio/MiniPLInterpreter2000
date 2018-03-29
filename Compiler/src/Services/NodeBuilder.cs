@@ -35,7 +35,7 @@ namespace MiniPLInterpreter
 			return new VariableIdNode (symbolTable);
 		}
 
-		public ISyntaxTreeNode CreateIdNode(Token t)
+		public IExpressionNode CreateIdNode(Token t)
 		{
 			string value = t.Value;
 			return new VariableIdNode (value, symbolTable, t);
@@ -114,19 +114,19 @@ namespace MiniPLInterpreter
 			return unOp;
 		}
 
-		public ISyntaxTreeNode CreateIntValueNode(Token t)
+		public IExpressionNode CreateIntValueNode(Token t)
 		{
 			int value = StringUtils.parseToInt (t.Value);
 			return new IntValueNode (value, t);
 		}
 
-		public ISyntaxTreeNode CreateStringValueNode (Token t)
+		public IExpressionNode CreateStringValueNode (Token t)
 		{
 			string value = t.Value;
 			return new StringValueNode (value, t);
 		}
 
-		public ISyntaxTreeNode CreateBoolValueNode (Token t)
+		public IExpressionNode CreateBoolValueNode (Token t)
 		{
 			bool value = StringUtils.parseToBoolean (t.Value);
 			return new BoolValueNode (value, t);

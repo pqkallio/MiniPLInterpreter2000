@@ -110,7 +110,8 @@ namespace MiniPLInterpreterTests
 				tokens.Add(t);
 			}
 
-			Assert.AreEqual (0, s.getErrors ().Count);
+			Assert.AreEqual (1, s.getErrors ().Count);
+			Assert.AreEqual (s.getErrors()[0].GetType().Name, nameof(InvalidIdentifierError));
 		}
 
 		[Test]

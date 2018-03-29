@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace MiniPLInterpreter
 {
-	public class DeclarationNode : ISyntaxTreeNode, IIdentifierContainer
+	public class DeclarationNode : IIdentifierContainer
 	{
 		private VariableIdNode idNode;
 		private AssignNode assignNode;

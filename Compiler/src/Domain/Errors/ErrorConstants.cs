@@ -26,6 +26,7 @@ namespace MiniPLInterpreter
 		public static readonly string NOT_AN_INTEGER_MESSAGE = "the read value is not an integer";
 		public static readonly string RUNTIME_ERROR_MESSAGE = "unexpected runtime error";
 		public static readonly string DIVISION_BY_ZERO_MESSAGE = "division by zero";
+		public static readonly string INVALID_IDENTIFIER_MESSAGE = "the identifiers must begin with a letter followed by zero or more numbers, letters and underscores";
 	}
 }
 

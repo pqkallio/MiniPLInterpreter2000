@@ -115,7 +115,6 @@ namespace MiniPLInterpreter
 				parseIdOrKeyword (token, previous, c);
 			} else {
 				parseErrorToken (token, c);
-				token.Type = TokenType.ERROR;
 			}
 
 			return token;
@@ -323,6 +322,9 @@ namespace MiniPLInterpreter
 
 		private void parseErrorToken(Token t, char c)
 		{
+			notifyError(new InvalidIdentifierError (t));
+			t.Type = TokenType.ERROR;
+
 			StringBuilder sb = new StringBuilder (c.ToString());
 
 			c = peekStream ();

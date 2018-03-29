@@ -20,8 +20,8 @@ namespace MiniPLInterpreter
 			this.indexAccumulator = new AssignNode (idNode, ids, t);
 			BinOpNode accum = new BinOpNode (t);
 			accum.Operation = TokenType.BINARY_OP_ADD;
-			accum.AddOperand (idNode);
-			accum.AddOperand (new IntValueNode (1, t));
+			accum.AddExpression (idNode);
+			accum.AddExpression (new IntValueNode (1, t));
 			this.indexAccumulator.ExprNode = accum;
 		}
 
