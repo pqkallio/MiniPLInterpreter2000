@@ -334,7 +334,7 @@ namespace MiniPLInterpreter
 				case TokenType.INT_VAL:
 					return integerComparison (operation, firstOperand, secondOperand);
 				case TokenType.STR_VAL:
-					return stringComparison (operation, firstOperand, secondOperand);s
+					return stringComparison (operation, firstOperand, secondOperand);
 				case TokenType.BOOL_VAL:
 					return booleanComparison (operation, firstOperand, secondOperand);
 				default:
