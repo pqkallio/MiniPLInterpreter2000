@@ -2,6 +2,9 @@
 
 namespace MiniPLInterpreter
 {
+	/// <summary>
+	/// Used to report an error when an integer is being divided by zero.
+	/// </summary>
 	public class DivisionByZeroError : Error
 	{
 		public DivisionByZeroError (Token token)

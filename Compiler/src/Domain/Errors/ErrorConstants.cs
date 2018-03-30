@@ -2,6 +2,9 @@
 
 namespace MiniPLInterpreter
 {
+	/// <summary>
+	/// Constants used when reporting error's
+	/// </summary>
 	public class ErrorConstants
 	{
 		public static readonly string SCANNER_ERROR_TITLE = "Scanner error";

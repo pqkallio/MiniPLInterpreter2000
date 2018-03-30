@@ -3,17 +3,24 @@ using System.Collections.Generic;
 
 namespace MiniPLInterpreter
 {
+	/// <summary>
+	/// This class controls the compilation frontend.
+	/// </summary>
 	public class CompilerFrontend
 	{
-		private Scanner scanner;
-		private Parser parser;
-		private SemanticAnalyzer semanticAnalyzer;
-		private Dictionary<string, IProperty> symbolTable;
-		private string[] sourceLines;
+		private Scanner scanner;							// lexical analyzer
+		private Parser parser;								// syntactical analyzer
+		private SemanticAnalyzer semanticAnalyzer;			// semantic analyzer
+		private Dictionary<string, IProperty> symbolTable;	// global symbol table
+		private string[] sourceLines;						// source code as lines
 
 		public CompilerFrontend ()
 		{}
 
+		/// <summary>
+		/// Initializes the compiler frontend to analyze a given filepath
+		/// </summary>
+		/// <param name="filePath">File path.</param>
 		private void Init(string filePath) {
 			this.sourceLines = readSource (filePath);
 			this.symbolTable = new Dictionary<string, IProperty> ();
@@ -21,19 +28,26 @@ namespace MiniPLInterpreter
 			this.parser = new Parser (symbolTable, scanner);
 		}
 
+		/// <summary>
+		/// Compiles the source code of the given filepath.
+		/// </summary>
+		/// <param name="filePath">File path.</param>
 		public SyntaxTree Compile(string filePath)
 		{
-			Init (filePath);
-			SyntaxTree syntaxTree = this.parser.Parse ();
+			Init (filePath);								// initialize the compiler
+			SyntaxTree syntaxTree = this.parser.Parse ();	// parse the source code into an AST
 
-			if (lexicalErrors ()) {
+			// if any errors were found during the parse, return null
+			if (lexicalAndSyntacticalErrors ()) {
 				return null;
 			}
 
+			// perform semantic analysis
 			semanticAnalyzer = new SemanticAnalyzer (syntaxTree, symbolTable);
 
 			semanticAnalyzer.Analyze ();
 
+			// return the AST
 			return syntaxTree;
 		}
 
@@ -42,6 +56,11 @@ namespace MiniPLInterpreter
 			get { return sourceLines; }
 		}
 
+		/// <summary>
+		/// Reads the source file's lines into an array of strings.
+		/// </summary>
+		/// <returns>The source as an array of strings.</returns>
+		/// <param name="filePath">File path.</param>
 		private string[] readSource(string filePath)
 		{
 			SourceBuffer sourceBuffer = new SourceBuffer(filePath);
@@ -49,7 +68,11 @@ namespace MiniPLInterpreter
 			return sourceBuffer.SourceLines;
 		}
 
-		private bool lexicalErrors ()
+		/// <summary>
+		/// Lexicals and syntactical errors.
+		/// </summary>
+		/// <returns><c>true</c>, if lexical or syntactical errors were found, <c>false</c> otherwise.</returns>
+		private bool lexicalAndSyntacticalErrors ()
 		{
 			bool errors = false;
 

@@ -2,6 +2,9 @@
 
 namespace MiniPLInterpreter
 {
+	/// <summary>
+	/// Used to report an error when an illegal assignment to a variable is made.
+	/// </summary>
 	public class IllegalAssignmentError : SemanticError
 	{
 		public IllegalAssignmentError (ISyntaxTreeNode node)

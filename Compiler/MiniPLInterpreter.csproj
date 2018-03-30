@@ -49,7 +49,6 @@
     <Compile Include="src\Domain\Errors\UnexpectedTokenException.cs" />
     <Compile Include="src\Services\NodeBuilder.cs" />
     <Compile Include="src\Domain\Visitors\TypeCheckingVisitor.cs" />
-    <Compile Include="src\Domain\Visitors\ExpressionCheckVisitor.cs" />
     <Compile Include="src\Domain\Errors\UninitializedVariableError.cs" />
     <Compile Include="src\Domain\Errors\IllegalTypeError.cs" />
     <Compile Include="src\Domain\Errors\DeclarationError.cs" />
@@ -102,6 +101,7 @@
     <Compile Include="src\Domain\Errors\RuntimeException.cs" />
     <Compile Include="src\Domain\Errors\DivisionByZeroError.cs" />
     <Compile Include="src\Domain\Errors\InvalidIdentifierError.cs" />
+    <Compile Include="src\Domain\Visitors\StatementCheckVisitor.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\" />

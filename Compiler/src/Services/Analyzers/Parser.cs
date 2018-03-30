@@ -57,7 +57,13 @@ namespace MiniPLInterpreter
 			IStatementsContainer root = nodeBuilder.CreateRootNode ();
 			syntaxTree.Root = root;
 
-			// then start parsing by asking for the first token
+			/* Then start parsing by asking for the first token from the scanner.
+			 * 
+			 * So, the first pass over the source starts here, and it's made
+			 * over the original source code. All the three phases are somewhat
+			 * interleaved during parsing: the lexical and syntactical analyses
+			 * completely and the building of the AST, which is actually a part
+			 * of the third frontend phase, the semantical analysis. */
 			ParseProgram (scanner.getNextToken (null), root);
 
 			// if there were errors during parsing, don't return the AST

@@ -2,6 +2,9 @@
 
 namespace MiniPLInterpreter
 {
+	/// <summary>
+	/// Used to report an error when an integer operation overflows.
+	/// </summary>
 	public class IntegerOverflowError : Error
 	{
 		public IntegerOverflowError (Token token)

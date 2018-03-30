@@ -2,6 +2,9 @@
 
 namespace MiniPLInterpreter
 {
+	/// <summary>
+	/// Used to report an error while parsing a token.
+	/// </summary>
 	public class TokenError : Error
 	{
 		public TokenError (Token token)

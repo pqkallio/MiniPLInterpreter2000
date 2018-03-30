@@ -2,12 +2,15 @@
 
 namespace MiniPLInterpreter
 {
+	/// <summary>
+	/// A general class for errors.
+	/// </summary>
 	public class Error
 	{
-		private string title;
-		private string errorMessage;
-		private Token token;
-		private ISyntaxTreeNode node;
+		private string title;			// the error's title
+		private string errorMessage;	// the error message
+		private Token token;			// the token where the error occured
+		private ISyntaxTreeNode node;	// the node where the error occured
 
 		public Error (string title, string errorMessage, ISyntaxTreeNode node)
 		{

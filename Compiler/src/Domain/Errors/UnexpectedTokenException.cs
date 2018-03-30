@@ -2,6 +2,9 @@
 
 namespace MiniPLInterpreter
 {
+	/// <summary>
+	/// Used to throw an exception when an unexpected token is encountered while parsing.
+	/// </summary>
 	public class UnexpectedTokenException : Exception
 	{
 		private Token token;

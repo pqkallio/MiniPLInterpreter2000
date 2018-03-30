@@ -2,6 +2,9 @@
 
 namespace MiniPLInterpreter
 {
+	/// <summary>
+	/// Used to throw an exception in runtime.
+	/// </summary>
 	public class RuntimeException : Exception
 	{
 		private Token token;

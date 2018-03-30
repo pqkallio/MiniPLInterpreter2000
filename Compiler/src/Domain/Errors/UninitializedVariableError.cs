@@ -2,6 +2,9 @@
 
 namespace MiniPLInterpreter
 {
+	/// <summary>
+	/// Used to report an error when an uninitialized variable is accessed. 
+	/// </summary>
 	public class UninitializedVariableError : SemanticError
 	{
 		public UninitializedVariableError (ISyntaxTreeNode node)

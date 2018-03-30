@@ -2,6 +2,9 @@
 
 namespace MiniPLInterpreter
 {
+	/// <summary>
+	/// Used to report a Semantic error
+	/// </summary>
 	public class SemanticError : Error, ISemanticCheckValue
 	{
 		public SemanticError (string title, string message, ISyntaxTreeNode node)

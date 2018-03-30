@@ -13,16 +13,26 @@ namespace MiniPLInterpreter
 		private AssignNode rangeFrom;
 		private Token token;
 
-		public ForLoopNode (VariableIdNode idNode, Dictionary<string, IProperty> ids, Token t)
+		public ForLoopNode (VariableIdNode idNode, Dictionary<string, IProperty> symbolTable, Token token)
 		{
 			this.idNode = idNode;
-			this.token = t;
-			this.indexAccumulator = new AssignNode (idNode, ids, t);
-			BinOpNode accum = new BinOpNode (t);
-			accum.Operation = TokenType.BINARY_OP_ADD;
-			accum.AddExpression (idNode);
-			accum.AddExpression (new IntValueNode (1, t));
-			this.indexAccumulator.ExprNode = accum;
+			this.token = token;
+
+			this.indexAccumulator = createIndexAccumulator (idNode, symbolTable, token);
+		}
+
+		private AssignNode createIndexAccumulator(VariableIdNode idNode, Dictionary<string, IProperty> symbolTable, Token token)
+		{
+			AssignNode accumulator = new AssignNode (idNode, symbolTable, token);
+
+			BinOpNode accumulationOperation = new BinOpNode (token);
+			accumulationOperation.Operation = TokenType.BINARY_OP_ADD;
+			accumulationOperation.AddExpression (idNode);
+			accumulationOperation.AddExpression (new IntValueNode (1, token));
+
+			accumulator.ExprNode = accumulationOperation;
+
+			return accumulator;
 		}
 
 		public AssignNode Accumulator

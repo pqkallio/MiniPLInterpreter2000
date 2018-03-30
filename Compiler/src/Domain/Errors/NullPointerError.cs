@@ -2,6 +2,9 @@
 
 namespace MiniPLInterpreter
 {
+	/// <summary>
+	/// Used to report an error when a null pointer is encountered.
+	/// </summary>
 	public class NullPointerError : SemanticError
 	{
 		public NullPointerError (ISyntaxTreeNode node)

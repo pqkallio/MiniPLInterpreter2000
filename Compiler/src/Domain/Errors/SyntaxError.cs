@@ -2,10 +2,13 @@
 
 namespace MiniPLInterpreter
 {
+	/// <summary>
+	/// Used to report an error during syntax analysis
+	/// </summary>
 	public class SyntaxError : Error
 	{
-		private TokenType expectedType;
-		private string[] expectationSet;
+		private TokenType expectedType;		// the expected type
+		private string[] expectationSet;	// the expected set of token in string form
 
 		public SyntaxError (Token token, string[] expectationSet)
 			: this(token, TokenType.UNDEFINED, expectationSet)
