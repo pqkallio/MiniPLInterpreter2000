@@ -80,10 +80,94 @@ namespace MiniPLInterpreterTests
 
 		public static readonly string[] forLoopMissingEnd =
 		{
+			"for x in 0..nTimes-1 do",
+			"   print x;",
+			"   print \" : Hello, World!\\n\";",
+			"for;"
+		};
+
+		public static readonly string[] forLoopMissingForAfterEnd =
+		{
 			"for x in 0..nTimes-1 ",
 			"   print x;",
 			"   print \" : Hello, World!\\n\";",
-			"end for;"
+			"end;"
+		};
+
+		public static readonly string[] forLoopMissingEndStatementAfterEndFor =
+		{
+			"for x in 0..nTimes-1 ",
+			"   print x;",
+			"   print \" : Hello, World!\\n\";",
+			"end for"
+		};
+
+		public static readonly string[] integerOverflowOnPositiveInt = {
+			"var too_big : int := 2147483648;"
+		};
+
+		public static readonly string[] integerOverflowOnNegativeInt = {
+			"var too_small : int := -2147483649;"
+		};
+
+		public static readonly string[] noIntegerOverflowOnPositiveInt = {
+			"var big : int := 2147483647;"
+		};
+
+		public static readonly string[] noIntegerOverflowOnNegativeInt = {
+			"var small : int := -2147483648;"
+		};
+
+		public static readonly string[] validDeclaration = {
+			"var banana : string;"
+		};
+
+		public static readonly string[] invalidTypeOnDeclaration = {
+			"var banana : strng;"
+		};
+
+		public static readonly string[] invalidIdInDeclaration = {
+			"var ~banana : string;"
+		};
+
+		public static readonly string[] invalidDeclarationStart = {
+			"?var banana : string;"
+		};
+
+		public static readonly string[] threeErrorsInDeclaration = {
+			"?var ~banana : strng;"
+		};
+
+		public static readonly string[] readStatementOk = {
+			"read a;"
+		};
+
+		public static readonly string[] readStatementMissingVarId = {
+			"read ;"
+		};
+
+		public static readonly string[] readStatementInvalidId = {
+			"read 3;"
+		};
+
+		public static readonly string[] printStatementOk = {
+			"print a;"
+		};
+
+		public static readonly string[] printStatementMissingExpression = {
+			"print ;"
+		};
+
+		public static readonly string[] printStatementInvalidId = {
+			"print var;"
+		};
+
+		public static readonly string[] assertOk = {
+			"assert (a = true);"
+		};
+
+		public static readonly string[] assertNoParentheses = {
+			"assert a = true;"
 		};
 
 		public static readonly string[] validMassiveInputForParserTesting =
