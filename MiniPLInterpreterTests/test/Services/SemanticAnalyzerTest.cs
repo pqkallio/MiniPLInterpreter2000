@@ -307,6 +307,86 @@ namespace MiniPLInterpreterTests
 			Assert.IsTrue (analyzed);
 			Assert.AreEqual (sa.getErrors ().Count, 1);
 		}
+
+		[Test]
+		public void TestAssertionBoolean ()
+		{
+			bool analyzed = Analyze (SemanticAnalyzerTestInputs.assertionBoolean);
+			Assert.IsTrue (analyzed);
+			Assert.AreEqual (sa.getErrors ().Count, 0);
+		}
+
+		[Test]
+		public void TestAssertionNotBoolean ()
+		{
+			bool analyzed = Analyze (SemanticAnalyzerTestInputs.assertionNotBoolean);
+			Assert.IsTrue (analyzed);
+			Assert.AreEqual (sa.getErrors ().Count, 1);
+		}
+
+		[Test]
+		public void TestForLoopOk ()
+		{
+			bool analyzed = Analyze (SemanticAnalyzerTestInputs.forLoopOk);
+			Assert.IsTrue (analyzed);
+			Assert.AreEqual (sa.getErrors ().Count, 0);
+		}
+
+		[Test]
+		public void TestForControlVarNotDeclared ()
+		{
+			bool analyzed = Analyze (SemanticAnalyzerTestInputs.forLoopControlVarNotDeclared);
+			Assert.IsTrue (analyzed);
+			Assert.IsTrue (sa.getErrors ().Count > 0);
+		}
+
+		[Test]
+		public void TestForRangeFromNotInt ()
+		{
+			bool analyzed = Analyze (SemanticAnalyzerTestInputs.forLoopRangeFromNotInt);
+			Assert.IsTrue (analyzed);
+			Assert.AreEqual (sa.getErrors ().Count, 1);
+		}
+
+		[Test]
+		public void TestForRangeUptoNotInt ()
+		{
+			bool analyzed = Analyze (SemanticAnalyzerTestInputs.forLoopRangeUptoNotInt);
+			Assert.IsTrue (analyzed);
+			Assert.AreEqual (sa.getErrors ().Count, 1);
+		}
+
+		[Test]
+		public void TestForLoopControlVariableReassignInsideLoop ()
+		{
+			bool analyzed = Analyze (SemanticAnalyzerTestInputs.forControlVariableReassignInsideLoop);
+			Assert.IsTrue (analyzed);
+			Assert.AreEqual (sa.getErrors ().Count, 1);
+		}
+
+		[Test]
+		public void TestForLoopControlVariableReassignOutsideLoop ()
+		{
+			bool analyzed = Analyze (SemanticAnalyzerTestInputs.forControlVariableReassignOutsideLoop);
+			Assert.IsTrue (analyzed);
+			Assert.AreEqual (sa.getErrors ().Count, 0);
+		}
+
+		[Test]
+		public void TestAssignWhenNotDeclared ()
+		{
+			bool analyzed = Analyze (SemanticAnalyzerTestInputs.assignWhenNotDeclared);
+			Assert.IsTrue (analyzed);
+			Assert.IsTrue (sa.getErrors ().Count > 0);
+		}
+
+		[Test]
+		public void TestSourceEmpty ()
+		{
+			bool analyzed = Analyze (SemanticAnalyzerTestInputs.sourceEmpty);
+			Assert.IsTrue (analyzed);
+			Assert.AreEqual (sa.getErrors ().Count, 0);
+		}
 	}
 }
 

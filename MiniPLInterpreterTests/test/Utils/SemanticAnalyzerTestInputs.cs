@@ -7,6 +7,9 @@ namespace MiniPLInterpreterTests
 		public SemanticAnalyzerTestInputs ()
 		{}
 
+		public static readonly string[] sourceEmpty = 
+		{};
+
 		public static readonly string[] correctBoolAssignments = 
 		{
 			"var i1 : bool := true;",
@@ -189,6 +192,61 @@ namespace MiniPLInterpreterTests
 		public static readonly string[] doubleDeclaration = {
 			"var a : string := \"gogogo\";\n",
 			"var a : int := 666;"
+		};
+
+		public static readonly string[] assertionBoolean = {
+			"assert (\"\" < \"bamboozle\");"
+		};
+
+		public static readonly string[] assertionNotBoolean = {
+			"assert (\"\" + \"bamboozle\");"
+		};
+
+		public static readonly string[] forLoopOk = {
+			"var i : int;\n",
+			"for i in 1..10 do\n",
+			"print i;\n",
+			"end for;\n"
+		};
+
+		public static readonly string[] forLoopControlVarNotDeclared = {
+			"for i in 1..10 do\n",
+			"print i;\n",
+			"end for;\n"
+		};
+
+		public static readonly string[] forLoopRangeFromNotInt = {
+			"var i : int;\n",
+			"var x : bool;\n",
+			"for i in x..10 do\n",
+			"print i;\n",
+			"end for;\n"
+		};
+
+		public static readonly string[] forLoopRangeUptoNotInt = {
+			"var i : int;\n",
+			"var x : bool;\n",
+			"for i in 1..x do\n",
+			"print i;\n",
+			"end for;\n"
+		};
+
+		public static readonly string[] forControlVariableReassignInsideLoop = {
+			"var i : int;\n",
+			"for i in 1..10 do\n",
+			"i := 1;\n",
+			"end for;\n"
+		};
+
+		public static readonly string[] forControlVariableReassignOutsideLoop = {
+			"var i : int;\n",
+			"for i in 1..10 do\n",
+			"end for;\n",
+			"i := 1;\n"
+		};
+
+		public static readonly string[] assignWhenNotDeclared = {
+			"a := false;"
 		};
 
 		public static readonly string[] validMassiveInputForSemanticTesting =

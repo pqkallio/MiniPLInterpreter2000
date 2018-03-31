@@ -45,6 +45,8 @@
     <Compile Include="test\MockReader.cs" />
     <Compile Include="test\Utils\SemanticAnalyzerTestInputs.cs" />
     <Compile Include="test\Services\SemanticAnalyzerTest.cs" />
+    <Compile Include="test\Services\InterpreterTest.cs" />
+    <Compile Include="test\InterpreterTestInput.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
