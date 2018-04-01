@@ -9,7 +9,7 @@ namespace MiniPLInterpreter
 	public class Interpreter
 	{
 		private SyntaxTree syntaxTree;							// the AST
-		private Dictionary<string, IProperty> symbolicTable;	
+		private Dictionary<string, IProperty> symbolTable;	
 		private ExecutionVisitor executor;
 		private IPrinter printer;
 		private IReader reader;
@@ -25,11 +25,11 @@ namespace MiniPLInterpreter
 			// The AST is assumed to be analyzed by a semantic analyzer before the interpretation.
 			this.syntaxTree = syntaxTree;
 			// The symbolic table is not the same used in the compilation, its empty at first.
-			this.symbolicTable = new Dictionary<string, IProperty> ();
+			this.symbolTable = new Dictionary<string, IProperty> ();
 			this.printer = printer;
 			this.reader = reader;
 			// The execution visitor is used to execute each AST's node in a depth first style. 
-			this.executor = new ExecutionVisitor (symbolicTable, this.printer, this.reader);
+			this.executor = new ExecutionVisitor (symbolTable, this.printer, this.reader);
 		}
 
 		/// <summary>
@@ -50,9 +50,9 @@ namespace MiniPLInterpreter
 			}
 		}
 
-		public Dictionary<string, IProperty> IDs
+		public Dictionary<string, IProperty> SymbolTable
 		{
-			get { return symbolicTable; }
+			get { return symbolTable; }
 		}
 	}
 }
