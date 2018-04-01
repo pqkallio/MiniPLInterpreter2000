@@ -2,6 +2,9 @@
 
 namespace MiniPLInterpreter
 {
+	/// <summary>
+	/// Designed to save and access a boolean value.
+	/// </summary>
 	public class BooleanProperty : IProperty
 	{
 		private bool value;
@@ -17,11 +20,6 @@ namespace MiniPLInterpreter
 			this.value = value;
 			this.declared = false;
 			this.constant = false;
-		}
-
-		public Type GetPropertyType ()
-		{
-			return typeof(bool);
 		}
 
 		public TokenType GetTokenType ()

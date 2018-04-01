@@ -3,6 +3,9 @@ using System.Collections;
 
 namespace MiniPLInterpreter
 {
+	/// <summary>
+	/// Represents a unary operation in the AST
+	/// </summary>
 	public class UnOpNode : IExpressionContainer, IExpressionNode
 	{
 		private IExpressionNode operand;

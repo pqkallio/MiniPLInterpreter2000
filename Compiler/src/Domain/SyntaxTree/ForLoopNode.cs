@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 namespace MiniPLInterpreter
 {
+	/// <summary>
+	/// Represents a for-loop node in the AST
+	/// </summary>
 	public class ForLoopNode : IExpressionContainer, IIdentifierContainer
 	{
 		private VariableIdNode idNode;

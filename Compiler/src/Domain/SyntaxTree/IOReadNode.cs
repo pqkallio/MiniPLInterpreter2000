@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 namespace MiniPLInterpreter
 {
+	/// <summary>
+	/// Represents a read statement in the AST
+	/// </summary>
 	public class IOReadNode : ISyntaxTreeNode, IIdentifierContainer
 	{
 		private VariableIdNode idNode;

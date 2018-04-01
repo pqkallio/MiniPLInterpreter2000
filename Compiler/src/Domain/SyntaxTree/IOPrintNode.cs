@@ -3,6 +3,9 @@ using System.Collections;
 
 namespace MiniPLInterpreter
 {
+	/// <summary>
+	/// Represents a print statement in the AST
+	/// </summary>
 	public class IOPrintNode: IExpressionContainer
 	{
 		private IExpressionNode expression;

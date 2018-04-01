@@ -2,15 +2,13 @@
 
 namespace MiniPLInterpreter
 {
+	/// <summary>
+	/// A void property, has no meaningful return value.
+	/// </summary>
 	public class VoidProperty : IProperty
 	{
 		public VoidProperty ()
 		{}
-
-		public Type GetPropertyType ()
-		{
-			return typeof(void);
-		}
 
 		public TokenType GetTokenType ()
 		{

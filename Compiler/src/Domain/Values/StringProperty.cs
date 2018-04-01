@@ -2,6 +2,9 @@
 
 namespace MiniPLInterpreter
 {
+	/// <summary>
+	/// Designed to save and access a string.
+	/// </summary>
 	public class StringProperty : IProperty
 	{
 		private string value;
@@ -13,11 +16,6 @@ namespace MiniPLInterpreter
 			this.value = value;
 			this.declared = false;
 			this.constant = false;
-		}
-
-		public Type GetPropertyType ()
-		{
-			return typeof(string);
 		}
 
 		public TokenType GetTokenType ()

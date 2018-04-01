@@ -3,6 +3,9 @@ using System.Collections;
 
 namespace MiniPLInterpreter
 {
+	/// <summary>
+	/// Represents a binary operation in the AST
+	/// </summary>
 	public class BinOpNode : IExpressionContainer, IExpressionNode
 	{
 		private IExpressionNode leftOperand;
@@ -13,6 +16,9 @@ namespace MiniPLInterpreter
 
 		public BinOpNode (Token t)
 		{
+			// by default the operation is a "no operation",
+			// meaning that in this case, only the lefthandside would
+			// be evaluated
 			this.operation = TokenType.BINARY_OP_NO_OP;
 			this.token = t;
 			this.evaluationType = TokenType.UNDEFINED;

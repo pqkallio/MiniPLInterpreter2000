@@ -3,6 +3,9 @@ using System.Collections;
 
 namespace MiniPLInterpreter
 {
+	/// <summary>
+	/// Represents a boolean value in the AST
+	/// </summary>
 	public class BoolValueNode : IExpressionNode, ISemanticCheckValue
 	{
 		private bool value;

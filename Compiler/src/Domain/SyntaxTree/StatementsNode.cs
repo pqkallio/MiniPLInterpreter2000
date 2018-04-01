@@ -3,6 +3,9 @@ using System.Collections;
 
 namespace MiniPLInterpreter
 {
+	/// <summary>
+	/// Represents a statement in the AST
+	/// </summary>
 	public class StatementsNode : IStatementsContainer
 	{
 		public ISyntaxTreeNode statement;

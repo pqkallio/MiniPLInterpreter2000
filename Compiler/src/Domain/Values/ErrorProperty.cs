@@ -2,16 +2,13 @@
 
 namespace MiniPLInterpreter
 {
+	/// <summary>
+	/// Represents an unusable property.
+	/// </summary>
 	public class ErrorProperty : IProperty
 	{
 		public ErrorProperty ()
-		{
-		}
-
-		public Type GetPropertyType ()
-		{
-			return typeof(Error);
-		}
+		{}
 
 		public TokenType GetTokenType ()
 		{

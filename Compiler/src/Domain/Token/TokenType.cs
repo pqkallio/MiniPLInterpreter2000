@@ -2,52 +2,47 @@
 
 namespace MiniPLInterpreter
 {
+	/// <summary>
+	/// Enumerates different token types.
+	/// </summary>
 	public enum TokenType
 	{
-		ID,
-		UNARY_OP_LOG_NEG,
-		BINARY_OP_ADD,
-		BINARY_OP_SUB,
-		BINARY_OP_MUL,
-		BINARY_OP_DIV,
-		BINARY_OP_LOG_EQ,
-		BINARY_OP_LOG_LT,
-		BINARY_OP_LOG_AND,
-		TYPE,
-		PARENTHESIS_LEFT,
-		PARENTHESIS_RIGHT,
-		RANGE_FROM,
-		RANGE_UPTO,
-		STR_VAL,
-		END_STATEMENT,
-		DECLARATION,
-		FOR_LOOP,
-		START_BLOCK,
-		READ,
-		PRINT,
-		END_OF_BLOCK,
-		ASSERT,
-		INT_VAL,
-		INT_VAR,
-		BOOL_VAL,
-		BOOL_VAR,
-		STR_VAR,
-		COMMENT_ONE_LINE,
-		COMMENT_START,
-		COMMENT_END,
-		UNDEFINED,
-		END_OF_FILE,
-		SET_TYPE,
-		ASSIGN,
-		PROGRAM,
-		ERROR,
-		STATEMENTS,
-		STATEMENT,
-		EXPRESSION,
-		BINARY_OP,
-		UNARY_OP,
-		BINARY_OP_NO_OP,
-		VOID
+		ID,					// an id variable
+		UNARY_OP_LOG_NEG,	// unary operation, negation
+		BINARY_OP_ADD,		// binary operation, addition
+		BINARY_OP_SUB,		// binary operation, subtraction
+		BINARY_OP_MUL,		// binary operation, multiplication
+		BINARY_OP_DIV,		// binary operation, division
+		BINARY_OP_LOG_EQ,	// binary operation, logical equation
+		BINARY_OP_LOG_LT,	// binary operation, logical less than
+		BINARY_OP_LOG_AND,	// binary operation, logical and
+		TYPE,				// a declaration's type
+		PARENTHESIS_LEFT,	// left parenthesis, "(" terminal
+		PARENTHESIS_RIGHT,	// right parenthesis ")" terminal
+		RANGE_FROM,			// range from, "in" terminal
+		RANGE_UPTO,			// range upto, ".." terminal
+		STR_VAL,			// a string value
+		END_STATEMENT,		// end of statement, ";" terminal
+		DECLARATION,		// declaration, "var" terminal
+		FOR_LOOP,			// for-loop, "for" terminal
+		START_BLOCK,		// start of a block, "do" terminal
+		READ,				// "read" terminal
+		PRINT,				// "print" terminal
+		END_OF_BLOCK,		// end of block, "end" terminal
+		ASSERT,				// "assert" terminal
+		INT_VAL,			// an integer value
+		INT_VAR,			// an integer variable
+		BOOL_VAL,			// a boolean value, true or false
+		BOOL_VAR,			// a boolean variable
+		STR_VAR,			// a string variable
+		UNDEFINED,			// token's type is undefined
+		END_OF_FILE,		// end of file, EOF, you know..
+		SET_TYPE,			// set type, ":" terminal
+		ASSIGN,				// assign, ":=" terminal
+		PROGRAM,			// the start of a program
+		ERROR,				// error token, if something goes wrong
+		BINARY_OP_NO_OP,	// binary expression, no operation (only lefthand side)
+		VOID				// a void property
 	}
 }
 

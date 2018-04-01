@@ -5,6 +5,9 @@ using System.Reflection;
 
 namespace MiniPLInterpreter
 {
+	/// <summary>
+	/// Represents an assignment in the AST
+	/// </summary>
 	public class AssignNode : IExpressionContainer, IIdentifierContainer
 	{
 		private VariableIdNode idNode;
@@ -39,7 +42,7 @@ namespace MiniPLInterpreter
 
 		public override string ToString ()
 		{
-			return "DECLARE AND/OR ASSIGN";
+			return "ASSIGN";
 		}
 
 		public ISemanticCheckValue Accept(INodeVisitor visitor) {

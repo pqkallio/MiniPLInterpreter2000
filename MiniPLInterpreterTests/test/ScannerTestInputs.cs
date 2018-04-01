@@ -1,6 +1,5 @@
 ﻿using System;
 
-
 namespace MiniPLInterpreterTests
 {
 	public class ScannerTestInputs

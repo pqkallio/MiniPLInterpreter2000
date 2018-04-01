@@ -3,6 +3,9 @@ using System.Collections;
 
 namespace MiniPLInterpreter
 {
+	/// <summary>
+	/// Represents an assert statement in the AST.
+	/// </summary>
 	public class AssertNode : IExpressionContainer
 	{
 		private IExpressionNode expressionNode;

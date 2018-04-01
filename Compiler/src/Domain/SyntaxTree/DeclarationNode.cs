@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 namespace MiniPLInterpreter
 {
+	/// <summary>
+	/// Represents a Declaration statement in the AST
+	/// </summary>
 	public class DeclarationNode : IIdentifierContainer
 	{
 		private VariableIdNode idNode;

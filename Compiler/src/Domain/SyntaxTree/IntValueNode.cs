@@ -3,6 +3,9 @@ using System.Collections;
 
 namespace MiniPLInterpreter
 {
+	/// <summary>
+	/// Represents an integer value in the AST
+	/// </summary>
 	public class IntValueNode : IExpressionNode, ISemanticCheckValue
 	{
 		private int value;

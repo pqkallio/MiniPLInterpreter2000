@@ -4,31 +4,36 @@ using System.Collections.Generic;
 
 namespace MiniPLInterpreter
 {
+	/// <summary>
+	/// Represents a variable id in the AST.
+	/// Can be used as an expression.
+	/// </summary>
 	public class VariableIdNode : IExpressionNode
 	{
 		private string id;
-		private Dictionary<string, IProperty> ids;
+		private Dictionary<string, IProperty> symbolTable;
 		private TokenType variableType;
 		private Token token;
 
-		public VariableIdNode(Dictionary<string, IProperty> ids)
-			: this(null, ids, null)
+		public VariableIdNode(Dictionary<string, IProperty> symbolTable)
+			: this(null, symbolTable, null)
 		{}
 
-		public VariableIdNode(Dictionary<string, IProperty> ids, Token token)
-			: this(null, ids, token)
-		{}
-
-		public VariableIdNode (string id, Dictionary<string, IProperty> ids, Token token)
+		public VariableIdNode (string id, Dictionary<string, IProperty> symbolTable, Token token)
 		{
 			this.id = id;
-			this.ids = ids;
+			this.symbolTable = symbolTable;
 			this.token = token;
 		}
 
+		/// <summary>
+		/// The evaluation type is the type of the IProperty corresponding
+		/// to the id string in the symbol table.
+		/// </summary>
+		/// <value>The type of the evaluation.</value>
 		public TokenType EvaluationType
 		{
-			get { return ids [id].GetTokenType (); }
+			get { return symbolTable [id].GetTokenType (); }
 			set { }
 		}
 

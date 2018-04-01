@@ -3,21 +3,42 @@ using System.Text;
 
 namespace MiniPLInterpreter
 {
+	/// <summary>
+	/// Represents a single symbol in the source code.
+	/// </summary>
 	public class Token
 	{
-		private readonly int row;
-		private readonly int column;
-		private string value;
-		private TokenType tokenType;
+		private readonly int row;		// the row in the source code this token is in
+		private readonly int column;	// the position of this token in the code line
+		private string value;			// the value of the token, if meaningful
+		private TokenType tokenType;	// an enumerated type
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MiniPLInterpreter.Token"/> class.
+		/// </summary>
+		/// <param name="row">Row.</param>
+		/// <param name="column">Column.</param>
 		public Token (int row, int column)
 			: this (row, column, null, TokenType.UNDEFINED)
 		{ }
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MiniPLInterpreter.Token"/> class.
+		/// </summary>
+		/// <param name="row">Row.</param>
+		/// <param name="column">Column.</param>
+		/// <param name="value">Value.</param>
 		public Token (int row, int column, string value)
 			: this (row, column, value, TokenType.UNDEFINED)
 		{ }
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MiniPLInterpreter.Token"/> class.
+		/// </summary>
+		/// <param name="row">Row.</param>
+		/// <param name="column">Column.</param>
+		/// <param name="value">Value.</param>
+		/// <param name="tokenType">Token type.</param>
 		public Token (int row, int column, string value, TokenType tokenType)
 		{
 			this.row = row;

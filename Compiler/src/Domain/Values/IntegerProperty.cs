@@ -2,6 +2,9 @@
 
 namespace MiniPLInterpreter
 {
+	/// <summary>
+	/// Designed to save and access an integer.
+	/// </summary>
 	public class IntegerProperty : IProperty
 	{
 		private int value;
@@ -13,11 +16,6 @@ namespace MiniPLInterpreter
 			this.value = value;
 			this.declared = false;
 			this.constant = false;
-		}
-
-		public Type GetPropertyType ()
-		{
-			return typeof(int);
 		}
 
 		public TokenType GetTokenType ()

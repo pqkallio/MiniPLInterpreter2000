@@ -3,6 +3,9 @@ using System.Collections;
 
 namespace MiniPLInterpreter
 {
+	/// <summary>
+	/// Represents a string value in the AST
+	/// </summary>
 	public class StringValueNode : IExpressionNode, ISemanticCheckValue
 	{
 		private string value;

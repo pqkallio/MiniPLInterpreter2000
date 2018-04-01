@@ -79,7 +79,6 @@
     <Compile Include="src\Domain\SyntaxTree\StringValueNode.cs" />
     <Compile Include="src\Domain\SyntaxTree\IExpressionContainer.cs" />
     <Compile Include="src\Domain\SyntaxTree\VariableIdNode.cs" />
-    <Compile Include="src\Domain\SyntaxTree\IOperandContainer.cs" />
     <Compile Include="src\Domain\SyntaxTree\ForLoopNode.cs" />
     <Compile Include="src\Domain\SyntaxTree\IOReadNode.cs" />
     <Compile Include="src\Domain\SyntaxTree\IOPrintNode.cs" />
